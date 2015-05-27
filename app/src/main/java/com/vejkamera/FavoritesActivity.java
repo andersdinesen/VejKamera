@@ -1,18 +1,24 @@
 package com.vejkamera;
 
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 public class FavoritesActivity extends ListActivity {
     ArrayAdapter<RoadCamera> adapter;
-    List<RoadCamera> favorites;
+    ArrayList<RoadCamera> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,7 @@ public class FavoritesActivity extends ListActivity {
 
         updateFavorites();
         setupAdapter();
+        startReadingAndReceiving();
     }
 
     private void updateFavorites() {
@@ -32,6 +39,18 @@ public class FavoritesActivity extends ListActivity {
     private void setupAdapter(){
         adapter = new RoadCameraListAdapter(this, favorites);
         setListAdapter(adapter);
+    }
+
+    private void startReadingAndReceiving() {
+        // Prepare for receiving the result when the favorites are read
+        FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
+        IntentFilter intentFilter = new IntentFilter(RoadCameraReaderService.BROADCAST_READING_DONE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
+
+        //Start service to read favorites
+        Intent readIntent = new Intent(this, RoadCameraReaderService.class);
+        readIntent.putExtra(RoadCameraReaderService.ROAD_CAMERA_LIST_KEY, favorites);
+        startService(readIntent);
     }
 
     @Override
@@ -54,5 +73,18 @@ public class FavoritesActivity extends ListActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class FavoritesResponseReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            favorites.clear();
+
+            ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraReaderService.ROAD_CAMERA_LIST_KEY);
+            //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
+            favorites.addAll(updatedFavorites);
+            adapter.notifyDataSetChanged();
+        }
     }
 }
