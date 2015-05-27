@@ -1,17 +1,37 @@
 package com.vejkamera;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class FavoritesActivity extends ActionBarActivity {
+public class FavoritesActivity extends ListActivity {
+    ArrayAdapter<RoadCamera> adapter;
+    List<RoadCamera> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
+
+        updateFavorites();
+        setupAdapter();
+    }
+
+    private void updateFavorites() {
+        favorites = new ArrayList();
+        favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "VejleN_Horsensvej_Cam1.jpg", null));
+        favorites.add(new RoadCamera("E20 Kauslunde V", "kauslunde2.jpg", null));
+    }
+
+    private void setupAdapter(){
+        adapter = new RoadCameraListAdapter(this, favorites);
+        setListAdapter(adapter);
     }
 
     @Override
