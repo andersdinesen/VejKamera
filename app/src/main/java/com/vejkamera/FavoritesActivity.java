@@ -1,29 +1,28 @@
 package com.vejkamera;
 
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 
-public class FavoritesActivity extends ListActivity {
+public class FavoritesActivity extends AppCompatActivity {
     ArrayAdapter<RoadCamera> adapter;
     ArrayList<RoadCamera> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_favorites);
+        setContentView(R.layout.activity_favorites);
 
         updateFavorites();
         setupAdapter();
@@ -37,8 +36,9 @@ public class FavoritesActivity extends ListActivity {
     }
 
     private void setupAdapter(){
+        final ListView listView = (ListView) findViewById(R.id.favorites_listview);
         adapter = new RoadCameraListAdapter(this, favorites);
-        setListAdapter(adapter);
+        listView.setAdapter(adapter);
     }
 
     private void startReadingAndReceiving() {
@@ -70,7 +70,11 @@ public class FavoritesActivity extends ListActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_by_list){
+            Intent intent = new Intent(this, CityListActivity.class);
+            startActivity(intent);
         }
+
 
         return super.onOptionsItemSelected(item);
     }

@@ -1,6 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".FavoritesActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:vejkamera="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        vejkamera:showAsAction="never" />
+    <item android:id="@+id/action_by_list"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/action_add_favorite_by_list"
+        vejkamera:showAsAction="always" />
 </menu>

@@ -4,9 +4,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".FavoritesActivity">
+    tools:context="com.vejkamera.CityListActivity">
+
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/favorites_listview"
+        android:id="@+id/city_listview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
