@@ -14,4 +14,11 @@
     <string name="jutland">Rest of Jutland</string>
     <string name="odense">Odense</string>
     <string name="fyn">Rest of Fyn</string>
+
+    <string-array name="planets">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+    </string-array>
 </resources>

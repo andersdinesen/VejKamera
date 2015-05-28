@@ -21,6 +21,8 @@ public class CityListActivity extends Activity {
         final ListView cityListView = (ListView) findViewById(R.id.city_listview);
         final ArrayList<String> listOfCities = new ArrayList<>();
 
+        getResources().getStringArray(R.array.planets);
+
         for (int i = 0; i<Constants.CITY_IDS.length; i++){
             listOfCities.add(getString(Constants.CITY_IDS[i]));
         }
