@@ -19,6 +19,8 @@ public class RoadCameraListAdapter extends ArrayAdapter<RoadCamera> {
 
     public RoadCameraListAdapter(Context context, List<RoadCamera> values){
         super(context, R.layout.favorite_camera_row, values);
+        this.context = context;
+        this.values = values;
     }
 
     @Override
