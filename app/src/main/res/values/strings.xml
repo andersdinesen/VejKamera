@@ -5,7 +5,7 @@
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
     <string name="title_activity_city_list">CityListActivity</string>
 
-    <string name="all">All</string>
+    <string name="all_areas">All</string>
     <string name="copenhagen">Copenhagen</string>
     <string name="zealand">Rest of Zealand</string>
     <string name="aarhus">Århus</string>

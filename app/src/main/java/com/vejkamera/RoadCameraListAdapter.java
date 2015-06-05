@@ -30,7 +30,7 @@ public class RoadCameraListAdapter extends ArrayAdapter<RoadCamera> {
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 
-        textView.setText(values.get(position).getDisplayName());
+        textView.setText(values.get(position).getTitle());
         if(values.get(position).getBitmap() != null){
             imageView.setImageBitmap(values.get(position).getBitmap());
         }

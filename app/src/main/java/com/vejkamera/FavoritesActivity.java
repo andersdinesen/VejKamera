@@ -31,8 +31,8 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void updateFavorites() {
         favorites = new ArrayList();
-        favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "VejleN_Horsensvej_Cam1.jpg", null));
-        favorites.add(new RoadCamera("E20 Kauslunde V", "kauslunde2.jpg", null));
+        favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
+        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
     }
 
     private void setupAdapter(){
@@ -44,12 +44,12 @@ public class FavoritesActivity extends AppCompatActivity {
     private void startReadingAndReceiving() {
         // Prepare for receiving the result when the favorites are read
         FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
-        IntentFilter intentFilter = new IntentFilter(RoadCameraReaderService.BROADCAST_READING_DONE);
+        IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
 
         //Start service to read favorites
-        Intent readIntent = new Intent(this, RoadCameraReaderService.class);
-        readIntent.putExtra(RoadCameraReaderService.ROAD_CAMERA_LIST_KEY, favorites);
+        Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
+        readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
         startService(readIntent);
     }
 
@@ -85,7 +85,7 @@ public class FavoritesActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             favorites.clear();
 
-            ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraReaderService.ROAD_CAMERA_LIST_KEY);
+            ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
             adapter.notifyDataSetChanged();

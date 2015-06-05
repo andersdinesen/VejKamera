@@ -34,7 +34,7 @@
         </activity>
 
         <service
-            android:name=".RoadCameraReaderService"
+            android:name=".RoadCameraImageReaderService"
             android:exported="false" />
 
         <activity

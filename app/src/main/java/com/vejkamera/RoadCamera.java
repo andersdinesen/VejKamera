@@ -8,50 +8,123 @@ import android.os.Parcelable;
  * Created by ad on 27-05-2015.
  */
 public class RoadCamera implements Parcelable{
-    private String displayName = null;
-    private String remoteFileName = null;
+    private String syncId = null;
+    private String title = null;
+    private String info = null;
+    private String imageLink = null;
+    private String thumbnailLink = null;
+    private String longitude = null;
+    private String latitude = null;
+
+    public String getSyncId() {
+        return syncId;
+    }
+
+    public void setSyncId(String syncId) {
+        this.syncId = syncId;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getThumbnailLink() {
+        return thumbnailLink;
+    }
+
+    public void setThumbnailLink(String thumbnailLink) {
+        this.thumbnailLink = thumbnailLink;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Integer getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Integer direction) {
+        this.direction = direction;
+    }
+
+    private String state = null;
+    private String time = null;
+    private Integer direction = null;
     private Bitmap bitmap = null;
 
     public RoadCamera() {
     }
 
     public RoadCamera(String displayName, String remoteFileName) {
-        this.displayName = displayName;
-        this.remoteFileName = remoteFileName;
+        this.title = displayName;
+        this.imageLink = remoteFileName;
     }
 
     public RoadCamera(String displayName, String remoteFileName, Bitmap bitmap) {
-        this.displayName = displayName;
-        this.remoteFileName = remoteFileName;
+        this.title = displayName;
+        this.imageLink = remoteFileName;
         this.bitmap = bitmap;
     }
 
     public RoadCamera(Parcel in){
-        displayName = in.readString();
-        remoteFileName = in.readString();
+        title = in.readString();
+        imageLink = in.readString();
         bitmap = in.readParcelable(RoadCamera.class.getClassLoader());
     }
 
     public RoadCamera(Parcel in, ClassLoader classLoader){
-        displayName = in.readString();
-        remoteFileName = in.readString();
+        title = in.readString();
+        imageLink = in.readString();
         bitmap = in.readParcelable(classLoader);
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getRemoteFileName() {
-        return remoteFileName;
+    public String getImageLink() {
+        return imageLink;
     }
 
-    public void setRemoteFileName(String remoteFileName) {
-        this.remoteFileName = remoteFileName;
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public Bitmap getBitmap() {
@@ -69,8 +142,8 @@ public class RoadCamera implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(displayName);
-        dest.writeString(remoteFileName);
+        dest.writeString(title);
+        dest.writeString(imageLink);
         dest.writeParcelable(bitmap, flags);
     }
 
