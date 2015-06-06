@@ -9,6 +9,7 @@ import android.util.JsonReader;
 
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,19 +46,19 @@ public class RoadCameraListingReaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        JSONObject entities = getReadJsonObjectsFromNetwork();
+        String rawReading = getReadJsonObjectsFromNetwork();
 
-        ArrayList<RoadCamera> roadCameras = convertJSONIntoRoadCamList(entities);
+        ArrayList<RoadCamera> roadCameras = convertJSONIntoRoadCamList(rawReading);
 
         broadcastResult(roadCameras);
     }
 
 
-    private JSONObject getReadJsonObjectsFromNetwork() {
+    private String getReadJsonObjectsFromNetwork() {
         URL url;
         InputStream inputStream = null;
         StringBuilder stringBuilder = null;
-        JSONObject result = null;
+        String result = null;
         try {
             url = new URL("http://prod.middleman.dk/api/webcam/json/synced?type=webCam&syncVersion=1&");
             HttpURLConnection connection = null;
@@ -75,19 +76,41 @@ public class RoadCameraListingReaderService extends IntentService {
                 stringBuilder.append(line);
             }
 
-            result = new JSONObject(stringBuilder.toString())
+            result = stringBuilder.toString();
         } catch (IOException e) {
             //TODO: Add network exception handling
-            e.printStackTrace();
-        } catch (JSONException e) {
-            //TODO: Add error of reading JSON string exception handling
             e.printStackTrace();
         }
         return result;
     }
 
-    private ArrayList<RoadCamera> convertJSONIntoRoadCamList(JSONObject entities) {
-        return null;
+    private ArrayList<RoadCamera> convertJSONIntoRoadCamList(String rawReading) {
+        ArrayList<RoadCamera> roadCameraList = new ArrayList<>();
+        RoadCamera roadCamera = null;
+        try {
+            JSONObject roadCameraListing = new JSONObject(rawReading);
+            JSONObject entities = roadCameraListing.getJSONObject("entities");
+            JSONArray jsonRoadCameraList = entities.getJSONArray("neworchanged");
+            for(int i=0; i<jsonRoadCameraList.length(); i++){
+                JSONObject jsonCamera = (JSONObject) jsonRoadCameraList.get(i);
+                roadCamera = new RoadCamera();
+                roadCamera.setImageLink(jsonCamera.getString("link"));
+                roadCamera.setLatitude(jsonCamera.getDouble("latitide"));
+                roadCamera.setState(jsonCamera.getString("state"));
+                roadCamera.setInfo(jsonCamera.getString("into"));
+                roadCamera.setTitle(jsonCamera.getString("title"));
+                roadCamera.setDirection(jsonCamera.getInt("direction"));
+                roadCamera.setTime(jsonCamera.getLong("time"));
+                roadCamera.setSyncId(jsonCamera.getString("syndId"));
+                roadCamera.setThumbnailLink(jsonCamera.getString("thumbnailLink"));
+                roadCameraList.add(roadCamera);
+            }
+
+        } catch (JSONException e) {
+            //TODO: Handle error on reading JSON content
+            e.printStackTrace();
+        }
+        return roadCameraList;
     }
 
     private void broadcastResult(ArrayList<RoadCamera> roadCameras) {

@@ -13,8 +13,21 @@ public class RoadCamera implements Parcelable{
     private String info = null;
     private String imageLink = null;
     private String thumbnailLink = null;
-    private String longitude = null;
-    private String latitude = null;
+    private Double longitude = null;
+    private Double latitude = null;
+    private String state = null;
+    private Long time = null;
+    private Integer direction = null;
+    private Bitmap bitmap = null;
+
+    public RoadCamera() {
+    }
+
+    public RoadCamera(String displayName, String remoteFileName) {
+        this.title = displayName;
+        this.imageLink = remoteFileName;
+    }
+
 
     public String getSyncId() {
         return syncId;
@@ -40,19 +53,19 @@ public class RoadCamera implements Parcelable{
         this.thumbnailLink = thumbnailLink;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
@@ -64,11 +77,11 @@ public class RoadCamera implements Parcelable{
         this.state = state;
     }
 
-    public String getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
@@ -78,19 +91,6 @@ public class RoadCamera implements Parcelable{
 
     public void setDirection(Integer direction) {
         this.direction = direction;
-    }
-
-    private String state = null;
-    private String time = null;
-    private Integer direction = null;
-    private Bitmap bitmap = null;
-
-    public RoadCamera() {
-    }
-
-    public RoadCamera(String displayName, String remoteFileName) {
-        this.title = displayName;
-        this.imageLink = remoteFileName;
     }
 
     public RoadCamera(String displayName, String remoteFileName, Bitmap bitmap) {

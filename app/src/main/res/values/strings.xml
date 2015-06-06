@@ -15,6 +15,14 @@
     <string name="odense">Odense</string>
     <string name="fyn">Rest of Fyn</string>
 
+    <!-- Camera listing API valies -->
+    <string name="listingURL">http://prod.middleman.dk/api/webcam/json/synced?type=webCam&amp;syncVersion=1&amp;</string>
+    <string name="http_request_property_appversion_key">X-VD-APPVERSION</string>
+    <string name="http_request_property_appversion_value">500</string>
+    <string name="http_request_property_appid_key">X-VD-APPID</string>
+    <string name="http_request_property_appid_value">ANDROID</string>
+
+
     <string-array name="planets">
         <item>Mercury</item>
         <item>Venus</item>
