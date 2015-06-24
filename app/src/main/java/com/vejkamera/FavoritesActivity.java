@@ -71,7 +71,7 @@ public class FavoritesActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_by_list){
-            Intent intent = new Intent(this, CityListActivity.class);
+            Intent intent = new Intent(this, AreasListActivity.class);
             startActivity(intent);
         }
 

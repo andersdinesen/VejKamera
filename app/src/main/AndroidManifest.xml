@@ -38,8 +38,12 @@
             android:exported="false" />
 
         <activity
-            android:name=".CityListActivity"
+            android:name=".AreasListActivity"
             android:label="@string/title_activity_city_list" >
+        </activity>
+        <activity
+            android:name=".AreaCamersListActivity"
+            android:label="@string/title_activity_area_camers_list" >
         </activity>
     </application>
 
