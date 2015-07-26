@@ -1,6 +1,7 @@
 package com.vejkamera;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,7 +32,7 @@ public class AreasListActivity extends Activity {
         setupListner(cityListView);
     }
 
-    private void setupListner(ListView cityListView) {
+    private void setupListner(final ListView cityListView) {
         cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                                                 @Override
@@ -40,6 +41,9 @@ public class AreasListActivity extends Activity {
                                                     final String item = (String) parent.getItemAtPosition(position);
                                                     if (position == 0) {
 
+                                                        Intent intent = new Intent(parent.getContext(), AreaCamerasListActivity.class);
+                                                        intent.putExtra(AreaCamerasListActivity.EXTRA_AREA_NAME_KEY, getString(Constants.CITY_IDS[position]));
+                                                        startActivity(intent);
                                                     }
                                                 }
                                             }

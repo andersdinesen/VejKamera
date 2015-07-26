@@ -37,12 +37,16 @@
             android:name=".RoadCameraImageReaderService"
             android:exported="false" />
 
+        <service
+            android:name=".RoadCameraListingReaderService"
+            android:exported="false" />
+
         <activity
             android:name=".AreasListActivity"
             android:label="@string/title_activity_city_list" >
         </activity>
         <activity
-            android:name=".AreaCamersListActivity"
+            android:name=".AreaCamerasListActivity"
             android:label="@string/title_activity_area_camers_list" >
         </activity>
     </application>

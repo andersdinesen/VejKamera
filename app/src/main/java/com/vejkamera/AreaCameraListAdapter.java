@@ -13,12 +13,12 @@ import java.util.List;
 /**
  * Created by ad on 27-05-2015.
  */
-public class RoadCameraListAdapter extends ArrayAdapter<RoadCamera> {
+public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
     private Context context;
     private List<RoadCamera> values;
 
-    public RoadCameraListAdapter(Context context, List<RoadCamera> values){
-        super(context, R.layout.favorite_camera_row, values);
+    public AreaCameraListAdapter(Context context, List<RoadCamera> values){
+        super(context, R.layout.area_camera_row, values);
         this.context = context;
         this.values = values;
     }
@@ -26,7 +26,7 @@ public class RoadCameraListAdapter extends ArrayAdapter<RoadCamera> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.favorite_camera_row, parent, false);
+        View rowView = inflater.inflate(R.layout.area_camera_row, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 

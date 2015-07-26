@@ -95,13 +95,13 @@ public class RoadCameraListingReaderService extends IntentService {
                 JSONObject jsonCamera = (JSONObject) jsonRoadCameraList.get(i);
                 roadCamera = new RoadCamera();
                 roadCamera.setImageLink(jsonCamera.getString("link"));
-                roadCamera.setLatitude(jsonCamera.getDouble("latitide"));
+                roadCamera.setLatitude(jsonCamera.getDouble("latitude"));
                 roadCamera.setState(jsonCamera.getString("state"));
-                roadCamera.setInfo(jsonCamera.getString("into"));
+                roadCamera.setInfo(jsonCamera.getString("info"));
                 roadCamera.setTitle(jsonCamera.getString("title"));
                 roadCamera.setDirection(jsonCamera.getInt("direction"));
                 roadCamera.setTime(jsonCamera.getLong("time"));
-                roadCamera.setSyncId(jsonCamera.getString("syndId"));
+                roadCamera.setSyncId(jsonCamera.getString("syncId"));
                 roadCamera.setThumbnailLink(jsonCamera.getString("thumbnailLink"));
                 roadCameraList.add(roadCamera);
             }

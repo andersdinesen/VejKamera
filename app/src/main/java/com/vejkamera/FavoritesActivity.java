@@ -26,7 +26,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
         updateFavorites();
         setupAdapter();
-        startReadingAndReceiving();
+        readFavoriteCameras();
     }
 
     private void updateFavorites() {
@@ -37,11 +37,11 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void setupAdapter(){
         final ListView listView = (ListView) findViewById(R.id.favorites_listview);
-        adapter = new RoadCameraListAdapter(this, favorites);
+        adapter = new FavoriteListAdapter(this, favorites);
         listView.setAdapter(adapter);
     }
 
-    private void startReadingAndReceiving() {
+    private void readFavoriteCameras() {
         // Prepare for receiving the result when the favorites are read
         FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
         IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
