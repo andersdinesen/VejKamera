@@ -30,6 +30,7 @@ import java.util.ArrayList;
 public class RoadCameraListingReaderService extends IntentService {
     public static final String BROADCAST_LIST_READING_DONE = "com.vejkamera.LIST_READING_DONE";
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
+    private ArrayList<RoadCamera> roadCameras = null;
 
     public RoadCameraListingReaderService() {
         super(RoadCameraListingReaderService.class.getSimpleName());
@@ -44,11 +45,15 @@ public class RoadCameraListingReaderService extends IntentService {
         super(name);
     }
 
+    public ArrayList<RoadCamera> getRoadCameras(){
+        return roadCameras;
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         String rawReading = getReadJsonObjectsFromNetwork();
 
-        ArrayList<RoadCamera> roadCameras = convertJSONIntoRoadCamList(rawReading);
+        roadCameras = convertJSONIntoRoadCamList(rawReading);
 
         broadcastResult(roadCameras);
     }

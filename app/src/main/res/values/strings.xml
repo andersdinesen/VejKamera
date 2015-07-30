@@ -33,4 +33,7 @@
     </string-array>
 
     <string name="hello_world">Hello world!</string>
+
+    <color name="white">#FFFFFF</color>
+    <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
 </resources>

@@ -18,6 +18,10 @@ import java.util.ArrayList;
 public class RoadCameraImageReaderService extends IntentService {
     public static final String BROADCAST_IMAGE_READING_DONE = "com.vejkamera.IMAGE_READING_DONE";
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
+    public static final String AREA_CAMERA_LIST_KEY = "AREA_CAMERAS";
+    public static final String THUMBNAILS_ONLY_KEY = "THUMBNAILS_ONLY";
+    private static ArrayList<RoadCamera> allRoadCameras = null;
+    private static Boolean listReadingCompleted = false;
 
     public RoadCameraImageReaderService() {
         super(RoadCameraImageReaderService.class.getSimpleName());
@@ -35,12 +39,13 @@ public class RoadCameraImageReaderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //String urlPath = getString(R.string.URL_path);
-        ArrayList<RoadCamera> roadCameras = intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
+        ArrayList<RoadCamera> roadCameras = getListOfCameras(intent);
         String failedReadings = null;
+        boolean thumbnailsOnly = (intent.hasExtra(THUMBNAILS_ONLY_KEY) && intent.getStringExtra(THUMBNAILS_ONLY_KEY).equalsIgnoreCase("Y"));
 
         for (RoadCamera roadCamera : roadCameras) {
             try {
-                URL url = new URL(roadCamera.getImageLink());
+                URL url = new URL(thumbnailsOnly ? roadCamera.getThumbnailLink() : roadCamera.getImageLink());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 InputStream is = connection.getInputStream();
                 roadCamera.setBitmap(BitmapFactory.decodeStream(is));
@@ -52,6 +57,31 @@ public class RoadCameraImageReaderService extends IntentService {
         }
 
         broadcastResult(roadCameras);
+    }
+
+    private ArrayList<RoadCamera> getListOfCameras(Intent intent){
+        if(intent.hasExtra(ROAD_CAMERA_LIST_KEY))
+            return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
+
+        return getCamerasByArea(intent);
+
+    }
+
+    private ArrayList<RoadCamera> getCamerasByArea(Intent intent){
+        if(!listReadingCompleted) {
+            RoadCameraListingReaderService listingReaderService = new RoadCameraListingReaderService();
+            listingReaderService.onHandleIntent(intent);
+            allRoadCameras = listingReaderService.getRoadCameras();
+            listReadingCompleted = true;
+        }
+
+        if(intent.hasExtra(AREA_CAMERA_LIST_KEY)){
+            // filter result by area
+            return allRoadCameras;
+        } else {
+            return allRoadCameras;
+        }
+
     }
 
     private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e) {

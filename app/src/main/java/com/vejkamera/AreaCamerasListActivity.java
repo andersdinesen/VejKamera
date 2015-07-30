@@ -5,16 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class AreaCamerasListActivity extends AppCompatActivity {
@@ -33,6 +33,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
         setupAdapter();
         readAreaCameras();
 
+        setupListListner();
     }
 
     private void setupAdapter(){
@@ -42,12 +43,40 @@ public class AreaCamerasListActivity extends AppCompatActivity {
     }
 
     private void readAreaCameras(){
+        LocalBroadcastManager.getInstance(this).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
+
+        Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
+        readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
+        //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
+        startService(readIntent);
+
+        /*
         LocalBroadcastManager.getInstance(this).registerReceiver(new CameraListingResponseReceiver(), new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
 
         Intent listReadIntent = new Intent(this, RoadCameraListingReaderService.class);
         startService(listReadIntent);
+        */
     }
 
+    private void setupListListner() {
+        final ListView areaCamerasListView = (ListView) findViewById(R.id.area_cameras_listview);
+
+        areaCamerasListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                                       @Override
+                                                       public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                                                           final RoadCamera item = (RoadCamera) parent.getItemAtPosition(position);
+
+                                                           Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
+                                                           intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, item);
+                                                           startActivity(intent);
+
+                                                       }
+                                                   }
+
+        );
+    }
+/*
     private class CameraListingResponseReceiver extends BroadcastReceiver {
 
         @Override
@@ -68,7 +97,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
             startService(readIntent);
         }
     }
-
+*/
     private class CameraImagesResponseReceiver extends BroadcastReceiver {
 
         @Override
