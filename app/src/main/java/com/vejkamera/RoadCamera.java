@@ -7,17 +7,17 @@ import android.os.Parcelable;
 /**
  * Created by ad on 27-05-2015.
  */
-public class RoadCamera implements Parcelable{
-    private String syncId = null;
-    private String title = null;
-    private String info = null;
-    private String imageLink = null;
-    private String thumbnailLink = null;
-    private Double longitude = null;
-    private Double latitude = null;
-    private String state = null;
-    private Long time = null;
-    private Integer direction = null;
+public class RoadCamera implements Parcelable {
+    private String syncId = "";
+    private String title = "";
+    private String info = "";
+    private String imageLink = "";
+    private String thumbnailLink = "";
+    private Double longitude = new Double(0.0);
+    private Double latitude = new Double(0.0);
+    private String state = "";
+    private Long time = new Long(0L);
+    private Integer direction = new Integer(0);
     private Bitmap bitmap = null;
 
     public RoadCamera() {
@@ -99,15 +99,31 @@ public class RoadCamera implements Parcelable{
         this.bitmap = bitmap;
     }
 
-    public RoadCamera(Parcel in){
+    public RoadCamera(Parcel in) {
+        syncId = in.readString();
         title = in.readString();
+        info = in.readString();
         imageLink = in.readString();
+        thumbnailLink = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        state = in.readString();
+        time = in.readLong();
+        direction = in.readInt();
         bitmap = in.readParcelable(RoadCamera.class.getClassLoader());
     }
 
-    public RoadCamera(Parcel in, ClassLoader classLoader){
+    public RoadCamera(Parcel in, ClassLoader classLoader) {
+        syncId = in.readString();
         title = in.readString();
+        info = in.readString();
         imageLink = in.readString();
+        thumbnailLink = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        state = in.readString();
+        time = in.readLong();
+        direction = in.readInt();
         bitmap = in.readParcelable(classLoader);
     }
 
@@ -142,12 +158,20 @@ public class RoadCamera implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(syncId);
         dest.writeString(title);
+        dest.writeString(info);
         dest.writeString(imageLink);
+        dest.writeString(thumbnailLink);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+        dest.writeString(state);
+        dest.writeLong(time);
+        dest.writeInt(direction);
         dest.writeParcelable(bitmap, flags);
     }
 
-    public static final Parcelable.Creator<RoadCamera> CREATOR = new Parcelable.ClassLoaderCreator<RoadCamera>(){
+    public static final Parcelable.Creator<RoadCamera> CREATOR = new Parcelable.ClassLoaderCreator<RoadCamera>() {
 
         @Override
         public RoadCamera createFromParcel(Parcel source) {

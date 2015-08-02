@@ -60,11 +60,11 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private ArrayList<RoadCamera> getListOfCameras(Intent intent){
-        if(intent.hasExtra(ROAD_CAMERA_LIST_KEY))
+        if(intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {
             return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
-
-        return getCamerasByArea(intent);
-
+        } else {
+            return getCamerasByArea(intent);
+        }
     }
 
     private ArrayList<RoadCamera> getCamerasByArea(Intent intent){
