@@ -93,9 +93,9 @@ public class RoadCamera implements Parcelable {
         this.direction = direction;
     }
 
-    public RoadCamera(String displayName, String remoteFileName, Bitmap bitmap) {
-        this.title = displayName;
-        this.imageLink = remoteFileName;
+    public RoadCamera(String title, String imageLink, Bitmap bitmap) {
+        this.title = title;
+        this.imageLink = imageLink;
         this.bitmap = bitmap;
     }
 

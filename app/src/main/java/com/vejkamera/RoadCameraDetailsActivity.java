@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,10 +35,21 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         imageView.setImageBitmap(roadCamera.getBitmap());
 
         TextView textView = (TextView) findViewById(R.id.detailed_description);
-        String info = roadCamera.getInfo();
         textView.setText(roadCamera.getInfo());
 
+
         updateCameraImage();
+    }
+
+    private void setupFavoriteListner(){
+        CheckBox favoriteCheckBox = (CheckBox) findViewById(R.id.detailed_star);
+        favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            }
+        });
+
     }
 
     private void updateCameraImage(){
