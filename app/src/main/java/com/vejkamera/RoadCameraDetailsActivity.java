@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class RoadCameraDetailsActivity extends AppCompatActivity {
     public final static String ROAD_CAMERA_KEY = "ROAD_CAMERA";
-    RoadCamera roadCamera = null;
+    private RoadCamera roadCamera = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_road_camera_details);
 
         roadCamera = (RoadCamera) getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
+        updateCameraImage();
 
         setTitle(roadCamera.getTitle());
 
@@ -37,16 +38,22 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.detailed_description);
         textView.setText(roadCamera.getInfo());
 
-
-        updateCameraImage();
+        setupFavoriteCheckBox();
     }
 
-    private void setupFavoriteListner(){
+    private void setupFavoriteCheckBox(){
         CheckBox favoriteCheckBox = (CheckBox) findViewById(R.id.detailed_star);
+
+        favoriteCheckBox.setChecked(RoadCameraFavoritesHandler.isFavorite(roadCamera, this));
+
         favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                if(isChecked){
+                    RoadCameraFavoritesHandler.addFavorite(roadCamera, buttonView.getContext());
+                } else {
+                    RoadCameraFavoritesHandler.removeFavorite(roadCamera, buttonView.getContext());
+                }
             }
         });
 

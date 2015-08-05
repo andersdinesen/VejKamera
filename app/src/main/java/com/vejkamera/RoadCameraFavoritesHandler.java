@@ -2,6 +2,7 @@ package com.vejkamera;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ public final class RoadCameraFavoritesHandler {
         }
 
         editor.commit();
+        Toast.makeText(context, R.string.toast_favorite_added, Toast.LENGTH_SHORT).show();
     }
 
     public static ArrayList<RoadCamera> getFavorites(Context context) {
@@ -87,5 +89,7 @@ public final class RoadCameraFavoritesHandler {
         editor.remove(FAVORITE_LATITUDE_PREF_NAME + syncId);
 
         editor.commit();
+
+        Toast.makeText(context, R.string.toast_favorite_removed, Toast.LENGTH_SHORT).show();
     }
 }

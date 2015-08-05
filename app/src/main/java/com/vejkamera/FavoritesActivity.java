@@ -30,9 +30,10 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     private void updateFavorites() {
-        favorites = new ArrayList();
+        favorites = RoadCameraFavoritesHandler.getFavorites(this);
+        /*
         favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
-        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
+        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));*/
     }
 
     private void setupAdapter(){
