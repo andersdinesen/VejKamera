@@ -19,15 +19,20 @@ import java.util.ArrayList;
 
 public class AreaCamerasListActivity extends AppCompatActivity {
     public final static String EXTRA_AREA_NAME_KEY = "AREA_NAME";
+    public final static String EXTRA_AREA_POSITION_KEY = "AREA_POSITION";
     ArrayAdapter<RoadCamera> adapter;
-    ArrayList<RoadCamera> cameraList = new ArrayList();;
+    ArrayList<RoadCamera> cameraList = new ArrayList();
+    int areaPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        areaPosition = getIntent().getIntExtra(EXTRA_AREA_POSITION_KEY,0);
         setContentView(R.layout.activity_area_camers_list);
+
         if (getIntent() != null) {
-            setTitle(getIntent().getStringExtra(EXTRA_AREA_NAME_KEY));
+            setTitle(getString(Constants.AREA_IDS[areaPosition]));
+            //setTitle(getIntent().getStringExtra(EXTRA_AREA_NAME_KEY));
         }
 
         setupAdapter();
@@ -107,6 +112,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             cameraList.addAll(updatedCameras);
             adapter.notifyDataSetChanged();
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 

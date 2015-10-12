@@ -19,6 +19,29 @@
     <string name="jutland">Rest of Jutland</string>
     <string name="odense">Odense</string>
     <string name="fyn">Rest of Fyn</string>
+    <string name="bornholm">Bornholm</string>
+
+    <string-array name="copenhagen_coordinates">
+        <item>55.594592,12.361731</item>
+        <item>55.600628,12.358267</item>
+        <item>55.621173,12.276276</item>
+        <item>55.604868,12.209875</item>
+        <item>55.612695,12.159064</item>
+        <item>55.670536,12.150981</item>
+        <item>55.708778,12.249716</item>
+        <item>55.717197,12.321153</item>
+        <item>55.755662,12.260042</item>
+        <item>55.752878,12.415269</item>
+        <item>55.773642,12.418531</item>
+        <item>55.773322,12.493364</item>
+        <item>55.761304,12.516027</item>
+        <item>55.774296,12.535226</item>
+        <item>55.758136,12.558322</item>
+        <item>55.741386,12.556517</item>
+        <item>55.726077,12.670374</item>
+        <item>55.588987,12.790543</item>
+        <item>55.550691,12.590977</item>
+    </string-array>
 
     <!-- Camera listing API valies -->
     <string name="listingURL">http://prod.middleman.dk/api/webcam/json/synced?type=webCam&amp;syncVersion=1&amp;</string>
@@ -26,7 +49,6 @@
     <string name="http_request_property_appversion_value">500</string>
     <string name="http_request_property_appid_key">X-VD-APPID</string>
     <string name="http_request_property_appid_value">ANDROID</string>
-
 
     <string-array name="planets">
         <item>Mercury</item>

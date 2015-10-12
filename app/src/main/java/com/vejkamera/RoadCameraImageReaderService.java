@@ -20,6 +20,7 @@ public class RoadCameraImageReaderService extends IntentService {
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
     public static final String AREA_CAMERA_LIST_KEY = "AREA_CAMERAS";
     public static final String THUMBNAILS_ONLY_KEY = "THUMBNAILS_ONLY";
+    public static final String BROADCAST_RECEIVER_KEY = "BROADCAST_RECEIVER";
     private static ArrayList<RoadCamera> allRoadCameras = null;
     private static Boolean listReadingCompleted = false;
 
@@ -68,6 +69,7 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private ArrayList<RoadCamera> getCamerasByArea(Intent intent){
+        // TODO: Timeout for reading the thumbnails again
         if(!listReadingCompleted) {
             RoadCameraListingReaderService listingReaderService = new RoadCameraListingReaderService();
             listingReaderService.onHandleIntent(intent);
@@ -76,7 +78,7 @@ public class RoadCameraImageReaderService extends IntentService {
         }
 
         if(intent.hasExtra(AREA_CAMERA_LIST_KEY)){
-            // filter result by area
+            // TODO: filter result by area
             return allRoadCameras;
         } else {
             return allRoadCameras;

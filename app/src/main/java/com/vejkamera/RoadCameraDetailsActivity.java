@@ -67,8 +67,8 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         cameraList.add(roadCamera);
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -99,6 +99,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
             roadCamera = updatedCameras.get(0);
             ImageView cameraImage = (ImageView) findViewById(R.id.detailed_image);
             cameraImage.setImageBitmap(roadCamera.getBitmap());
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 }

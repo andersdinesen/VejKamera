@@ -90,6 +90,7 @@ public class FavoritesActivity extends AppCompatActivity {
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
             adapter.notifyDataSetChanged();
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 }
