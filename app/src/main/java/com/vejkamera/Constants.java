@@ -13,5 +13,6 @@ public class Constants {
         AREA_COORDINATES = new HashMap<>();
         AREA_COORDINATES.put(R.string.all_areas, null);
         AREA_COORDINATES.put(R.string.copenhagen, R.array.copenhagen_coordinates);
+        AREA_COORDINATES.put(R.string.zealand, null);
     }
 }

@@ -52,6 +52,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
         Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
         readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
+        readIntent.putExtra(RoadCameraImageReaderService.AREA_CAMERA_ID_KEY, Constants.AREA_IDS[areaPosition]);
         //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
 
