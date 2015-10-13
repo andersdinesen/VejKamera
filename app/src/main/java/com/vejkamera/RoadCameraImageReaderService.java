@@ -3,6 +3,7 @@ package com.vejkamera;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.sromku.polygon.Point;
@@ -14,7 +15,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -103,20 +103,13 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private ArrayList<RoadCamera> filterListOfCameras(int areaResourceId, ArrayList<RoadCamera> roadCameras){
-        String[] coordinatesStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(areaResourceId));
+        Polygon areaPolygon = getAreaPolygon(areaResourceId);
+        return findRoadCameraInPolygon(roadCameras, areaPolygon);
+    }
+
+    @NonNull
+    private ArrayList<RoadCamera> findRoadCameraInPolygon(ArrayList<RoadCamera> roadCameras, Polygon areaPolygon) {
         ArrayList<RoadCamera> resultCameras = new ArrayList<>();
-        Polygon.Builder polygonBuilder = Polygon.Builder();
-
-        for(int i=0; coordinatesStrings != null && i<coordinatesStrings.length; i++){
-            if(coordinatesStrings[i] != null){
-                String[] pointArray = coordinatesStrings[i].split(",");
-                float x = Float.valueOf(pointArray[1]);
-                float y = Float.valueOf(pointArray[0]);
-                polygonBuilder.addVertex(new Point(x, y));
-            }
-        }
-        Polygon areaPolygon = polygonBuilder.build();
-
         Iterator<RoadCamera> roadCameraIterator = roadCameras.iterator();
         while (roadCameraIterator.hasNext()){
             RoadCamera currentRoadCamera = roadCameraIterator.next();
@@ -129,5 +122,35 @@ public class RoadCameraImageReaderService extends IntentService {
             }
         }
         return resultCameras;
+    }
+
+    private Polygon getAreaPolygon(int areaResourceId) {
+        String[] coordinatesStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(areaResourceId));
+        Polygon.Builder polygonBuilder = Polygon.Builder();
+
+        for(int i=0; coordinatesStrings != null && i<coordinatesStrings.length; i++){
+            if(coordinatesStrings[i] != null){
+                String[] pointArray = coordinatesStrings[i].split(",");
+                float x = Float.valueOf(pointArray[1]);
+                float y = Float.valueOf(pointArray[0]);
+                polygonBuilder.addVertex(new Point(x, y));
+            }
+        }
+        polygonBuilder.close();
+
+        // Find cities that should be cutout
+        Integer[] areaCutoutsResourceIds = Constants.AREA_CUTOUTS.get(areaResourceId);
+        for(int i=0; areaCutoutsResourceIds != null && i<areaCutoutsResourceIds.length; i++){
+            String[] coordinatesCutoutStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(areaCutoutsResourceIds[i]));
+            for(int j=0; coordinatesCutoutStrings != null && coordinatesCutoutStrings.length>j; j++){
+                String[] pointArray = coordinatesCutoutStrings[j].split(",");
+                float x = Float.valueOf(pointArray[1]);
+                float y = Float.valueOf(pointArray[0]);
+                polygonBuilder.addVertex(new Point(x, y));
+            }
+            polygonBuilder.close();
+        }
+
+        return polygonBuilder.build();
     }
 }
