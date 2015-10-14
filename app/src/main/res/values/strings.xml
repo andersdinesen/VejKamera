@@ -11,13 +11,18 @@
     <string name="title_activity_area_camers_list">Area</string>
 
     <string name="all_areas">All</string>
-    <string name="copenhagen">Copenhagen</string>
+    <string name="copenhagen">Copenhagen area</string>
     <string name="zealand">Rest of Zealand</string>
-    <string name="aarhus">Århus</string>
-    <string name="aalborg">Ålborg</string>
-    <string name="esbjerg">Esbjerg</string>
-    <string name="jutland">Rest of Jutland</string>
-    <string name="odense">Odense</string>
+    <string name="aalborg">Ålborg area</string>
+    <string name="north-jutland">North Jutland</string>
+    <string name="aarhus">Århus area</string>
+    <string name="middle-jutland">Middle Jutland</string>
+    <string name="vejle">Vejle area</string>
+    <string name="fredercia">Fredercia og Middelfart area</string>
+    <string name="kolding">Kolding area</string>
+    <string name="esbjerg">Esbjerg area</string>
+    <string name="south-jutland">South Jutland</string>
+    <string name="odense">Odense area</string>
     <string name="fyn">Rest of Fyn</string>
     <string name="bornholm">Bornholm</string>
 
@@ -52,6 +57,135 @@
         <item>55.564721, 12.734437</item>
         <item>54.694831, 12.542176</item>
         <item>54.499119, 11.737428</item>
+    </string-array>
+
+    <string-array name="aahus_coordinates">
+        <item>56.078968,10.132359</item>
+        <item>56.094292,10.013226</item>
+        <item>56.201200,10.037258</item>
+        <item>56.247008,10.130299</item>
+        <item>56.250251,10.249775</item>
+        <item>56.090461,10.288914</item>
+    </string-array>
+
+    <string-array name="aalborg_coordinates">
+        <item>56.938304,9.855290</item>
+        <item>57.039868,9.695302</item>
+        <item>57.114134,9.824391</item>
+        <item>57.119167,9.972707</item>
+        <item>57.079259,10.113469</item>
+        <item>56.955531,10.034848</item>
+    </string-array>
+
+    <string-array name="esbjerg_coordinates">
+        <item>55.331518,8.469401</item>
+        <item>55.573819,8.252877</item>
+        <item>55.652409,8.387411</item>
+        <item>55.657621,8.616638</item>
+        <item>55.480677,8.770226</item>
+        <item>55.344654,8.803715</item>
+    </string-array>
+
+    <string-array name="kolding_coordinates">
+        <item>55.438482,9.434281</item>
+        <item>55.456932,9.369705</item>
+        <item>55.533943,9.349799</item>
+        <item>55.571294,9.456616</item>
+        <item>55.562234,9.580426</item>
+        <item>55.450049,9.574600</item>
+    </string-array>
+
+    <string-array name="vejle_coordinates">
+        <item>55.577539,9.590123</item>
+        <item>55.604701,9.348424</item>
+        <item>55.698070,9.311345</item>
+        <item>55.844453,9.473394</item>
+        <item>55.863339,9.778264</item>
+        <item>55.670199,9.740499</item>
+    </string-array>
+
+    <string-array name="fredercia_coordinates">
+        <item>55.449523,9.719108</item>
+        <item>55.556767,9.590443</item>
+        <item>55.638242,9.753581</item>
+        <item>55.632213,9.874479</item>
+        <item>55.485579,9.850202</item>
+    </string-array>
+
+    <string-array name="north-jutland_coordindates">
+        <item>56.719411,8.182181</item>
+        <item>57.162250,8.353088</item>
+        <item>57.819798,10.586533</item>
+        <item>57.330369,11.262394</item>
+        <item>56.706620,10.337941</item>
+        <item>56.550729,9.854107</item>
+        <item>56.671502,9.137463</item>
+        <item>56.738668,9.189900</item>
+        <item>56.904468,9.003456</item>
+        <item>56.654425,8.745153</item>
+        <item>56.691771,8.543172</item>
+        <item>56.659762,8.347017</item>
+    </string-array>
+
+    <string-array name="middle-jutland_coordindates">
+        <item>55.945813,9.227682</item>
+        <item>55.825662,8.991476</item>
+        <item>55.830290,8.120810</item>
+        <item>56.725594,8.198573</item>
+        <item>56.665990,8.301350</item>
+        <item>56.698974,8.586585</item>
+        <item>56.643773,8.717077</item>
+        <item>56.889333,8.983834</item>
+        <item>56.889333,8.983834</item>
+        <item>56.563684,9.855705</item>
+        <item>56.707216,10.333790</item>
+        <item>56.463015,11.160624</item>
+        <item>55.701098,10.710520</item>
+        <item>55.711657,9.669541</item>
+        <item>55.934219,9.341322</item>
+    </string-array>
+
+    <string-array name="south-jutland_coordindates">
+        <item>54.915037, 8.629045</item>
+        <item>55.082620, 8.402705</item>
+        <item>55.558326, 8.034325</item>
+        <item>55.818055, 8.153269</item>
+        <item>55.773263, 8.467373</item>
+        <item>55.835568, 8.593246</item>
+        <item>55.818704, 8.825360</item>
+        <item>55.878346, 8.844991</item>
+        <item>55.823245, 9.002044</item>
+        <item>55.950183, 9.224919</item>
+        <item>55.751822, 9.664896</item>
+        <item>55.710857, 9.669515</item>
+        <item>55.623583, 9.908558</item>
+        <item>55.512838, 9.736972</item>
+        <item>55.523299, 9.678077</item>
+        <item>55.482422, 9.668839</item>
+        <item>54.855183, 10.169443</item>
+        <item>54.800637, 9.343764</item>
+    </string-array>
+
+    <string-array name="odense_coordinates">
+        <item>55.267758,10.268038</item>
+        <item>55.398207,10.142382</item>
+        <item>55.497124,10.268038</item>
+        <item>55.488177,10.484332</item>
+        <item>55.373634,10.631274</item>
+        <item>55.267758,10.531710</item>
+    </string-array>
+
+    <string-array name="fyn_coordinates">
+        <item>54.669310,10.543221</item>
+        <item>55.330333,9.714078</item>
+        <item>55.469351,9.694446</item>
+        <item>55.521820,9.665550</item>
+        <item>55.514434,9.743141</item>
+        <item>55.545912,9.751381</item>
+        <item>55.680866,10.175041</item>
+        <item>55.630419,10.844170</item>
+        <item>55.037968,11.002377</item>
+        <item>54.672357,10.764489</item>
     </string-array>
 
     <!-- Camera listing API valies -->

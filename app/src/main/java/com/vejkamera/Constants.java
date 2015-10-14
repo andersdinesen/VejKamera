@@ -17,7 +17,7 @@ public class Constants {
         AREA_COORDINATES.put(R.string.zealand, R.array.zealand_coordinates);
 
         AREA_CUTOUTS = new HashMap<>();
-        Integer[] zealandCutout = {R.array.copenhagen_coordinates};
+        Integer[] zealandCutout = {R.string.copenhagen};
         AREA_CUTOUTS.put(R.string.zealand, zealandCutout);
     }
 }
