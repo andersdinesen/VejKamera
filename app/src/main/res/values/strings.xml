@@ -14,14 +14,14 @@
     <string name="copenhagen">Copenhagen area</string>
     <string name="zealand">Rest of Zealand</string>
     <string name="aalborg">Ålborg area</string>
-    <string name="north-jutland">North Jutland</string>
+    <string name="northjutland">North Jutland</string>
     <string name="aarhus">Århus area</string>
-    <string name="middle-jutland">Middle Jutland</string>
+    <string name="middlejutland">Middle Jutland</string>
     <string name="vejle">Vejle area</string>
     <string name="fredercia">Fredercia og Middelfart area</string>
     <string name="kolding">Kolding area</string>
     <string name="esbjerg">Esbjerg area</string>
-    <string name="south-jutland">South Jutland</string>
+    <string name="southjutland">South Jutland</string>
     <string name="odense">Odense area</string>
     <string name="fyn">Rest of Fyn</string>
     <string name="bornholm">Bornholm</string>
@@ -112,7 +112,7 @@
         <item>55.485579,9.850202</item>
     </string-array>
 
-    <string-array name="north-jutland_coordindates">
+    <string-array name="northjutland_coordindates">
         <item>56.719411,8.182181</item>
         <item>57.162250,8.353088</item>
         <item>57.819798,10.586533</item>
@@ -127,7 +127,7 @@
         <item>56.659762,8.347017</item>
     </string-array>
 
-    <string-array name="middle-jutland_coordindates">
+    <string-array name="middlejutland_coordindates">
         <item>55.945813,9.227682</item>
         <item>55.825662,8.991476</item>
         <item>55.830290,8.120810</item>
@@ -145,7 +145,7 @@
         <item>55.934219,9.341322</item>
     </string-array>
 
-    <string-array name="south-jutland_coordindates">
+    <string-array name="southjutland_coordindates">
         <item>54.915037, 8.629045</item>
         <item>55.082620, 8.402705</item>
         <item>55.558326, 8.034325</item>
@@ -186,6 +186,13 @@
         <item>55.630419,10.844170</item>
         <item>55.037968,11.002377</item>
         <item>54.672357,10.764489</item>
+    </string-array>
+
+    <string-array name="bornholm_coordinates">
+        <item>54.946428,15.081225</item>
+        <item>55.050410,14.631557</item>
+        <item>55.374121,14.657454</item>
+        <item>55.162193,15.290756</item>
     </string-array>
 
     <!-- Camera listing API valies -->
