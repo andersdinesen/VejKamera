@@ -74,8 +74,10 @@ public class FavoritesActivity extends AppCompatActivity {
         } else if (id == R.id.action_by_list){
             Intent intent = new Intent(this, AreasListActivity.class);
             startActivity(intent);
+        } else  if (id == R.id.action_by_map){
+            Intent intent = new Intent(this, RoadCamersMapsActivity.class);
+            startActivity(intent);
         }
-
 
         return super.onOptionsItemSelected(item);
     }

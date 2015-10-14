@@ -3,9 +3,14 @@
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_setting_dark"
         vejkamera:showAsAction="never" />
     <item android:id="@+id/action_by_list"
         android:icon="@drawable/ic_action_new"
         android:title="@string/action_add_favorite_by_list"
+        vejkamera:showAsAction="always" />
+    <item android:id="@+id/action_by_map"
+        android:icon="@drawable/ic_cast_dark"
+        android:title="@string/action_add_favorite_by_map"
         vejkamera:showAsAction="always" />
 </menu>

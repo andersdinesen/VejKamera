@@ -2,6 +2,7 @@
     <string name="app_name">Vej Kamera</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_favorite_by_list">Add favorite by list</string>
+    <string name="action_add_favorite_by_map">Add favorite by map</string>
     <string name="toast_favorite_added">Added to favorites</string>
     <string name="toast_favorite_removed">Removed from favorites</string>
 
@@ -213,4 +214,5 @@
 
     <color name="white">#FFFFFF</color>
     <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
+    <string name="title_activity_road_camers_maps">Road Camera Map</string>
 </resources>
