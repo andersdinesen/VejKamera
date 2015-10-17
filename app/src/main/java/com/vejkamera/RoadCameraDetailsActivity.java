@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,12 +14,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vejkamera.services.RoadCameraImageReaderService;
+
 import java.util.ArrayList;
 
 
 public class RoadCameraDetailsActivity extends AppCompatActivity {
     public final static String ROAD_CAMERA_KEY = "ROAD_CAMERA";
     private RoadCamera roadCamera = null;
+    private BroadcastReceiver broadcastReceiver = new CameraImagesResponseReceiver();
+    Intent readIntent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,6 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_road_camera_details);
 
         roadCamera = (RoadCamera) getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
-        updateCameraImage();
 
         setTitle(roadCamera.getTitle());
 
@@ -59,16 +61,29 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
 
     }
 
-    private void updateCameraImage(){
-        LocalBroadcastManager.getInstance(this).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startImageUpdatingService();
+    }
 
-        Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(readIntent);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+    }
+
+    private void startImageUpdatingService(){
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
+
+        readIntent = new Intent(this, RoadCameraImageReaderService.class);
         ArrayList<RoadCamera> cameraList = new ArrayList<>(1);
         cameraList.add(roadCamera);
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -1,9 +1,11 @@
-package com.vejkamera;
+package com.vejkamera.services;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.vejkamera.RoadCamera;
 
 import java.io.IOException;
 import java.io.InputStream;

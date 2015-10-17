@@ -34,10 +34,10 @@
         </activity>
 
         <service
-            android:name=".RoadCameraImageReaderService"
+            android:name=".services.RoadCameraImageReaderService"
             android:exported="false" />
         <service
-            android:name=".RoadCameraListingReaderService"
+            android:name=".services.RoadCameraListingReaderService"
             android:exported="false" />
 
         <activity
