@@ -93,15 +93,16 @@ public class RoadCameraListingReaderService extends IntentService {
             for(int i=0; i<jsonRoadCameraList.length(); i++){
                 JSONObject jsonCamera = (JSONObject) jsonRoadCameraList.get(i);
                 roadCamera = new RoadCamera();
-                roadCamera.setImageLink(jsonCamera.getString("link"));
-                roadCamera.setLatitude(jsonCamera.getDouble("latitude"));
-                roadCamera.setState(jsonCamera.getString("state"));
-                roadCamera.setInfo(jsonCamera.getString("info"));
-                roadCamera.setTitle(jsonCamera.getString("title"));
-                roadCamera.setDirection(jsonCamera.getInt("direction"));
-                roadCamera.setTime(jsonCamera.getLong("time"));
-                roadCamera.setSyncId(jsonCamera.getString("syncId"));
-                roadCamera.setThumbnailLink(jsonCamera.getString("thumbnailLink"));
+                roadCamera.setImageLink(jsonCamera.optString("link"));
+                roadCamera.setLongitude(jsonCamera.optDouble("longitude"));
+                roadCamera.setLatitude(jsonCamera.optDouble("latitude"));
+                roadCamera.setState(jsonCamera.optString("state"));
+                roadCamera.setInfo(jsonCamera.optString("info"));
+                roadCamera.setTitle(jsonCamera.optString("title"));
+                roadCamera.setDirection(jsonCamera.optInt("direction"));
+                roadCamera.setTime(jsonCamera.optLong("time"));
+                roadCamera.setSyncId(jsonCamera.optString("syncId"));
+                roadCamera.setThumbnailLink(jsonCamera.optString("thumbnailLink"));
                 roadCameraList.add(roadCamera);
             }
 

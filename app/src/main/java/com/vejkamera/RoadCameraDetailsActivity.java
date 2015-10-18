@@ -114,6 +114,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
             roadCamera = updatedCameras.get(0);
             ImageView cameraImage = (ImageView) findViewById(R.id.detailed_image);
             cameraImage.setImageBitmap(roadCamera.getBitmap());
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 }

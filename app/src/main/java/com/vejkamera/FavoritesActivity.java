@@ -76,8 +76,10 @@ public class FavoritesActivity extends AppCompatActivity {
         } else if (id == R.id.action_by_list){
             Intent intent = new Intent(this, AreasListActivity.class);
             startActivity(intent);
+        } else  if (id == R.id.action_by_map){
+            Intent intent = new Intent(this, RoadCamersMapsActivity.class);
+            startActivity(intent);
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -92,6 +94,7 @@ public class FavoritesActivity extends AppCompatActivity {
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
             adapter.notifyDataSetChanged();
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 }
