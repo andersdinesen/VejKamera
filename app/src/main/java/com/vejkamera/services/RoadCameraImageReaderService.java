@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.vejkamera.Constants;
 import com.vejkamera.RoadCamera;
 import com.sromku.polygon.Point;
 import com.sromku.polygon.Polygon;
