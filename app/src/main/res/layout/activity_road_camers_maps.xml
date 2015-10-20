@@ -6,5 +6,6 @@
     android:id="@+id/map"
     tools:context="com.vejkamera.RoadCamersMapsActivity"
     android:name="com.google.android.gms.maps.MapFragment"
-    map:mapType="normal"/>
+    map:mapType="normal"
+    map:uiZoomControls="true"/>
 <!-- tools:layout="@layout/abc_action_bar_up_container"-->

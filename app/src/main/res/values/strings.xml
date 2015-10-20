@@ -196,6 +196,13 @@
         <item>55.162193,15.290756</item>
     </string-array>
 
+    <string-array name="dk_bounds">
+        <item>54.550201,7.861924</item>
+        <item>57.821755,7.861924</item>
+        <item>57.821755,12.915634</item>
+        <item>54.550201,12.915634</item>
+    </string-array>
+
     <!-- Camera listing API valies -->
     <string name="listingURL">http://prod.middleman.dk/api/webcam/json/synced?type=webCam&amp;syncVersion=1&amp;</string>
     <string name="http_request_property_appversion_key">X-VD-APPVERSION</string>
