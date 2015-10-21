@@ -1,8 +1,11 @@
-package com.vejkamera;
+package com.vejkamera.favorites;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
+
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
 
 import java.util.ArrayList;
 import java.util.HashSet;

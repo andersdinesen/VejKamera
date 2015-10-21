@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.area;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.vejkamera.Constants;
+import com.vejkamera.R;
 
 import java.util.ArrayList;
 
@@ -21,7 +24,7 @@ public class AreasListActivity extends Activity {
         final ListView cityListView = (ListView) findViewById(R.id.city_listview);
         final ArrayList<String> listOfCities = new ArrayList<>();
 
-        for (int i = 0; i<Constants.AREA_IDS.length; i++){
+        for (int i = 0; i< Constants.AREA_IDS.length; i++){
             listOfCities.add(getString(Constants.AREA_IDS[i]));
         }
         final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfCities);

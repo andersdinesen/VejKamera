@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.favorites;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.vejkamera.area.AreasListActivity;
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
+import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 
 import java.util.ArrayList;

@@ -35,7 +35,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
-            android:name=".FavoritesActivity"
+            android:name=".favorites.FavoritesActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,15 +52,15 @@
             android:exported="false" />
 
         <activity
-            android:name=".AreasListActivity"
+            android:name=".area.AreasListActivity"
             android:label="@string/title_activity_city_list" >
         </activity>
         <activity
-            android:name=".AreaCamerasListActivity"
+            android:name=".area.AreaCamerasListActivity"
             android:label="@string/title_activity_area_camers_list" >
         </activity>
         <activity
-            android:name=".RoadCameraDetailsActivity"
+            android:name=".details.RoadCameraDetailsActivity"
             android:label="@string/title_activity_road_camera_details" >
         </activity>
         <!--
@@ -76,7 +76,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".RoadCamersMapsActivity"
+            android:name=".map.RoadCamersMapsActivity"
             android:label="@string/title_activity_road_camers_maps" >
         </activity>
 

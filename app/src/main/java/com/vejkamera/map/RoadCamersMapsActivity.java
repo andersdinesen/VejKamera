@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.map;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +22,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
+import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 
 import java.util.ArrayList;
@@ -48,15 +49,19 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                              @Override
+                                              public void onInfoWindowClick(Marker marker) {
+                                                  RoadCamera roadCamera = markers.get(marker);
+                                                  Intent intent = new Intent(getBaseContext(), RoadCameraDetailsActivity.class);
+                                                  intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+                                                  startActivity(intent);
+                                              }
+                                          }
+        );
 
         readAreaCameras();
         moveMapToDK();
-        // Add a marker in Sydney and move the camera
-        /*
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        */
     }
 
     private void addCameraMarkers() {
@@ -142,39 +147,11 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             roadCamera = markers.get(marker);
             ImageView thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
             TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
-            CheckBox favoriteCheckBox = (CheckBox)  mapCameraContent.findViewById(R.id.map_favorite_star);
 
             title.setText(roadCamera.getTitle());
-            title.setOnClickListener(new MapInfoClicked());
-
             thumbnail.setImageBitmap(roadCamera.getBitmap());
-            thumbnail.setOnClickListener(new MapInfoClicked());
-
-            favoriteCheckBox.setChecked(RoadCameraFavoritesHandler.isFavorite(roadCamera, mapCameraContent.getContext()));
-
-            favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        RoadCameraFavoritesHandler.addFavorite(roadCamera, buttonView.getContext());
-                    } else {
-                        RoadCameraFavoritesHandler.removeFavorite(roadCamera, buttonView.getContext());
-                    }
-                }
-            });
 
             return mapCameraContent;
         }
-
-        private class MapInfoClicked implements View.OnClickListener {
-
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), RoadCameraDetailsActivity.class);
-                intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
-                startActivity(intent);
-            }
-        }
-
     }
 }

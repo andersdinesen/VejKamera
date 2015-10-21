@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.details;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +14,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
+import com.vejkamera.favorites.RoadCameraFavoritesHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 
 import java.util.ArrayList;
