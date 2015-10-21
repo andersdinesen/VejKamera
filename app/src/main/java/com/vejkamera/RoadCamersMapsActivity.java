@@ -50,7 +50,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
 
         readAreaCameras();
-
+        moveMapToDK();
         // Add a marker in Sydney and move the camera
         /*
         LatLng sydney = new LatLng(-34, 151);
@@ -82,7 +82,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void moveMapToDK() {
-        final View mapView = getSupportFragmentManager().findFragmentById(R.id.map).getView();
+        final View mapView = getFragmentManager().findFragmentById(R.id.map).getView();
         if (mapView.getViewTreeObserver().isAlive()) {
             mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @SuppressWarnings("deprecation") // We use the new method when supported
@@ -140,12 +140,16 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         @Override
         public View getInfoContents(Marker marker) {
             roadCamera = markers.get(marker);
-            ((ImageView) mapCameraContent.findViewById(R.id.thumbnail)).setImageBitmap(roadCamera.getBitmap());
-            ((TextView) mapCameraContent.findViewById(R.id.title)).setText(roadCamera.getTitle());
+            ImageView thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
+            TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
+            CheckBox favoriteCheckBox = (CheckBox)  mapCameraContent.findViewById(R.id.map_favorite_star);
 
-            CheckBox favoriteCheckBox = (CheckBox) findViewById(R.id.favorite_star);
+            title.setText(roadCamera.getTitle());
+            title.setOnClickListener(new MapInfoClicked());
 
-            /*
+            thumbnail.setImageBitmap(roadCamera.getBitmap());
+            thumbnail.setOnClickListener(new MapInfoClicked());
+
             favoriteCheckBox.setChecked(RoadCameraFavoritesHandler.isFavorite(roadCamera, mapCameraContent.getContext()));
 
             favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -158,10 +162,19 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                     }
                 }
             });
-*/
+
             return mapCameraContent;
         }
 
+        private class MapInfoClicked implements View.OnClickListener {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), RoadCameraDetailsActivity.class);
+                intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+                startActivity(intent);
+            }
+        }
 
     }
 }
