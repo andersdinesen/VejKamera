@@ -50,6 +50,9 @@
         <service
             android:name=".services.RoadCameraListingReaderService"
             android:exported="false" />
+        <service
+            android:name=".services.RoadCameraLoopReaderService"
+            android:exported="false" />
 
         <activity
             android:name=".area.AreasListActivity"

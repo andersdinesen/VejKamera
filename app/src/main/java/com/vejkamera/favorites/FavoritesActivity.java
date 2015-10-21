@@ -17,6 +17,7 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
+import com.vejkamera.services.RoadCameraLoopReaderService;
 
 import java.util.ArrayList;
 
@@ -24,16 +25,33 @@ import java.util.ArrayList;
 public class FavoritesActivity extends AppCompatActivity {
     ArrayAdapter<RoadCamera> adapter;
     ArrayList<RoadCamera> favorites;
+    FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
+    Intent readIntent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         setContentView(R.layout.activity_favorites);
 
         updateFavorites();
         setupAdapter();
         readFavoriteCameras();
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        readFavoriteCameras();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
+        stopService(readIntent);
+    }
+
 
     private void updateFavorites() {
         favorites = RoadCameraFavoritesHandler.getFavorites(this);
@@ -50,12 +68,10 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void readFavoriteCameras() {
         // Prepare for receiving the result when the favorites are read
-        FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
-        IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
+        IntentFilter intentFilter = new IntentFilter(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_UPDATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
 
         //Start service to read favorites
-        Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
         startService(readIntent);
     }
@@ -97,8 +113,9 @@ public class FavoritesActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
+            System.out.println("Received " + favorites.size() + " favorites");
             adapter.notifyDataSetChanged();
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+            System.out.println("Adapter notified");
         }
     }
 }
