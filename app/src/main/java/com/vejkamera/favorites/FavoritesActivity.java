@@ -36,7 +36,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
         updateFavorites();
         setupAdapter();
-        readFavoriteCameras();
+        //readFavoriteCameras();
     }
 
     @Override

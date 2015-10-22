@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="camera_image_update_interval">
-        20000
+        9000
     </integer>
 </resources>

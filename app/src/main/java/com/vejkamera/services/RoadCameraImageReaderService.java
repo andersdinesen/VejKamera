@@ -31,6 +31,8 @@ public class RoadCameraImageReaderService extends IntentService {
     private static ArrayList<RoadCamera> allRoadCameras = null;
     private static Boolean listReadingCompleted = false;
 
+    private ArrayList<RoadCamera> roadCameras = null;
+
     public RoadCameraImageReaderService() {
         super(RoadCameraImageReaderService.class.getSimpleName());
     }
@@ -44,10 +46,14 @@ public class RoadCameraImageReaderService extends IntentService {
         super(name);
     }
 
+    public ArrayList<RoadCamera> getRoadCameras()  {
+        return roadCameras;
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         //String urlPath = getString(R.string.URL_path);
-        ArrayList<RoadCamera> roadCameras = getListOfCameras(intent);
+        roadCameras = getListOfCameras(intent);
         String failedReadings = null;
         boolean thumbnailsOnly = (intent.hasExtra(THUMBNAILS_ONLY_KEY) && intent.getStringExtra(THUMBNAILS_ONLY_KEY).equalsIgnoreCase("Y"));
 
