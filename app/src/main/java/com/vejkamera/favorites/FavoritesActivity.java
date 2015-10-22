@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -50,6 +51,7 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onPause();
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
         stopService(readIntent);
+
     }
 
 
@@ -113,9 +115,10 @@ public class FavoritesActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
-            System.out.println("Received " + favorites.size() + " favorites");
+            Log.d(getClass().getSimpleName(), "Received " + favorites.size() + " favorites");
             adapter.notifyDataSetChanged();
-            System.out.println("Adapter notified");
+            Log.d(getClass().getSimpleName(), "Adapter notified");
+
         }
     }
 }
