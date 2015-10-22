@@ -1,10 +1,13 @@
 package com.vejkamera.favorites;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,6 +30,7 @@ public class FavoritesActivity extends AppCompatActivity {
     ArrayAdapter<RoadCamera> adapter;
     ArrayList<RoadCamera> favorites;
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
+    RoadCameraLoopReaderService.LocalBinder binder = null;
     Intent readIntent = null;
 
     @Override
@@ -50,10 +54,10 @@ public class FavoritesActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
+        binder.stopService();
         stopService(readIntent);
 
     }
-
 
     private void updateFavorites() {
         favorites = RoadCameraFavoritesHandler.getFavorites(this);
@@ -75,6 +79,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
         //Start service to read favorites
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
+        //bindService(readIntent, mConnection, Context.BIND_AUTO_CREATE);
         startService(readIntent);
     }
 
@@ -121,4 +126,21 @@ public class FavoritesActivity extends AppCompatActivity {
 
         }
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            binder = (RoadCameraLoopReaderService.LocalBinder) service;
+            //mService = binder.getService();
+            //mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            //mBound = false;
+        }
+    };
 }
