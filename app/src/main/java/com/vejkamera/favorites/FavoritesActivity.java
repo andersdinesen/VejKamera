@@ -1,24 +1,24 @@
 package com.vejkamera.favorites;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
+import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
@@ -28,9 +28,8 @@ import java.util.ArrayList;
 
 public class FavoritesActivity extends AppCompatActivity {
     ArrayAdapter<RoadCamera> adapter;
-    ArrayList<RoadCamera> favorites;
+    ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
-    RoadCameraLoopReaderService.LocalBinder binder = null;
     Intent readIntent = null;
 
     @Override
@@ -38,15 +37,13 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         setContentView(R.layout.activity_favorites);
-
-        updateFavorites();
         setupAdapter();
-        //readFavoriteCameras();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
+        updateFavorites();
         readFavoriteCameras();
     }
 
@@ -54,13 +51,14 @@ public class FavoritesActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
-        binder.stopService();
-        stopService(readIntent);
-
+        // For some reason a waiting service does not stop on stopService. Broadcasting stop intent instead.
+        //stopService(readIntent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_STOP));
     }
 
     private void updateFavorites() {
-        favorites = RoadCameraFavoritesHandler.getFavorites(this);
+        favorites.clear();
+        favorites.addAll(RoadCameraFavoritesHandler.getFavorites(this));
         /*
         favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
         favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));*/
@@ -70,6 +68,7 @@ public class FavoritesActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.favorites_listview);
         adapter = new FavoriteListAdapter(this, favorites);
         listView.setAdapter(adapter);
+        setupListner(listView);
     }
 
     private void readFavoriteCameras() {
@@ -90,14 +89,27 @@ public class FavoritesActivity extends AppCompatActivity {
         return true;
     }
 
+    private void setupListner(final ListView cityListView) {
+        cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                                                    final RoadCamera roadCamera = (RoadCamera) parent.getItemAtPosition(position);
+
+                                                    //Setting Camera image to null, because it may be too big for the internal parcel bundle
+                                                    roadCamera.setBitmap(null);
+                                                    Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
+                                                    intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+                                                    startActivity(intent);
+                                                }
+                                            }
+
+        );
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_by_list){
@@ -120,27 +132,8 @@ public class FavoritesActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
-            Log.d(getClass().getSimpleName(), "Received " + favorites.size() + " favorites");
             adapter.notifyDataSetChanged();
-            Log.d(getClass().getSimpleName(), "Adapter notified");
 
         }
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            binder = (RoadCameraLoopReaderService.LocalBinder) service;
-            //mService = binder.getService();
-            //mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            //mBound = false;
-        }
-    };
 }

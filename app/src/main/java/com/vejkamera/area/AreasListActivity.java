@@ -39,7 +39,7 @@ public class AreasListActivity extends Activity {
                                                 @Override
                                                 public void onItemClick(AdapterView<?> parent, final View view,
                                                                         int position, long id) {
-                                                    final String item = (String) parent.getItemAtPosition(position);
+                                                    //final String item = (String) parent.getItemAtPosition(position);
                                                     Intent intent = new Intent(parent.getContext(), AreaCamerasListActivity.class);
                                                     intent.putExtra(AreaCamerasListActivity.EXTRA_AREA_POSITION_KEY, position);
                                                     //intent.putExtra(AreaCamerasListActivity.EXTRA_AREA_NAME_KEY, getString(Constants.CITY_IDS[position]));
