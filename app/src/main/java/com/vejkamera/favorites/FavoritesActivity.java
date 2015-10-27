@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,48 +40,49 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         setContentView(R.layout.activity_favorites);
-        setupDrawerMenu();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+        //setupDrawerMenu();
         setupAdapter();
-
-
-
     }
 
-    private void setupDrawerMenu() {
-        String[] mPlanetTitles = getResources().getStringArray(R.array.planets);
-        ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mPlanetTitles));
-        // Set the list's click listener
-        //mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                //R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
-                R.string.drawer_open,  /* "open drawer" description */
-                R.string.drawer_close  /* "close drawer" description */
-        ) {            /** Called when a drawer has settled in a completely closed state. */
-        public void onDrawerClosed(View view) {
-            super.onDrawerClosed(view);
-            //getActionBar().setTitle(mTitle);
-        }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //getActionBar().setTitle(mDrawerTitle);
-            }
-        };
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-    }
+//    private void setupDrawerMenu() {
+//        String[] mPlanetTitles = getResources().getStringArray(R.array.planets);
+//        ListView mDrawerList = (ListView) findViewById(R.id.left_drawer);
+//
+//        // Set the adapter for the list view
+//        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mPlanetTitles));
+//        // Set the list's click listener
+//        //mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+//
+//
+//        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        mDrawerToggle = new ActionBarDrawerToggle(
+//                this,                  /* host Activity */
+//                mDrawerLayout,         /* DrawerLayout object */
+//                //R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+//                R.string.drawer_open,  /* "open drawer" description */
+//                R.string.drawer_close  /* "close drawer" description */
+//        ) {            /** Called when a drawer has settled in a completely closed state. */
+//        public void onDrawerClosed(View view) {
+//            super.onDrawerClosed(view);
+//            //getActionBar().setTitle(mTitle);
+//        }
+//
+//            /** Called when a drawer has settled in a completely open state. */
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                //getActionBar().setTitle(mDrawerTitle);
+//            }
+//        };
+//        // Set the drawer toggle as the DrawerListener
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+//
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActionBar().setHomeButtonEnabled(true);
+//    }
 
     @Override
     protected void onResume(){
