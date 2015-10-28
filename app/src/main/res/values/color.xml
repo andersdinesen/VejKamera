@@ -2,4 +2,9 @@
 <resources>
     <color name="ColorPrimary">#4285F4</color>
     <color name="ColorPrimaryDark">#3367D6</color>
+    <color name="list_background">#FFFFFF</color>
+    <color name="list_background_pressed">#EEEEEE</color>
+    <color name="counter_text_bg">#FF0000</color>
+    <color name="list_item_title">#000000</color>
+
 </resources>
