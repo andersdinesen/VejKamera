@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.vejkamera.Constants;
+import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.sromku.polygon.Point;
 import com.sromku.polygon.Polygon;
@@ -95,7 +96,7 @@ public class RoadCameraImageReaderService extends IntentService {
             listReadingCompleted = true;
         }
 
-        if(intent.hasExtra(AREA_CAMERA_ID_KEY)){
+        if(intent.hasExtra(AREA_CAMERA_ID_KEY) && intent.getIntExtra(AREA_CAMERA_ID_KEY, 0) != R.string.all_areas){
             return filterListOfCameras(intent.getIntExtra(AREA_CAMERA_ID_KEY, 0), allRoadCameras);
         } else {
             return allRoadCameras;
