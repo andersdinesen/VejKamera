@@ -1,6 +1,5 @@
 package com.vejkamera.favorites;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,18 +11,15 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
@@ -56,11 +52,11 @@ public class FavoritesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        setupDrawerMenu(savedInstanceState);
+        setupDrawerMenu();
         setupAdapter();
     }
 
-    private void setupDrawerMenu(Bundle savedInstanceState) {
+    private void setupDrawerMenu() {
         final CharSequence mTitle = getTitle();
         final CharSequence mDrawerTitle = mTitle;
 
@@ -136,7 +132,10 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     private void setupAdapter() {
-        final ListView listView = (ListView) findViewById(R.id.favorites_listview);
+        final RecyclerView listView = (RecyclerView) findViewById(R.id.favorites_listview);
+        listView.setHasFixedSize(true);
+        listView.setLayoutManager(new LinearLayoutManager(this));
+
         adapter = new FavoriteListAdapter(this, favorites);
         listView.setAdapter(adapter);
         setupListner(listView);
