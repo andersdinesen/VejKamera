@@ -10,14 +10,13 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@color/white"
     android:layout_centerVertical="true"
-    tools:context="com.vejkamera.RoadCameraDetailsActivity">
+    tools:context="com.vejkamera.details.RoadCameraDetailsActivity">
 
     <ImageView
         android:id="@+id/detailed_image"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:src="@drawable/universitetsboulevarden"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"
@@ -27,8 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/abc_text_size_medium_material"
-        android:layout_alignParentRight="true"
-        android:text="Rute 595  ved Universitetsboulevarden-Sohngårdsholmsvej, mod øst dvs. ad Universitetsboulevarden" />
+        android:layout_alignParentRight="true" />
     <CheckBox android:id="@+id/detailed_star"
         style="?android:attr/starStyle"
         android:layout_width="wrap_content"

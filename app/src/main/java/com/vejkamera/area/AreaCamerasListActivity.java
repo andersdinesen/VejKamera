@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.area;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.vejkamera.Constants;
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
+import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 
 import java.util.ArrayList;

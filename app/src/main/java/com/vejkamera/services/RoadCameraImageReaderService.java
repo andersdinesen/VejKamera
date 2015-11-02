@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.vejkamera.Constants;
+import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.sromku.polygon.Point;
 import com.sromku.polygon.Polygon;
@@ -31,6 +32,8 @@ public class RoadCameraImageReaderService extends IntentService {
     private static ArrayList<RoadCamera> allRoadCameras = null;
     private static Boolean listReadingCompleted = false;
 
+    private ArrayList<RoadCamera> roadCameras = null;
+
     public RoadCameraImageReaderService() {
         super(RoadCameraImageReaderService.class.getSimpleName());
     }
@@ -44,26 +47,35 @@ public class RoadCameraImageReaderService extends IntentService {
         super(name);
     }
 
+    public ArrayList<RoadCamera> getRoadCameras()  {
+        return roadCameras;
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         //String urlPath = getString(R.string.URL_path);
-        ArrayList<RoadCamera> roadCameras = getListOfCameras(intent);
+        roadCameras = getListOfCameras(intent);
         String failedReadings = null;
         boolean thumbnailsOnly = (intent.hasExtra(THUMBNAILS_ONLY_KEY) && intent.getStringExtra(THUMBNAILS_ONLY_KEY).equalsIgnoreCase("Y"));
 
         for (RoadCamera roadCamera : roadCameras) {
             try {
-                URL url = new URL(thumbnailsOnly ? roadCamera.getThumbnailLink() : roadCamera.getImageLink());
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                InputStream is = connection.getInputStream();
-                roadCamera.setBitmap(BitmapFactory.decodeStream(is));
+                String urlLink = thumbnailsOnly ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
+                if(urlLink.startsWith("http:")) {
+                    URL url = new URL(urlLink);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    InputStream is = connection.getInputStream();
+                    roadCamera.setBitmap(BitmapFactory.decodeStream(is));
+                }
             } catch (MalformedURLException e) {
                 failedReadings = updateFailedReading(failedReadings, roadCamera, e);
             } catch (IOException e) {
                 failedReadings = updateFailedReading(failedReadings, roadCamera, e);
             }
         }
-
+        if(failedReadings != null) {
+            System.out.println(failedReadings);
+        }
         broadcastResult(roadCameras);
     }
 
@@ -84,7 +96,7 @@ public class RoadCameraImageReaderService extends IntentService {
             listReadingCompleted = true;
         }
 
-        if(intent.hasExtra(AREA_CAMERA_ID_KEY)){
+        if(intent.hasExtra(AREA_CAMERA_ID_KEY) && intent.getIntExtra(AREA_CAMERA_ID_KEY, 0) != R.string.all_areas){
             return filterListOfCameras(intent.getIntExtra(AREA_CAMERA_ID_KEY, 0), allRoadCameras);
         } else {
             return allRoadCameras;
@@ -93,7 +105,7 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e) {
-        failedReadings = (failedReadings != null ? failedReadings + ", " : "") + roadCamera.getTitle();
+        failedReadings = (failedReadings != null ? failedReadings + ", " : "\n") + roadCamera.getTitle() + " (Thumbnail: " + roadCamera.getThumbnailLink() + ", " + ", URL: " + roadCamera.getImageLink() + ")\n";
         e.printStackTrace();
         return failedReadings;
     }

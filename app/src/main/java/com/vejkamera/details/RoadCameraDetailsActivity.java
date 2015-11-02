@@ -1,4 +1,4 @@
-package com.vejkamera;
+package com.vejkamera.details;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,7 +14,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vejkamera.R;
+import com.vejkamera.RoadCamera;
+import com.vejkamera.favorites.RoadCameraFavoritesHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
+import com.vejkamera.services.RoadCameraLoopReaderService;
 
 import java.util.ArrayList;
 
@@ -22,7 +26,7 @@ import java.util.ArrayList;
 public class RoadCameraDetailsActivity extends AppCompatActivity {
     public final static String ROAD_CAMERA_KEY = "ROAD_CAMERA";
     private RoadCamera roadCamera = null;
-    private BroadcastReceiver broadcastReceiver = new CameraImagesResponseReceiver();
+    private BroadcastReceiver cameraImagebroadcastReceiver = new CameraImagesResponseReceiver();
     Intent readIntent = null;
 
     @Override
@@ -30,17 +34,23 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_road_camera_details);
 
-        roadCamera = (RoadCamera) getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
+        roadCamera = getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
+        readIntent = new Intent(this, RoadCameraLoopReaderService.class);
 
+        setupLayout();
+        setupFavoriteCheckBox();
+    }
+
+    private void setupLayout() {
         setTitle(roadCamera.getTitle());
 
-        ImageView imageView = (ImageView) findViewById(R.id.detailed_image);
-        imageView.setImageBitmap(roadCamera.getBitmap());
+        if(roadCamera.getBitmap() != null) {
+            ImageView imageView = (ImageView) findViewById(R.id.detailed_image);
+            imageView.setImageBitmap(roadCamera.getBitmap());
+        }
 
         TextView textView = (TextView) findViewById(R.id.detailed_description);
         textView.setText(roadCamera.getInfo());
-
-        setupFavoriteCheckBox();
     }
 
     private void setupFavoriteCheckBox(){
@@ -71,17 +81,30 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         stopService(readIntent);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraImagebroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_STOP));
     }
 
     private void startImageUpdatingService(){
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
+        IntentFilter intentFilter = new IntentFilter(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_UPDATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(cameraImagebroadcastReceiver, intentFilter);
+
+        //Start service to read favorites
+        ArrayList<RoadCamera> cameraList =  new ArrayList<>(1);
+        cameraList.add(roadCamera);
+        readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
+        startService(readIntent);
+
+
+        /*
+        LocalBroadcastManager.getInstance(this).registerReceiver(cameraImagebroadcastReceiver, new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
 
         readIntent = new Intent(this, RoadCameraImageReaderService.class);
         ArrayList<RoadCamera> cameraList = new ArrayList<>(1);
         cameraList.add(roadCamera);
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
+        */
     }
 
     @Override
@@ -114,7 +137,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
             roadCamera = updatedCameras.get(0);
             ImageView cameraImage = (ImageView) findViewById(R.id.detailed_image);
             cameraImage.setImageBitmap(roadCamera.getBitmap());
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+            //LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
 }
