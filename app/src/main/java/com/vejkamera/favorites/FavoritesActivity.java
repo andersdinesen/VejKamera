@@ -25,6 +25,7 @@ import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
+import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.map.RoadCamersMapsActivity;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 
 
 public class FavoritesActivity extends AppCompatActivity {
-    ArrayAdapter<RoadCamera> adapter;
+    FavoriteRecycleListAdapter adapter;
     ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
     Intent readIntent = null;
@@ -126,19 +127,23 @@ public class FavoritesActivity extends AppCompatActivity {
     private void updateFavorites() {
         favorites.clear();
         favorites.addAll(RoadCameraFavoritesHandler.getFavorites(this));
-        /*
+
         favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
-        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));*/
+        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
     }
 
     private void setupAdapter() {
-        final RecyclerView listView = (RecyclerView) findViewById(R.id.favorites_listview);
-        listView.setHasFixedSize(true);
-        listView.setLayoutManager(new LinearLayoutManager(this));
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        adapter = new FavoriteRecycleListAdapter(favorites);
+        recyclerView.setAdapter(adapter);
+        /*
         adapter = new FavoriteListAdapter(this, favorites);
-        listView.setAdapter(adapter);
-        setupListner(listView);
+        recyclerView.setAdapter(adapter);
+        */
+        //setupListner(recyclerView);
     }
 
     private void readFavoriteCameras() {
@@ -240,7 +245,10 @@ public class FavoritesActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
-            adapter.notifyDataSetChanged();
+            for (int i=0; i<favorites.size() ; i++) {
+                adapter.notifyItemChanged(i);
+            }
+            //adapter.notifyDataSetChanged();
 
         }
     }
