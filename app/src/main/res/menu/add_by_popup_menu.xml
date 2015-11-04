@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add_by_map"
+        android:title="@string/add_by_map"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_place_black_24dp"
+        android:visible="true"/>
+    <item
+        android:id="@+id/add_from_lists"
+        android:title="@string/add_from_lists"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_playlist_add_black_24dp"
+        android:visible="true"/>
+</menu>

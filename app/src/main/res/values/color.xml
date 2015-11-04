@@ -6,5 +6,6 @@
     <color name="list_background_pressed">#EEEEEE</color>
     <color name="counter_text_bg">#FF0000</color>
     <color name="list_item_title">#000000</color>
+    <color name="floating_button">#F44336</color>
 
 </resources>

@@ -6,11 +6,11 @@
         android:icon="@drawable/common_ic_googleplayservices"
         vejkamera:showAsAction="never" />
     <item android:id="@+id/action_by_list"
-        android:icon="@drawable/ic_action_new"
+        android:icon="@drawable/ic_view_module_white_24dp"
         android:title="@string/action_add_favorite_by_list"
         vejkamera:showAsAction="always" />
     <item android:id="@+id/action_by_map"
-        android:icon="@drawable/abc_ic_menu_copy_mtrl_am_alpha"
+        android:icon="@drawable/ic_sort_by_alpha_white_24dp"
         android:title="@string/action_add_favorite_by_map"
         vejkamera:showAsAction="always" />
 </menu>

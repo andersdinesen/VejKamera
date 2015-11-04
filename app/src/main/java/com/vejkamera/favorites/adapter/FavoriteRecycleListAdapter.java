@@ -30,6 +30,9 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
 
             this.name = (TextView) itemView.findViewById(R.id.label);
             this.image = (ImageView) itemView.findViewById(R.id.image);
+
+            itemView.setOnClickListener(this);
+            image.setOnClickListener(this);
         }
 
         @Override

@@ -7,6 +7,8 @@
     <string name="action_add_favorite_by_map">Add favorite by map</string>
     <string name="toast_favorite_added">Added to favorites</string>
     <string name="toast_favorite_removed">Removed from favorites</string>
+    <string name="add_by_map">Add by map</string>
+    <string name="add_from_lists">Add from lists</string>
 
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
 

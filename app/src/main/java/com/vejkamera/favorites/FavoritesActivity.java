@@ -7,11 +7,13 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -128,8 +130,8 @@ public class FavoritesActivity extends AppCompatActivity {
         favorites.clear();
         favorites.addAll(RoadCameraFavoritesHandler.getFavorites(this));
 
-        favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
-        favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
+        //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
+        //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
     }
 
     private void setupAdapter() {
@@ -144,6 +146,38 @@ public class FavoritesActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         */
         //setupListner(recyclerView);
+        setupFloatingButtonListener();
+    }
+
+    private void setupFloatingButtonListener(){
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_floating_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                popupMenu.setOnMenuItemClickListener(new FloatingButtonClickHandler());
+                popupMenu.inflate(R.menu.add_by_popup_menu);
+                popupMenu.show();
+            }
+
+            class FloatingButtonClickHandler implements android.support.v7.widget.PopupMenu.OnMenuItemClickListener {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.add_by_map:
+                            Intent mapIntent = new Intent(getBaseContext(), RoadCamersMapsActivity.class);
+                            startActivity(mapIntent);
+                            return true;
+                        case R.id.add_from_lists:
+                            Intent listIntent = new Intent(getBaseContext(), AreasListActivity.class);
+                            startActivity(listIntent);
+                            return true;
+                    }
+                    return false;                }
+            }
+
+        });
     }
 
     private void readFavoriteCameras() {
@@ -163,8 +197,27 @@ public class FavoritesActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_favorites, menu);
         return true;
     }
+/*
+    private void setupREcycleListner(final RecyclerView recyclerView) {
+        recyclerView.setOnClickListener(new View.OnClickListener() {
 
-    private void setupListner(final ListView cityListView) {
+            @Override
+            public void onClick(final View view) {
+                view.getP
+
+                final RoadCamera roadCamera = (RoadCamera) parent.getItemAtPosition(position);
+
+                //Setting Camera image to null, because it may be too big for the internal parcel bundle
+                roadCamera.setBitmap(null);
+                Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
+                intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+                startActivity(intent);
+            }
+        });
+    }
+*/
+
+        private void setupListner(final ListView cityListView) {
         cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                                                 @Override
