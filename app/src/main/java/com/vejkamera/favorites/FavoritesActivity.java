@@ -1,7 +1,9 @@
 package com.vejkamera.favorites;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -12,21 +14,22 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
-import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
@@ -42,6 +45,7 @@ public class FavoritesActivity extends AppCompatActivity {
     ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
     Intent readIntent = null;
+    AlertDialog.Builder addByDialogBuilder;
     private ActionBarDrawerToggle mDrawerToggle;
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
@@ -56,7 +60,7 @@ public class FavoritesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setupDrawerMenu();
-        setupAdapter();
+        setupRecycleAdapter();
     }
 
     private void setupDrawerMenu() {
@@ -134,49 +138,64 @@ public class FavoritesActivity extends AppCompatActivity {
         //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
     }
 
-    private void setupAdapter() {
+    private void setupRecycleAdapter() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         adapter = new FavoriteRecycleListAdapter(favorites);
         recyclerView.setAdapter(adapter);
-        /*
-        adapter = new FavoriteListAdapter(this, favorites);
-        recyclerView.setAdapter(adapter);
-        */
-        //setupListner(recyclerView);
         setupFloatingButtonListener();
     }
 
     private void setupFloatingButtonListener(){
+        final NavDrawerItem[] addByItems = {new NavDrawerItem(getString(R.string.add_by_map), R.drawable.ic_add_by_location_24dp),
+                new NavDrawerItem(getString(R.string.add_from_lists), R.drawable.ic_playlist_add_black_24dp)};
+
+        ListAdapter addByAdapter = new ArrayAdapter<NavDrawerItem>(
+                this,
+                android.R.layout.select_dialog_item,
+                android.R.id.text1,
+                addByItems){
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //Use super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(android.R.id.text1);
+
+                //Put the image on the TextView
+                tv.setCompoundDrawablesWithIntrinsicBounds(addByItems[position].getIcon(), 0, 0, 0);
+
+                //Add margin between image and text (support various screen densities)
+                int padding = (int) (6 * getResources().getDisplayMetrics().density + 0.8f);
+                tv.setCompoundDrawablePadding(padding);
+
+                return v;
+            }
+        };
+
+        addByDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.add_favorit))
+                .setAdapter(addByAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                Intent mapIntent = new Intent(getBaseContext(), RoadCamersMapsActivity.class);
+                                startActivity(mapIntent);
+                                break;
+                            case 1:
+                                Intent listIntent = new Intent(getBaseContext(), AreasListActivity.class);
+                                startActivity(listIntent);
+                                break;                        }
+                    }
+                });
+
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_floating_button);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-                popupMenu.setOnMenuItemClickListener(new FloatingButtonClickHandler());
-                popupMenu.inflate(R.menu.add_by_popup_menu);
-                popupMenu.show();
+                addByDialogBuilder.show();
             }
-
-            class FloatingButtonClickHandler implements android.support.v7.widget.PopupMenu.OnMenuItemClickListener {
-
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.add_by_map:
-                            Intent mapIntent = new Intent(getBaseContext(), RoadCamersMapsActivity.class);
-                            startActivity(mapIntent);
-                            return true;
-                        case R.id.add_from_lists:
-                            Intent listIntent = new Intent(getBaseContext(), AreasListActivity.class);
-                            startActivity(listIntent);
-                            return true;
-                    }
-                    return false;                }
-            }
-
         });
     }
 
@@ -197,26 +216,8 @@ public class FavoritesActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_favorites, menu);
         return true;
     }
+
 /*
-    private void setupREcycleListner(final RecyclerView recyclerView) {
-        recyclerView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View view) {
-                view.getP
-
-                final RoadCamera roadCamera = (RoadCamera) parent.getItemAtPosition(position);
-
-                //Setting Camera image to null, because it may be too big for the internal parcel bundle
-                roadCamera.setBitmap(null);
-                Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
-                intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
-                startActivity(intent);
-            }
-        });
-    }
-*/
-
         private void setupListner(final ListView cityListView) {
         cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -234,7 +235,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
         );
     }
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -243,10 +244,20 @@ public class FavoritesActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.action_by_list) {
-            Intent intent = new Intent(this, AreasListActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.action_by_map) {
+        } else if (id == R.id.menu_grid_layout) {
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
+
+            int currentLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
+            int newLayout = currentLayout%3 + 1;
+
+            recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
+            RoadCameraFavoritesHandler.setFavoritesGridLayout(newLayout, this);
+
+            if(newLayout == 1){
+
+            }
+
+        } else if (id == R.id.menu_sorting) {
             Intent intent = new Intent(this, RoadCamersMapsActivity.class);
             startActivity(intent);
         }
@@ -264,6 +275,8 @@ public class FavoritesActivity extends AppCompatActivity {
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
+
+
 
     @Override
     public void setTitle(CharSequence title) {

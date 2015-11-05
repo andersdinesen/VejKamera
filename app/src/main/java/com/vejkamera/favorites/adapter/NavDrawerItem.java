@@ -27,4 +27,9 @@ public class NavDrawerItem {
     public void setIcon(int icon){
         this.icon = icon;
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

@@ -24,6 +24,7 @@ public final class RoadCameraFavoritesHandler {
     private final static String FAVORITE_INFO_PREF_NAME = "FAVORITE_INFO_";
     private final static String FAVORITE_LATITUDE_PREF_NAME = "FAVORITE_LATITUDE_";
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
+    private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -94,5 +95,18 @@ public final class RoadCameraFavoritesHandler {
         editor.commit();
 
         Toast.makeText(context, R.string.toast_favorite_removed, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void setFavoritesGridLayout(int cellsPerRow, Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(FAVORITES_GRID_LAYOUT_NAME, cellsPerRow);
+        editor.commit();
+    }
+
+    public static int getFavoritesGridLayout(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(FAVORITES_GRID_LAYOUT_NAME, 2);
     }
 }

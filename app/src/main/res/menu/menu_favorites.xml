@@ -5,12 +5,12 @@
         android:orderInCategory="100"
         android:icon="@drawable/common_ic_googleplayservices"
         vejkamera:showAsAction="never" />
-    <item android:id="@+id/action_by_list"
+    <item android:id="@+id/menu_grid_layout"
         android:icon="@drawable/ic_view_module_white_24dp"
-        android:title="@string/action_add_favorite_by_list"
+        android:title="@string/menu_grid_layout"
         vejkamera:showAsAction="always" />
-    <item android:id="@+id/action_by_map"
+    <item android:id="@+id/menu_sorting"
         android:icon="@drawable/ic_sort_by_alpha_white_24dp"
-        android:title="@string/action_add_favorite_by_map"
+        android:title="@string/menu_sorting"
         vejkamera:showAsAction="always" />
 </menu>
