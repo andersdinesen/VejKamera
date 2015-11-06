@@ -1,5 +1,6 @@
 package com.vejkamera.favorites;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -141,6 +143,7 @@ public class FavoritesActivity extends AppCompatActivity {
     private void setupRecycleAdapter() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
         recyclerView.setHasFixedSize(true);
+        int favoritesGridLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
         recyclerView.setLayoutManager(new GridLayoutManager(this, RoadCameraFavoritesHandler.getFavoritesGridLayout(this)));
 
         recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
@@ -237,6 +240,7 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 */
     @Override
+    @TargetApi(21)
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
@@ -253,10 +257,30 @@ public class FavoritesActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
             RoadCameraFavoritesHandler.setFavoritesGridLayout(newLayout, this);
 
-            if(newLayout == 1){
-
+            MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
+            switch(newLayout){
+                case 1:
+                    if(android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                    }
+                    break;
+                case 2:
+                    if(android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                    }
+                    break;
+                case 3:
+                    if(android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                    }
+                    break;
             }
-
         } else if (id == R.id.menu_sorting) {
             Intent intent = new Intent(this, RoadCamersMapsActivity.class);
             startActivity(intent);

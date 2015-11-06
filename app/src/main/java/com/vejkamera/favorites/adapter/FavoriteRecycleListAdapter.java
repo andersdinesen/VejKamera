@@ -2,16 +2,21 @@ package com.vejkamera.favorites.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
+import com.vejkamera.favorites.RoadCameraFavoritesHandler;
 
 import java.util.List;
 
@@ -20,6 +25,11 @@ import java.util.List;
  */
 public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRecycleListAdapter.ViewHolder>{
     private List<RoadCamera> roadCameras;
+    private ViewGroup parent;
+
+    public FavoriteRecycleListAdapter(List<RoadCamera> roadCameras){
+        this.roadCameras = roadCameras;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView name;
@@ -47,15 +57,10 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
         }
     }
 
-    public FavoriteRecycleListAdapter(List<RoadCamera> roadCameras){
-        this.roadCameras = roadCameras;
-    }
-
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        this.parent = parent;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         // Inflate the custom layout
         View roadCameraView = inflater.inflate(R.layout.favorite_camera_row, parent, false);
@@ -71,6 +76,30 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
 
         holder.name.setText(roadCamera.getTitle());
         holder.image.setImageBitmap(roadCamera.getBitmap());
+
+        adjustImageHeight(holder.image);
+    }
+
+    private void adjustImageHeight(ImageView image) {
+        float scale = 1;
+        switch (RoadCameraFavoritesHandler.getFavoritesGridLayout(parent.getContext())) {
+            case 1:
+                scale = 0.3f;
+                break;
+            case 2:
+                scale = 0.15f;
+                break;
+            case 3:
+                scale = 0.12f;
+                break;
+        }
+        WindowManager wm = (WindowManager) parent.getContext().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(metrics);
+
+        int newHeight = Math.round(metrics.heightPixels*scale);
+        image.setMaxHeight(newHeight);
+        image.setMinimumHeight(newHeight);
     }
 
     @Override

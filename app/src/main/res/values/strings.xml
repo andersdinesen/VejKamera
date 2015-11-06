@@ -253,4 +253,5 @@
     <color name="white">#FFFFFF</color>
     <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
     <string name="title_activity_road_camers_maps">Road Camera Map</string>
+    <string name="keep_screen_on">Keep screen on</string>
 </resources>
