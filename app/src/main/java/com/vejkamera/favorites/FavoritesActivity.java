@@ -41,7 +41,7 @@ import java.util.ArrayList;
 
 
 public class FavoritesActivity extends AppCompatActivity {
-    FavoriteRecycleListAdapter adapter;
+    FavoriteRecycleListAdapter recycleListAdapter;
     ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
     Intent readIntent = null;
@@ -141,10 +141,10 @@ public class FavoritesActivity extends AppCompatActivity {
     private void setupRecycleAdapter() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, RoadCameraFavoritesHandler.getFavoritesGridLayout(this)));
 
-        adapter = new FavoriteRecycleListAdapter(favorites);
-        recyclerView.setAdapter(adapter);
+        recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
+        recyclerView.setAdapter(recycleListAdapter);
         setupFloatingButtonListener();
     }
 
@@ -312,9 +312,9 @@ public class FavoritesActivity extends AppCompatActivity {
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
             for (int i=0; i<favorites.size() ; i++) {
-                adapter.notifyItemChanged(i);
+                recycleListAdapter.notifyItemChanged(i);
             }
-            //adapter.notifyDataSetChanged();
+            //recycleListAdapter.notifyDataSetChanged();
 
         }
     }
