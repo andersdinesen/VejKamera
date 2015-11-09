@@ -2,10 +2,8 @@ package com.vejkamera.favorites.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,7 @@ import java.util.List;
  * Created by Anders on 02-11-2015.
  */
 public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRecycleListAdapter.ViewHolder>{
+    private static int imageHeightGrid1, imageHeightGrid2, imageHeightGrid3 = 0;
     private List<RoadCamera> roadCameras;
     private ViewGroup parent;
 
@@ -81,25 +80,32 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
     }
 
     private void adjustImageHeight(ImageView image) {
-        float scale = 1;
+        float scale = 300;
+
+        if(imageHeightGrid1 == 0 || imageHeightGrid2 ==0 || imageHeightGrid3 == 0){
+            WindowManager wm = (WindowManager) parent.getContext().getSystemService(Context.WINDOW_SERVICE);
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(metrics);
+
+            // Adjusting to wide-screen format 16:9
+            imageHeightGrid1 = Math.round(metrics.widthPixels * 0.5625f);
+            imageHeightGrid2 = Math.round(metrics.widthPixels/2 * 0.5625f);
+            imageHeightGrid3 = Math.round(metrics.widthPixels/3 * 0.5625f);
+        }
         switch (RoadCameraFavoritesHandler.getFavoritesGridLayout(parent.getContext())) {
             case 1:
-                scale = 0.3f;
+                image.getLayoutParams().height = imageHeightGrid1;
+                scale = imageHeightGrid1;
                 break;
             case 2:
-                scale = 0.15f;
+                image.getLayoutParams().height = imageHeightGrid2;
+                scale = imageHeightGrid2;
                 break;
             case 3:
-                scale = 0.12f;
+                image.getLayoutParams().height = imageHeightGrid3;
+                scale = imageHeightGrid3;
                 break;
         }
-        WindowManager wm = (WindowManager) parent.getContext().getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
-
-        int newHeight = Math.round(metrics.heightPixels*scale);
-        image.setMaxHeight(newHeight);
-        image.setMinimumHeight(newHeight);
     }
 
     @Override
