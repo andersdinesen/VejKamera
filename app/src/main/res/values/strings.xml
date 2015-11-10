@@ -254,4 +254,8 @@
     <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
     <string name="title_activity_road_camers_maps">Road Camera Map</string>
     <string name="keep_screen_on">Keep screen on</string>
+    <string name="sort_by">Sort by...</string>
+    <string name="sort_by_alfabeth">Alphabetically</string>
+    <string name="sort_by_near">Driving direction</string>
+    <string name="sort_by_added">Order added</string>
 </resources>

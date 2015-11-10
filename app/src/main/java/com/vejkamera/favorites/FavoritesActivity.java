@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -29,6 +30,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationServices;
 import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
@@ -40,9 +45,10 @@ import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
-public class FavoritesActivity extends AppCompatActivity {
+public class FavoritesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     FavoriteRecycleListAdapter recycleListAdapter;
     ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
@@ -51,6 +57,10 @@ public class FavoritesActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
+    private GoogleApiClient googleApiClient;
+    private Location lastLocation;
+    private Sorting currentSorting = Sorting.BY_ADDED;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +153,6 @@ public class FavoritesActivity extends AppCompatActivity {
     private void setupRecycleAdapter() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
         recyclerView.setHasFixedSize(true);
-        int favoritesGridLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
         recyclerView.setLayoutManager(new GridLayoutManager(this, RoadCameraFavoritesHandler.getFavoritesGridLayout(this)));
 
         recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
@@ -155,11 +164,7 @@ public class FavoritesActivity extends AppCompatActivity {
         final NavDrawerItem[] addByItems = {new NavDrawerItem(getString(R.string.add_by_map), R.drawable.ic_add_by_location_24dp),
                 new NavDrawerItem(getString(R.string.add_from_lists), R.drawable.ic_playlist_add_black_24dp)};
 
-        ListAdapter addByAdapter = new ArrayAdapter<NavDrawerItem>(
-                this,
-                android.R.layout.select_dialog_item,
-                android.R.id.text1,
-                addByItems){
+        ListAdapter addByAdapter = new ArrayAdapter<NavDrawerItem>(this, android.R.layout.select_dialog_item, android.R.id.text1, addByItems){
             public View getView(int position, View convertView, ViewGroup parent) {
                 //Use super class to create the View
                 View v = super.getView(position, convertView, parent);
@@ -220,25 +225,6 @@ public class FavoritesActivity extends AppCompatActivity {
         return true;
     }
 
-/*
-        private void setupListner(final ListView cityListView) {
-        cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                                                    final RoadCamera roadCamera = (RoadCamera) parent.getItemAtPosition(position);
-
-                                                    //Setting Camera image to null, because it may be too big for the internal parcel bundle
-                                                    roadCamera.setBitmap(null);
-                                                    Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
-                                                    intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
-                                                    startActivity(intent);
-                                                }
-                                            }
-
-        );
-    }
-*/
     @Override
     @TargetApi(21)
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -249,49 +235,82 @@ public class FavoritesActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.menu_grid_layout) {
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
-
-            int currentLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
-            int newLayout = currentLayout%3 + 1;
-
-            recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
-            RoadCameraFavoritesHandler.setFavoritesGridLayout(newLayout, this);
-
-            MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
-            switch(newLayout){
-                case 1:
-                    if(android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                    }
-                    break;
-                case 2:
-                    if(android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                    }
-                    break;
-                case 3:
-                    if(android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                    }
-                    break;
-            }
+            changeGridLayout();
         } else if (id == R.id.menu_sorting) {
-            Intent intent = new Intent(this, RoadCamersMapsActivity.class);
-            startActivity(intent);
+            final String[] sort_options = {getString(R.string.sort_by_alfabeth), getString(R.string.sort_by_near), getString(R.string.sort_by_added)};
+            AlertDialog.Builder sortByDialogBuilder = new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.sort_by))
+                    .setItems(sort_options, new DialogInterface.OnClickListener(){
+
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            switch (i){
+                                case 0:
+                                    currentSorting = Sorting.BY_NAME;
+                                    break;
+                                case 1:
+                                    currentSorting = Sorting.BY_NEAR;
+                                    break;
+                                case 2:
+                                    currentSorting = Sorting.BY_ADDED;
+                                    break;
+                            }
+                            sortFavorites();
+                        }
+                    });
+            sortByDialogBuilder.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void sortFavorites(){
+        if(currentSorting == Sorting.BY_NAME) {
+            Collections.sort(favorites);
+        }
+
+        recycleListAdapter.notifyDataSetChanged();
+    }
+
+    private void changeGridLayout() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
+
+        int currentLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
+        int newLayout = currentLayout%3 + 1;
+
+        recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
+        RoadCameraFavoritesHandler.setFavoritesGridLayout(newLayout, this);
+
+        MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
+        switch(newLayout){
+            case 1:
+                if(android.os.Build.VERSION.SDK_INT >= 21) {
+                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                } else {
+                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                }
+                break;
+            case 2:
+                if(android.os.Build.VERSION.SDK_INT >= 21) {
+                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                } else {
+                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                }
+                break;
+            case 3:
+                if(android.os.Build.VERSION.SDK_INT >= 21) {
+                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                } else {
+                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                }
+                break;
+        }
+    }
+
     /***
      * Called when invalidateOptionsMenu() is triggered
      */
+    /*
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
@@ -299,7 +318,7 @@ public class FavoritesActivity extends AppCompatActivity {
         //menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
-
+*/
 
 
     @Override
@@ -326,6 +345,33 @@ public class FavoritesActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    protected synchronized void buildGoogleApiClient() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    private enum Sorting {
+        BY_NAME, BY_NEAR, BY_ADDED
+    }
+
     private class FavoritesResponseReceiver extends BroadcastReceiver {
 
         @Override
@@ -335,6 +381,7 @@ public class FavoritesActivity extends AppCompatActivity {
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             favorites.addAll(updatedFavorites);
+            sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);
             }

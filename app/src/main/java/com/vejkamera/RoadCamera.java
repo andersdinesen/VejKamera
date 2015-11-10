@@ -7,7 +7,7 @@ import android.os.Parcelable;
 /**
  * Created by ad on 27-05-2015.
  */
-public class RoadCamera implements Parcelable {
+public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
     private String syncId = "";
     private String title = "";
     private String info = "";
@@ -188,4 +188,8 @@ public class RoadCamera implements Parcelable {
             return new RoadCamera(source, loader);
         }
     };
+
+    public int compareTo(RoadCamera compareRoadCamera){
+        return this.title.compareTo(compareRoadCamera.getTitle());
+    }
 }
