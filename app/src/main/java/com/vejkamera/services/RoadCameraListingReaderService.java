@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.vejkamera.RoadCamera;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,14 +50,15 @@ public class RoadCameraListingReaderService extends IntentService {
 
         roadCameras = convertJSONIntoRoadCamList(rawReading);
 
+        updateFavoritesInArchive(roadCameras);
         broadcastResult(roadCameras);
     }
 
 
     private String getReadJsonObjectsFromNetwork() {
         URL url;
-        InputStream inputStream = null;
-        StringBuilder stringBuilder = null;
+        InputStream inputStream;
+        StringBuilder stringBuilder;
         String result = null;
         try {
             url = new URL("http://prod.middleman.dk/api/webcam/json/synced?type=webCam&syncVersion=1&");
@@ -111,6 +113,10 @@ public class RoadCameraListingReaderService extends IntentService {
             e.printStackTrace();
         }
         return roadCameraList;
+    }
+
+    private void updateFavoritesInArchive(ArrayList<RoadCamera> roadCameras){
+        RoadCameraArchiveHandler.setAllRoadCameras(roadCameras);
     }
 
     private void broadcastResult(ArrayList<RoadCamera> roadCameras) {

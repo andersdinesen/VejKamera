@@ -25,7 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
+import com.vejkamera.services.RoadCameraListingReaderService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,13 +75,22 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void readAreaCameras() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
-        //LocalBroadcastManager.getInstance(this).registerReceiver(new CameraListingResponseReceiver(), new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
+        if(cameraList.size() == 0) {
+            cameraList = RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext());
+            // If list of road cameras are not all ready read, then wait for them. Reading started in FavoritesActivity
+            if(cameraList.size() == 0) {
+                LocalBroadcastManager.getInstance(this).registerReceiver(new CameraListingResponseReceiver(), new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
+            } else {
+                addCameraMarkers();
+            }
 
-        Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
-        readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
-        startService(readIntent);
+            //LocalBroadcastManager.getInstance(this).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
 
+            /*
+            Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
+            readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
+            startService(readIntent);*/
+        }
         /*
         Intent listReadIntent = new Intent(this, RoadCameraListingReaderService.class);
         startService(listReadIntent);
@@ -126,6 +137,20 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
+
+    private class CameraListingResponseReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            cameraList.clear();
+            //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+            cameraList.addAll(RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext()));
+            addCameraMarkers();
+            //adapter.notifyDataSetChanged();
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+        }
+    }
+
 
     private class MapCameraInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mapCameraContent;

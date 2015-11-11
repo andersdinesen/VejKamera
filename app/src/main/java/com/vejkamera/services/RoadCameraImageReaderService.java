@@ -11,6 +11,7 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.sromku.polygon.Point;
 import com.sromku.polygon.Polygon;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +27,10 @@ import java.util.Iterator;
 public class RoadCameraImageReaderService extends IntentService {
     public static final String BROADCAST_IMAGE_READING_DONE = "com.vejkamera.IMAGE_READING_DONE";
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
+    public static final String TYPE_TO_READ_KEY = "TYPE_TO_READ";
+    public static final String TYPE_TO_READ_FAVORITES = "FAVORITES";
     public static final String AREA_CAMERA_ID_KEY = "AREA_CAMERAS";
     public static final String THUMBNAILS_ONLY_KEY = "THUMBNAILS_ONLY";
-    public static final String BROADCAST_RECEIVER_KEY = "BROADCAST_RECEIVER";
     private static ArrayList<RoadCamera> allRoadCameras = null;
     private static Boolean listReadingCompleted = false;
 
@@ -80,6 +82,10 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private ArrayList<RoadCamera> getListOfCameras(Intent intent){
+        if(intent.hasExtra(TYPE_TO_READ_KEY) && intent.getStringExtra(TYPE_TO_READ_KEY).equalsIgnoreCase(TYPE_TO_READ_FAVORITES)){
+            return RoadCameraArchiveHandler.getFavorites(getBaseContext());
+        }
+
         if(intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {
             return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
         } else {

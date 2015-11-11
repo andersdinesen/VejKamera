@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationServices;
 import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
@@ -70,6 +69,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+        RoadCameraArchiveHandler.initRoadCamerasArchive(this);
 
         setupDrawerMenu();
         setupRecycleAdapter();
@@ -144,7 +145,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     private void updateFavorites() {
         favorites.clear();
-        favorites.addAll(RoadCameraFavoritesHandler.getFavorites(this));
+        favorites.addAll(RoadCameraArchiveHandler.getFavorites(this));
 
         //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
         //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
@@ -153,7 +154,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private void setupRecycleAdapter() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, RoadCameraFavoritesHandler.getFavoritesGridLayout(this)));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, RoadCameraArchiveHandler.getFavoritesGridLayout(this)));
 
         recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
         recyclerView.setAdapter(recycleListAdapter);
@@ -213,7 +214,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
 
         //Start service to read favorites
-        readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
+        //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
+        readIntent.putExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY, RoadCameraImageReaderService.TYPE_TO_READ_FAVORITES);
         //bindService(readIntent, mConnection, Context.BIND_AUTO_CREATE);
         startService(readIntent);
     }
@@ -275,11 +277,11 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private void changeGridLayout() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
 
-        int currentLayout = RoadCameraFavoritesHandler.getFavoritesGridLayout(this);
+        int currentLayout = RoadCameraArchiveHandler.getFavoritesGridLayout(this);
         int newLayout = currentLayout%3 + 1;
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
-        RoadCameraFavoritesHandler.setFavoritesGridLayout(newLayout, this);
+        RoadCameraArchiveHandler.setFavoritesGridLayout(newLayout, this);
 
         MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
         switch(newLayout){
@@ -380,7 +382,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
             ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
-            favorites.addAll(updatedFavorites);
+            favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
             sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);

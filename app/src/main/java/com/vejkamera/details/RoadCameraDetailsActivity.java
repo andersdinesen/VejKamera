@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
-import com.vejkamera.favorites.RoadCameraFavoritesHandler;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
 
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class RoadCameraDetailsActivity extends AppCompatActivity {
     public final static String ROAD_CAMERA_KEY = "ROAD_CAMERA";
+    public final static String ROAD_CAMERA_SYNC_ID_KEY = "ROAD_CAMERA_SYNC_ID";
     private RoadCamera roadCamera = null;
     private BroadcastReceiver cameraImagebroadcastReceiver = new CameraImagesResponseReceiver();
     Intent readIntent = null;
@@ -34,7 +35,11 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_road_camera_details);
 
-        roadCamera = getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
+        if(getIntent().hasExtra(ROAD_CAMERA_KEY)) {
+            roadCamera = getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
+        } else {
+            roadCamera = RoadCameraArchiveHandler.getRoadCameraFromSyncId(getIntent().getStringExtra(ROAD_CAMERA_SYNC_ID_KEY), this);
+        }
         readIntent = new Intent(this, RoadCameraLoopReaderService.class);
 
         setupLayout();
@@ -56,15 +61,15 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
     private void setupFavoriteCheckBox(){
         CheckBox favoriteCheckBox = (CheckBox) findViewById(R.id.detailed_star);
 
-        favoriteCheckBox.setChecked(RoadCameraFavoritesHandler.isFavorite(roadCamera, this));
+        favoriteCheckBox.setChecked(RoadCameraArchiveHandler.isFavorite(roadCamera, this));
 
         favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    RoadCameraFavoritesHandler.addFavorite(roadCamera, buttonView.getContext());
+                    RoadCameraArchiveHandler.addFavorite(roadCamera, buttonView.getContext());
                 } else {
-                    RoadCameraFavoritesHandler.removeFavorite(roadCamera, buttonView.getContext());
+                    RoadCameraArchiveHandler.removeFavorite(roadCamera, buttonView.getContext());
                 }
             }
         });

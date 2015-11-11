@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
-import com.vejkamera.favorites.RoadCameraFavoritesHandler;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 
 import java.util.List;
 
@@ -51,7 +51,8 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
             //Setting Camera image to null, because it may be too big for the internal parcel bundle
             roadCamera.setBitmap(null);
             Intent intent = new Intent(v.getContext(), RoadCameraDetailsActivity.class);
-            intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+            //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+            intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_SYNC_ID_KEY, roadCamera.getSyncId());
             v.getContext().startActivity(intent);
         }
     }
@@ -92,7 +93,7 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
             imageHeightGrid2 = Math.round(metrics.widthPixels/2 * 0.5625f);
             imageHeightGrid3 = Math.round(metrics.widthPixels/3 * 0.5625f);
         }
-        switch (RoadCameraFavoritesHandler.getFavoritesGridLayout(parent.getContext())) {
+        switch (RoadCameraArchiveHandler.getFavoritesGridLayout(parent.getContext())) {
             case 1:
                 image.getLayoutParams().height = imageHeightGrid1;
                 scale = imageHeightGrid1;
