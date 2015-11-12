@@ -29,6 +29,8 @@ public class RoadCameraImageReaderService extends IntentService {
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
     public static final String TYPE_TO_READ_KEY = "TYPE_TO_READ";
     public static final String TYPE_TO_READ_FAVORITES = "FAVORITES";
+    public static final String TYPE_TO_READ_SYNC_ID = "SYNC_ID";
+    public static final String VALUES_TO_READ = "VALUES_TO_READ";
     public static final String AREA_CAMERA_ID_KEY = "AREA_CAMERAS";
     public static final String THUMBNAILS_ONLY_KEY = "THUMBNAILS_ONLY";
     private static ArrayList<RoadCamera> allRoadCameras = null;

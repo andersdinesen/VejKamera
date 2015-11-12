@@ -46,6 +46,17 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         setupFavoriteCheckBox();
     }
 
+    private ArrayList<RoadCamera> getListOfCameras(Intent intent) {
+        if (intent.hasExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY)) {
+            String syncId = intent.getStringExtra(RoadCameraImageReaderService.)
+            return RoadCameraArchiveHandler.getFavorites(getBaseContext());
+        }
+
+        if (intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {
+            return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
+        }
+    }
+
     private void setupLayout() {
         setTitle(roadCamera.getTitle());
 
