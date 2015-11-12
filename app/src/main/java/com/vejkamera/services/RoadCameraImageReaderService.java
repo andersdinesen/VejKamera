@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.vejkamera.Constants;
 import com.vejkamera.R;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 public class RoadCameraImageReaderService extends IntentService {
     public static final String BROADCAST_IMAGE_READING_DONE = "com.vejkamera.IMAGE_READING_DONE";
     public static final String ROAD_CAMERA_LIST_KEY = "ROAD_CAMERA_LIST";
+    public static final String READ_REQUEST_KEY = "READ_REQUEST";
     public static final String TYPE_TO_READ_KEY = "TYPE_TO_READ";
     public static final String TYPE_TO_READ_FAVORITES = "FAVORITES";
     public static final String TYPE_TO_READ_SYNC_ID = "SYNC_ID";
@@ -72,20 +74,23 @@ public class RoadCameraImageReaderService extends IntentService {
                     roadCamera.setBitmap(BitmapFactory.decodeStream(is));
                 }
             } catch (MalformedURLException e) {
+                //TODO Add image of broken camera
                 failedReadings = updateFailedReading(failedReadings, roadCamera, e);
             } catch (IOException e) {
+                //TODO Add image of broken camera
                 failedReadings = updateFailedReading(failedReadings, roadCamera, e);
             }
         }
         if(failedReadings != null) {
-            System.out.println(failedReadings);
+            Log.d(getClass().getSimpleName(), failedReadings);
         }
         broadcastResult(roadCameras);
     }
 
     private ArrayList<RoadCamera> getListOfCameras(Intent intent){
-        if(intent.hasExtra(TYPE_TO_READ_KEY) && intent.getStringExtra(TYPE_TO_READ_KEY).equalsIgnoreCase(TYPE_TO_READ_FAVORITES)){
-            return RoadCameraArchiveHandler.getFavorites(getBaseContext());
+        if(intent.hasExtra(READ_REQUEST_KEY)){
+            RoadCameraReadRequest readRequest = intent.getParcelableExtra(READ_REQUEST_KEY);
+            return readRequest.getRequestedRoadCameras(getBaseContext());
         }
 
         if(intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {

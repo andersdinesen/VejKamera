@@ -15,6 +15,8 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
+import com.vejkamera.services.RoadCameraImageReaderService;
+import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.List;
 
@@ -52,7 +54,9 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
             roadCamera.setBitmap(null);
             Intent intent = new Intent(v.getContext(), RoadCameraDetailsActivity.class);
             //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
-            intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_SYNC_ID_KEY, roadCamera.getSyncId());
+            //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_SYNC_ID_KEY, roadCamera.getSyncId());
+            RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
+            intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
             v.getContext().startActivity(intent);
         }
     }

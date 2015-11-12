@@ -42,6 +42,7 @@ import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
+import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -215,7 +216,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         //Start service to read favorites
         //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
-        readIntent.putExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY, RoadCameraImageReaderService.TYPE_TO_READ_FAVORITES);
+        //readIntent.putExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY, RoadCameraImageReaderService.TYPE_TO_READ_FAVORITES);
+        readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_FAVORITES));
         //bindService(readIntent, mConnection, Context.BIND_AUTO_CREATE);
         startService(readIntent);
     }

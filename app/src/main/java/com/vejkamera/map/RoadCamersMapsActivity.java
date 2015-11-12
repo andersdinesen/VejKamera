@@ -28,6 +28,7 @@ import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
+import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 public class RoadCamersMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     ArrayList<RoadCamera> cameraList = new ArrayList();
-    HashMap<Marker, RoadCamera> markers = new HashMap<>();
+    HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
     private GoogleMap mMap;
 
     @Override
@@ -54,15 +55,16 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                               @Override
                                               public void onInfoWindowClick(Marker marker) {
-                                                  RoadCamera roadCamera = markers.get(marker);
+                                                  RoadCamera roadCamera = markerToRoadCameras.get(marker);
                                                   Intent intent = new Intent(getBaseContext(), RoadCameraDetailsActivity.class);
-                                                  intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, roadCamera);
+                                                  RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
+                                                  intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
                                                   startActivity(intent);
                                               }
                                           }
         );
 
-        readAreaCameras();
+        readAllCameras();
         moveMapToDK();
     }
 
@@ -70,17 +72,18 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         for (RoadCamera camera : cameraList) {
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions().position(letLng).title(camera.getTitle()));
-            markers.put(marker, camera);
+            markerToRoadCameras.put(marker, camera);
         }
     }
 
-    private void readAreaCameras() {
+    private void readAllCameras() {
         if(cameraList.size() == 0) {
+            CameraListingResponseReceiver cameraListingResponseReceiver = new CameraListingResponseReceiver();
+            LocalBroadcastManager.getInstance(this).registerReceiver(cameraListingResponseReceiver, new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
             cameraList = RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext());
             // If list of road cameras are not all ready read, then wait for them. Reading started in FavoritesActivity
-            if(cameraList.size() == 0) {
-                LocalBroadcastManager.getInstance(this).registerReceiver(new CameraListingResponseReceiver(), new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
-            } else {
+            if(cameraList.size() != 0) {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraListingResponseReceiver);
                 addCameraMarkers();
             }
 
@@ -169,7 +172,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
         @Override
         public View getInfoContents(Marker marker) {
-            roadCamera = markers.get(marker);
+            roadCamera = markerToRoadCameras.get(marker);
             ImageView thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
             TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
 

@@ -10,6 +10,7 @@ import com.vejkamera.RoadCamera;
 import com.vejkamera.services.RoadCameraListingReaderService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,6 +29,7 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
     private static ArrayList<RoadCamera> allRoadCameras = new ArrayList<>();
+    private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
     private static ArrayList<RoadCamera> favoriteRoadCameras = new ArrayList<>();
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
@@ -146,7 +148,11 @@ public final class RoadCameraArchiveHandler {
     public static void setAllRoadCameras(ArrayList<RoadCamera> allNewRoadCameras) {
         synchronized (allRoadCameras) {
             allRoadCameras.clear();
+            allRoadCamerasHashMap.clear();
             allRoadCameras.addAll(allNewRoadCameras);
+            for(RoadCamera roadCamera : allNewRoadCameras){
+                allRoadCamerasHashMap.put(roadCamera.getSyncId(), roadCamera);
+            }
         }
     }
 
@@ -156,15 +162,15 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static RoadCamera getRoadCameraFromSyncId(String syncId, Context context){
-        ArrayList<RoadCamera> listToCheck = getAllRoadCameras(context);
-        listToCheck.addAll(getFavorites(context));
-        for(RoadCamera currentRoadCamera: getAllRoadCameras(context)){
-            if(currentRoadCamera.getSyncId().equalsIgnoreCase(syncId)){
-                return currentRoadCamera;
-            }
-        }
+        return allRoadCamerasHashMap.get(syncId);
+    }
 
-        return null;
+    public static ArrayList<RoadCamera> getRoadCameraFromSyncIdList(ArrayList<String> syncIdList, Context context){
+        ArrayList<RoadCamera> result = new ArrayList<>();
+        for(String syncId : syncIdList) {
+            result.add(getRoadCameraFromSyncId(syncId, context));
+        }
+        return result;
     }
 
 }

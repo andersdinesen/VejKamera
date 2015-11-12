@@ -19,6 +19,7 @@ import com.vejkamera.RoadCamera;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
+import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 
@@ -34,18 +35,20 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_road_camera_details);
+        readIntent = new Intent(this, RoadCameraLoopReaderService.class);
 
         if(getIntent().hasExtra(ROAD_CAMERA_KEY)) {
             roadCamera = getIntent().getParcelableExtra(ROAD_CAMERA_KEY);
         } else {
-            roadCamera = RoadCameraArchiveHandler.getRoadCameraFromSyncId(getIntent().getStringExtra(ROAD_CAMERA_SYNC_ID_KEY), this);
+            RoadCameraReadRequest readRequest = getIntent().getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
+            roadCamera = readRequest.getRequestedRoadCameras(getBaseContext()).get(0);
+            readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
         }
-        readIntent = new Intent(this, RoadCameraLoopReaderService.class);
 
         setupLayout();
         setupFavoriteCheckBox();
     }
-
+/*
     private ArrayList<RoadCamera> getListOfCameras(Intent intent) {
         if (intent.hasExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY)) {
             String syncId = intent.getStringExtra(RoadCameraImageReaderService.)
@@ -56,7 +59,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
             return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
         }
     }
-
+*/
     private void setupLayout() {
         setTitle(roadCamera.getTitle());
 
@@ -106,9 +109,11 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(cameraImagebroadcastReceiver, intentFilter);
 
         //Start service to read favorites
+        /*
         ArrayList<RoadCamera> cameraList =  new ArrayList<>(1);
         cameraList.add(roadCamera);
         readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
+        */
         startService(readIntent);
 
 
@@ -149,8 +154,9 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
-            roadCamera = updatedCameras.get(0);
+            //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+            RoadCameraReadRequest readRequest = intent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
+            roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
             ImageView cameraImage = (ImageView) findViewById(R.id.detailed_image);
             cameraImage.setImageBitmap(roadCamera.getBitmap());
             //LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
