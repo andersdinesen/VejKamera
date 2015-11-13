@@ -110,7 +110,7 @@ public class RoadCameraImageReaderService extends IntentService {
         }
 
         if(intent.hasExtra(AREA_CAMERA_ID_KEY) && intent.getIntExtra(AREA_CAMERA_ID_KEY, 0) != R.string.all_areas){
-            return filterListOfCameras(intent.getIntExtra(AREA_CAMERA_ID_KEY, 0), allRoadCameras);
+            return RoadCameraArchiveHandler.filterListOfCameras(intent.getIntExtra(AREA_CAMERA_ID_KEY, 0), allRoadCameras, this);
         } else {
             return allRoadCameras;
         }
@@ -129,55 +129,4 @@ public class RoadCameraImageReaderService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    private ArrayList<RoadCamera> filterListOfCameras(int areaResourceId, ArrayList<RoadCamera> roadCameras){
-        Polygon areaPolygon = getAreaPolygon(areaResourceId);
-        return findRoadCameraInPolygon(roadCameras, areaPolygon);
-    }
-
-    @NonNull
-    private ArrayList<RoadCamera> findRoadCameraInPolygon(ArrayList<RoadCamera> roadCameras, Polygon areaPolygon) {
-        ArrayList<RoadCamera> resultCameras = new ArrayList<>();
-        Iterator<RoadCamera> roadCameraIterator = roadCameras.iterator();
-        while (roadCameraIterator.hasNext()){
-            RoadCamera currentRoadCamera = roadCameraIterator.next();
-            float x = currentRoadCamera.getLongitude().floatValue();
-            float y = currentRoadCamera.getLatitude().floatValue();
-            Point currentPoint = new Point(x,y);
-
-            if(areaPolygon.contains(currentPoint)) {
-                resultCameras.add(currentRoadCamera);
-            }
-        }
-        return resultCameras;
-    }
-
-    private Polygon getAreaPolygon(int areaResourceId) {
-        String[] coordinatesStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(areaResourceId));
-        Polygon.Builder polygonBuilder = Polygon.Builder();
-
-        for(int i=0; coordinatesStrings != null && i<coordinatesStrings.length; i++){
-            if(coordinatesStrings[i] != null){
-                String[] pointArray = coordinatesStrings[i].split(",");
-                float x = Float.valueOf(pointArray[1]);
-                float y = Float.valueOf(pointArray[0]);
-                polygonBuilder.addVertex(new Point(x, y));
-            }
-        }
-        polygonBuilder.close();
-
-        // Find cities that should be cutout
-        Integer[] areaCutoutsResourceIds = Constants.AREA_CUTOUTS.get(areaResourceId);
-        for(int i=0; areaCutoutsResourceIds != null && i<areaCutoutsResourceIds.length; i++){
-            String[] coordinatesCutoutStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(areaCutoutsResourceIds[i]));
-            for(int j=0; coordinatesCutoutStrings != null && coordinatesCutoutStrings.length>j; j++){
-                String[] pointArray = coordinatesCutoutStrings[j].split(",");
-                float x = Float.valueOf(pointArray[1]);
-                float y = Float.valueOf(pointArray[0]);
-                polygonBuilder.addVertex(new Point(x, y));
-            }
-            polygonBuilder.close();
-        }
-
-        return polygonBuilder.build();
-    }
 }

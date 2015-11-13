@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,9 @@ import com.vejkamera.Constants;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
+import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 
@@ -37,7 +40,10 @@ public class AreaCamerasListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_area_camers_list);
 
         if (getIntent() != null) {
-            setTitle(getString(Constants.AREA_IDS[areaPosition]));
+            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            toolbar.setTitle(getString(Constants.AREA_IDS[areaPosition]));
+            setSupportActionBar(toolbar);
+            //setTitle(getString(Constants.AREA_IDS[areaPosition]));
             //setTitle(getIntent().getStringExtra(EXTRA_AREA_NAME_KEY));
         }
 
@@ -58,6 +64,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
         Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
         readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
+        RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_AREA, RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this))
         readIntent.putExtra(RoadCameraImageReaderService.AREA_CAMERA_ID_KEY, Constants.AREA_IDS[areaPosition]);
         //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
