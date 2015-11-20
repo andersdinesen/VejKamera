@@ -18,12 +18,12 @@ import java.util.List;
  */
 public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
     private Context context;
-    private List<RoadCamera> values;
+    private List<RoadCamera> roadCameras;
 
     public AreaCameraListAdapter(Context context, List<RoadCamera> values){
         super(context, R.layout.area_camera_row, values);
         this.context = context;
-        this.values = values;
+        this.roadCameras = values;
     }
 
     @Override
@@ -33,9 +33,9 @@ public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 
-        textView.setText(values.get(position).getTitle());
-        if(values.get(position).getBitmap() != null){
-            imageView.setImageBitmap(values.get(position).getBitmap());
+        textView.setText(roadCameras.get(position).getTitle());
+        if(roadCameras.get(position).getThumbnail() != null){
+            imageView.setImageBitmap(roadCameras.get(position).getThumbnail());
         }
         return rowView;
     }

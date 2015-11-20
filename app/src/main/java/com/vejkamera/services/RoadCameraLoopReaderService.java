@@ -38,7 +38,7 @@ public class RoadCameraLoopReaderService extends IntentService{
         originalIntent = intent;
         System.out.println("Started RoadCameraLoopReaderService");
         if(!intent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY) && !intent.hasExtra(RoadCameraImageReaderService.READ_REQUEST_KEY)){
-            throw new IllegalArgumentException("Intent missing Extra value for " + RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY + " or " +RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+            throw new IllegalArgumentException("Intent missing Extra value for " + RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY + " or " +RoadCameraImageReaderService.READ_REQUEST_KEY);
         }
         roadCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
         setupReceiver();

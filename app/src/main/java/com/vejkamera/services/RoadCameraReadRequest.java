@@ -50,6 +50,8 @@ public class RoadCameraReadRequest implements Parcelable {
     public ArrayList<RoadCamera> getRequestedRoadCameras(Context context){
         if(readType == READ_TYPE_FAVORITES){
             return RoadCameraArchiveHandler.getFavorites(context);
+        } else if(readType == READ_TYPE_ALL) {
+            return RoadCameraArchiveHandler.getAllRoadCameras(context);
         } else if(readType == READ_TYPE_SYNC_IDS) {
             return RoadCameraArchiveHandler.getRoadCameraFromSyncIdList(syncIds, context);
         }

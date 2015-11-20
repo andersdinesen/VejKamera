@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
@@ -61,9 +62,16 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
     }
 */
     private void setupLayout() {
-        setTitle(roadCamera.getTitle());
+        //setTitle(roadCamera.getTitle());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_details);
+        toolbar.setTitle(roadCamera.getTitle());
+        setSupportActionBar(toolbar);
 
         if(roadCamera.getBitmap() != null) {
+            ImageView imageView = (ImageView) findViewById(R.id.detailed_image);
+            imageView.setImageBitmap(roadCamera.getBitmap());
+        } else if(roadCamera.getThumbnail() != null) {
             ImageView imageView = (ImageView) findViewById(R.id.detailed_image);
             imageView.setImageBitmap(roadCamera.getBitmap());
         }

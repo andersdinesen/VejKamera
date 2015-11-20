@@ -40,11 +40,9 @@ public class AreaCamerasListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_area_camers_list);
 
         if (getIntent() != null) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_area_list);
             toolbar.setTitle(getString(Constants.AREA_IDS[areaPosition]));
             setSupportActionBar(toolbar);
-            //setTitle(getString(Constants.AREA_IDS[areaPosition]));
-            //setTitle(getIntent().getStringExtra(EXTRA_AREA_NAME_KEY));
         }
 
         setupAdapter();
@@ -64,8 +62,18 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
         Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
         readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
-        RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_AREA, RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this))
-        readIntent.putExtra(RoadCameraImageReaderService.AREA_CAMERA_ID_KEY, Constants.AREA_IDS[areaPosition]);
+
+        ArrayList<String> areaSyncIds;
+        RoadCameraReadRequest readRequest;
+        if(Constants.AREA_IDS[areaPosition] == R.string.all_areas){
+            readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_ALL);
+        } else {
+            areaSyncIds = RoadCameraArchiveHandler.getSyncIdsFromRoadCameras(RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this));
+            readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, areaSyncIds);
+        }
+
+        readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
+        //readIntent.putExtra(RoadCameraImageReaderService.AREA_CAMERA_ID_KEY, Constants.AREA_IDS[areaPosition]);
         //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
         startService(readIntent);
 
@@ -77,6 +85,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
         */
     }
 
+
     private void setupListListner() {
         final ListView areaCamerasListView = (ListView) findViewById(R.id.area_cameras_listview);
 
@@ -87,7 +96,9 @@ public class AreaCamerasListActivity extends AppCompatActivity {
                                                            final RoadCamera item = (RoadCamera) parent.getItemAtPosition(position);
 
                                                            Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
-                                                           intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, item);
+                                                           RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, item.getSyncId());
+                                                           intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
+                                                           //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, item);
                                                            startActivity(intent);
 
                                                        }
@@ -133,8 +144,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_area_camers_list, menu);
+        getMenuInflater().inflate(R.menu.menu_empty, menu);
         return true;
     }
 

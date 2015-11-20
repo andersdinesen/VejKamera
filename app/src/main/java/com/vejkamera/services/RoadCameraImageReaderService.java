@@ -66,12 +66,11 @@ public class RoadCameraImageReaderService extends IntentService {
 
         for (RoadCamera roadCamera : roadCameras) {
             try {
-                String urlLink = thumbnailsOnly ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
-                if(urlLink.startsWith("http:")) {
-                    URL url = new URL(urlLink);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    InputStream is = connection.getInputStream();
-                    roadCamera.setBitmap(BitmapFactory.decodeStream(is));
+                //TODO Timeout for reading thumbnails again
+                if(thumbnailsOnly && roadCamera.getThumbnail() == null) {
+                    updateImageFromURL(roadCamera, true);
+                } else {
+                    updateImageFromURL(roadCamera, false);
                 }
             } catch (MalformedURLException e) {
                 //TODO Add image of broken camera
@@ -87,6 +86,21 @@ public class RoadCameraImageReaderService extends IntentService {
         broadcastResult(roadCameras);
     }
 
+    private void updateImageFromURL(RoadCamera roadCamera, boolean thumbnail) throws IOException {
+        String urlLink = thumbnail ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
+        if(urlLink.startsWith("http:")) {
+            URL url = new URL(urlLink);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream is = connection.getInputStream();
+            if(thumbnail) {
+                roadCamera.setThumbnail(BitmapFactory.decodeStream(is));
+            } else {
+                roadCamera.setBitmap(BitmapFactory.decodeStream(is));
+
+            }
+        }
+    }
+
     private ArrayList<RoadCamera> getListOfCameras(Intent intent){
         if(intent.hasExtra(READ_REQUEST_KEY)){
             RoadCameraReadRequest readRequest = intent.getParcelableExtra(READ_REQUEST_KEY);
@@ -96,10 +110,10 @@ public class RoadCameraImageReaderService extends IntentService {
         if(intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {
             return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
         } else {
-            return getCamerasByArea(intent);
+            return null;//getCamerasByArea(intent);
         }
     }
-
+/*
     private ArrayList<RoadCamera> getCamerasByArea(Intent intent){
         // TODO: Timeout for reading the thumbnails again
         if(!listReadingCompleted) {
@@ -114,8 +128,8 @@ public class RoadCameraImageReaderService extends IntentService {
         } else {
             return allRoadCameras;
         }
-
     }
+*/
 
     private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e) {
         failedReadings = (failedReadings != null ? failedReadings + ", " : "\n") + roadCamera.getTitle() + " (Thumbnail: " + roadCamera.getThumbnailLink() + ", " + ", URL: " + roadCamera.getImageLink() + ")\n";

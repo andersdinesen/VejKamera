@@ -258,4 +258,5 @@
     <string name="sort_by_alfabeth">Alphabetically</string>
     <string name="sort_by_near">Driving direction</string>
     <string name="sort_by_added">Order added</string>
+    <string name="pick_area">Pick area</string>
 </resources>

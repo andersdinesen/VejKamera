@@ -34,6 +34,7 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
     private static ArrayList<RoadCamera> allRoadCameras = new ArrayList<>();
     private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
+    private static HashMap<Integer, ArrayList<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
     private static ArrayList<RoadCamera> favoriteRoadCameras = new ArrayList<>();
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
@@ -178,8 +179,22 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static ArrayList<RoadCamera> filterListOfCameras(int areaResourceId, Context context){
-        Polygon areaPolygon = getAreaPolygon(areaResourceId, context);
-        return findRoadCameraInPolygon(getAllRoadCameras(context), areaPolygon);
+        ArrayList<RoadCamera> result = areaRoadCamerasHashMap.get(areaResourceId);
+
+        if(result == null){
+            Polygon areaPolygon = getAreaPolygon(areaResourceId, context);
+            result = findRoadCameraInPolygon(getAllRoadCameras(context), areaPolygon);
+            areaRoadCamerasHashMap.put(areaResourceId, result);
+        }
+        return result;
+    }
+
+    public static ArrayList<String> getSyncIdsFromRoadCameras(ArrayList<RoadCamera> roadCameras) {
+        ArrayList<String> syncIds = new ArrayList<>();
+        for(RoadCamera roadCamera : roadCameras){
+            syncIds.add(roadCamera.getSyncId());
+        }
+        return syncIds;
     }
 
     @NonNull

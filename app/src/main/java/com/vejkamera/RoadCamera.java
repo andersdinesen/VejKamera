@@ -19,6 +19,7 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
     private Long time = new Long(0L);
     private Integer direction = new Integer(0);
     private Bitmap bitmap = null;
+    private Bitmap thumbnail = null;
 
     public RoadCamera() {
     }
@@ -111,6 +112,7 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
         time = in.readLong();
         direction = in.readInt();
         bitmap = in.readParcelable(RoadCamera.class.getClassLoader());
+        thumbnail = in.readParcelable(RoadCamera.class.getClassLoader());
     }
 
     public RoadCamera(Parcel in, ClassLoader classLoader) {
@@ -125,6 +127,7 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
         time = in.readLong();
         direction = in.readInt();
         bitmap = in.readParcelable(classLoader);
+        thumbnail = in.readParcelable(classLoader);
     }
 
     public String getTitle() {
@@ -151,6 +154,10 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
         this.bitmap = bitmap;
     }
 
+    public Bitmap getThumbnail() { return thumbnail; }
+
+    public void setThumbnail(Bitmap thumbnail) { this.thumbnail = thumbnail; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -169,6 +176,7 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
         dest.writeLong(time);
         dest.writeInt(direction);
         dest.writeParcelable(bitmap, flags);
+        dest.writeParcelable(thumbnail, flags);
     }
 
     public static final Parcelable.Creator<RoadCamera> CREATOR = new Parcelable.ClassLoaderCreator<RoadCamera>() {
