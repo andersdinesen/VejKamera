@@ -19,6 +19,7 @@ public class RoadCameraReadRequest implements Parcelable {
     public final static int READ_TYPE_AREA = 3;
     private int readType = 0;
     private ArrayList<String> syncIds = new ArrayList<>();
+    private boolean thumbNailsOnly = false;
 
     public RoadCameraReadRequest(int readType) {
         this.readType = readType;
@@ -37,6 +38,7 @@ public class RoadCameraReadRequest implements Parcelable {
     protected RoadCameraReadRequest(Parcel in) {
         readType = in.readInt();
         syncIds = in.createStringArrayList();
+        thumbNailsOnly = in.readByte() != 0;
     }
 
     public void addSyncId(String syncId) {
@@ -46,6 +48,10 @@ public class RoadCameraReadRequest implements Parcelable {
     public void setSyncIds(ArrayList<String> syncIds){
         this.syncIds = syncIds;
     }
+
+    public boolean isThumbNailsOnly() { return thumbNailsOnly; }
+
+    public void setThumbNailsOnly(boolean thumbNailsOnly) { this.thumbNailsOnly = thumbNailsOnly; }
 
     public ArrayList<RoadCamera> getRequestedRoadCameras(Context context){
         if(readType == READ_TYPE_FAVORITES){
@@ -69,6 +75,7 @@ public class RoadCameraReadRequest implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(readType);
         dest.writeStringList(syncIds);
+        dest.writeByte((byte) (thumbNailsOnly ? 1 : 0));
     }
 
     public static final Creator<RoadCameraReadRequest> CREATOR = new Creator<RoadCameraReadRequest>() {

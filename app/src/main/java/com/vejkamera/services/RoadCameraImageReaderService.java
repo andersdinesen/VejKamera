@@ -39,6 +39,7 @@ public class RoadCameraImageReaderService extends IntentService {
     private static Boolean listReadingCompleted = false;
 
     private ArrayList<RoadCamera> roadCameras = null;
+    private RoadCameraReadRequest readRequest = null;
 
     public RoadCameraImageReaderService() {
         super(RoadCameraImageReaderService.class.getSimpleName());
@@ -60,16 +61,17 @@ public class RoadCameraImageReaderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //String urlPath = getString(R.string.URL_path);
+        readRequest = intent.getParcelableExtra(READ_REQUEST_KEY);
         roadCameras = getListOfCameras(intent);
         String failedReadings = null;
-        boolean thumbnailsOnly = (intent.hasExtra(THUMBNAILS_ONLY_KEY) && intent.getStringExtra(THUMBNAILS_ONLY_KEY).equalsIgnoreCase("Y"));
+        boolean thumbnailsOnly = readRequest.isThumbNailsOnly();//( intent.hasExtra(THUMBNAILS_ONLY_KEY) && intent.getStringExtra(THUMBNAILS_ONLY_KEY).equalsIgnoreCase("Y"));
 
         for (RoadCamera roadCamera : roadCameras) {
             try {
                 //TODO Timeout for reading thumbnails again
                 if(thumbnailsOnly && roadCamera.getThumbnail() == null) {
                     updateImageFromURL(roadCamera, true);
-                } else {
+                } else if(!thumbnailsOnly) {
                     updateImageFromURL(roadCamera, false);
                 }
             } catch (MalformedURLException e) {
@@ -102,8 +104,7 @@ public class RoadCameraImageReaderService extends IntentService {
     }
 
     private ArrayList<RoadCamera> getListOfCameras(Intent intent){
-        if(intent.hasExtra(READ_REQUEST_KEY)){
-            RoadCameraReadRequest readRequest = intent.getParcelableExtra(READ_REQUEST_KEY);
+        if(readRequest != null){
             return readRequest.getRequestedRoadCameras(getBaseContext());
         }
 
