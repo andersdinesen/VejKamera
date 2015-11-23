@@ -85,9 +85,7 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
     }
 
     private void adjustImageHeight(ImageView image) {
-        float scale = 300;
-
-        if(imageHeightGrid1 == 0 || imageHeightGrid2 ==0 || imageHeightGrid3 == 0){
+         if(imageHeightGrid1 == 0 || imageHeightGrid2 ==0 || imageHeightGrid3 == 0){
             WindowManager wm = (WindowManager) parent.getContext().getSystemService(Context.WINDOW_SERVICE);
             DisplayMetrics metrics = new DisplayMetrics();
             wm.getDefaultDisplay().getMetrics(metrics);
@@ -100,15 +98,12 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
         switch (RoadCameraArchiveHandler.getFavoritesGridLayout(parent.getContext())) {
             case 1:
                 image.getLayoutParams().height = imageHeightGrid1;
-                scale = imageHeightGrid1;
                 break;
             case 2:
                 image.getLayoutParams().height = imageHeightGrid2;
-                scale = imageHeightGrid2;
                 break;
             case 3:
                 image.getLayoutParams().height = imageHeightGrid3;
-                scale = imageHeightGrid3;
                 break;
         }
     }
