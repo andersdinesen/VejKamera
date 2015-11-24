@@ -224,6 +224,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_favorites, menu);
         return true;
@@ -285,29 +286,36 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
         RoadCameraArchiveHandler.setFavoritesGridLayout(newLayout, this);
 
+        adjustGridLayoutIcon();
+    }
+
+    private void adjustGridLayoutIcon() {
+        int gridLayout = RoadCameraArchiveHandler.getFavoritesGridLayout(this);
         MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
-        switch(newLayout){
-            case 1:
-                if(android.os.Build.VERSION.SDK_INT >= 21) {
-                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                } else {
-                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                }
-                break;
-            case 2:
-                if(android.os.Build.VERSION.SDK_INT >= 21) {
-                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                } else {
-                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                }
-                break;
-            case 3:
-                if(android.os.Build.VERSION.SDK_INT >= 21) {
-                    menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                } else {
-                    menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                }
-                break;
+        if(menuItem!=null) {
+            switch (gridLayout) {
+                case 1:
+                    if (android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
+                    }
+                    break;
+                case 2:
+                    if (android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
+                    }
+                    break;
+                case 3:
+                    if (android.os.Build.VERSION.SDK_INT >= 21) {
+                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                    } else {
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
+                    }
+                    break;
+            }
         }
     }
 
@@ -341,6 +349,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
