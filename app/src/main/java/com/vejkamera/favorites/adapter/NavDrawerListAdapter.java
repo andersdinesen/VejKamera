@@ -2,6 +2,7 @@ package com.vejkamera.favorites.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,17 +44,27 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        /*
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+        }*/
+
+        NavDrawerItem currentNavDrawerItem = navDrawerItems.get(position);
+        if (convertView == null) {
+            convertView = currentNavDrawerItem.setupLayout(convertView, context);
         }
-
-        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-
-        imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
-        txtTitle.setText(navDrawerItems.get(position).getTitle());
-
+        /*
+        if(currentNavDrawerItem instanceof NavDrawerItemMainHeading){
+            imgIcon.setImageResource(((NavDrawerItemMainHeading) currentNavDrawerItem).getIcon());
+        } else if (currentNavDrawerItem instanceof NavDrawerItemHeading) {
+            imgIcon.setImageResource(((NavDrawerItemHeading) navDrawerItems.get(position)).getIcon());
+            txtTitle.setText(((NavDrawerItemHeading) navDrawerItems.get(position)).getTitle());
+            txtTitle.setTypeface(null, Typeface.BOLD);
+        } else if (currentNavDrawerItem instanceof NavDrawerItemLine) {
+            txtTitle.setText(((NavDrawerItemLine) navDrawerItems.get(position)).getTitle());
+        }
+*/
         return convertView;
     }
 

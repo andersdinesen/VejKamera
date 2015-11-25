@@ -12,6 +12,9 @@
     <string name="add_favorit">Add Favorite</string>
     <string name="add_by_map">Add by map</string>
     <string name="add_from_lists">Add from lists</string>
+    <string name="profiles">Profiles</string>
+    <string name="add_profile">Add profile...</string>
+    <string name="remove_profile">Remove profile...</string>
 
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
 

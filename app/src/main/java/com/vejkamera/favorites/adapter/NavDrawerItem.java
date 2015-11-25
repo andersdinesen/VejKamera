@@ -1,35 +1,11 @@
 package com.vejkamera.favorites.adapter;
 
+import android.content.Context;
+import android.view.View;
+
 /**
  * Created by ad on 28-10-2015.
  */
-public class NavDrawerItem {
-    private String title;
-    private int icon;
-
-    public NavDrawerItem(String title, int icon){
-        this.title = title;
-        this.icon = icon;
-    }
-
-    public String getTitle(){
-        return this.title;
-    }
-
-    public int getIcon(){
-        return this.icon;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    public void setIcon(int icon){
-        this.icon = icon;
-    }
-
-    @Override
-    public String toString() {
-        return title;
-    }
+public interface  NavDrawerItem {
+    View setupLayout(View convertView, Context context);
 }

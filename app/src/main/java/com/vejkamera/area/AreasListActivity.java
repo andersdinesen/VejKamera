@@ -1,6 +1,5 @@
 package com.vejkamera.area;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +21,7 @@ public class AreasListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_city_list);
+        setContentView(R.layout.activity_areas_list);
 
         final ListView cityListView = (ListView) findViewById(R.id.city_listview);
         final ArrayList<String> listOfCities = new ArrayList<>();

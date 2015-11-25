@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="TextDimTop">5dp</dimen>
+    <dimen name="drawer_menu_width">240dp</dimen>
+    <dimen name="drawer_main_header">36dp</dimen>
 </resources>

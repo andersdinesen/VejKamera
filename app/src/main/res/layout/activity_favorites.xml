@@ -50,13 +50,12 @@
 
         </RelativeLayout>
     <!-- The navigation drawer -->
+
     <ListView
         android:id="@+id/list_slidermenu"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/drawer_menu_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#111"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
+        android:background="@color/white"
+        android:choiceMode="singleChoice" />
 </android.support.v4.widget.DrawerLayout>

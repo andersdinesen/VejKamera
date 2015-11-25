@@ -38,6 +38,9 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
+import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
+import com.vejkamera.favorites.adapter.NavDrawerItemLine;
+import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
@@ -84,9 +87,15 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<NavDrawerItem>();
+        ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<>();
 
         // adding nav drawer items to array
+        navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
+        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
+        navDrawerItems.add(new NavDrawerItemLine("Profile 1"));
+        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
+        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
+        /*
         String[] navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
         TypedArray navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
@@ -98,7 +107,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         // Recycle the typed array
         navMenuIcons.recycle();
-
+*/
         NavDrawerListAdapter drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(drawerListAdapter);
 
@@ -163,8 +172,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     private void setupFloatingButtonListener(){
-        final NavDrawerItem[] addByItems = {new NavDrawerItem(getString(R.string.add_by_map), R.drawable.ic_add_by_location_24dp),
-                new NavDrawerItem(getString(R.string.add_from_lists), R.drawable.ic_playlist_add_black_24dp)};
+        final NavDrawerItemHeading[] addByItems = {new NavDrawerItemHeading(getString(R.string.add_by_map), R.drawable.ic_add_by_location_24dp),
+                new NavDrawerItemHeading(getString(R.string.add_from_lists), R.drawable.ic_playlist_add_black_24dp)};
 
         ListAdapter addByAdapter = new ArrayAdapter<NavDrawerItem>(this, android.R.layout.select_dialog_item, android.R.id.text1, addByItems){
             public View getView(int position, View convertView, ViewGroup parent) {
