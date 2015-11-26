@@ -127,7 +127,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             });
         }
     }
-
+/*
     private class CameraImagesResponseReceiver extends BroadcastReceiver {
 
         @Override
@@ -141,7 +141,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
         }
     }
-
+*/
     private class CameraListingResponseReceiver extends BroadcastReceiver {
 
         @Override

@@ -38,10 +38,10 @@ public class RoadCameraLoopReaderService extends IntentService{
     protected void onHandleIntent(Intent intent) {
         originalIntent = intent;
         System.out.println("Started RoadCameraLoopReaderService");
-        if(!intent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY) && !intent.hasExtra(RoadCameraImageReaderService.READ_REQUEST_KEY)){
-            throw new IllegalArgumentException("Intent missing Extra value for " + RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY + " or " +RoadCameraImageReaderService.READ_REQUEST_KEY);
+        if( !intent.hasExtra(RoadCameraImageReaderService.READ_REQUEST_KEY)){
+            throw new IllegalArgumentException("Intent missing Extra value for Read Request: " +RoadCameraImageReaderService.READ_REQUEST_KEY);
         }
-        roadCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+        //roadCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
         setupReceiver();
         readCameraListInLoop();
     }
@@ -57,9 +57,10 @@ public class RoadCameraLoopReaderService extends IntentService{
             }
             // Not starting the service a a separate thread, since we are already in separate (from main) thread
             roadCameraImageReaderService.onHandleIntent(readIntent);
+            /*
             if(originalIntent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY)) {
                 roadCameras = roadCameraImageReaderService.getRoadCameras();
-            }
+            }*/
             broadcastResult();
             sleep();
         }
@@ -95,18 +96,18 @@ public class RoadCameraLoopReaderService extends IntentService{
 
     private void broadcastResult() {
         Intent localIntent = new Intent(BROADCAST_IMAGE_LOOP_READING_UPDATE);
-        if(originalIntent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY)) {
+        //if(originalIntent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY)) {
             //localIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
-        } else {
+        //} else {
             localIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
-        }
+        //}
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
     private class LoopFavoritesResponseReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            roadCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+            //roadCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             broadcastResult();
         }
     }

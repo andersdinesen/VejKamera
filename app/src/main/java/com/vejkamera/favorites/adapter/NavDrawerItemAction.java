@@ -13,11 +13,11 @@ import com.vejkamera.R;
 /**
  * Created by ad on 28-10-2015.
  */
-public class NavDrawerItemHeading implements NavDrawerItem {
+public class NavDrawerItemAction implements NavDrawerItem {
     private String title;
     private int icon;
 
-    public NavDrawerItemHeading(String title, int icon){
+    public NavDrawerItemAction(String title, int icon){
         this.title = title;
         this.icon = icon;
     }
@@ -42,7 +42,7 @@ public class NavDrawerItemHeading implements NavDrawerItem {
     public View setupLayout(View convertView, Context context){
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_header, null);
+            convertView = mInflater.inflate(R.layout.drawer_list_action, null);
         }
 
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);

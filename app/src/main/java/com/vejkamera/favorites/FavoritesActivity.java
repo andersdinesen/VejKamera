@@ -38,6 +38,7 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
+import com.vejkamera.favorites.adapter.NavDrawerItemAction;
 import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
 import com.vejkamera.favorites.adapter.NavDrawerItemLine;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
@@ -93,8 +94,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
         navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
         navDrawerItems.add(new NavDrawerItemLine("Profile 1"));
-        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
-        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
+        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
+        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
         /*
         String[] navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
         TypedArray navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
@@ -399,11 +400,11 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            favorites.clear();
+            //favorites.clear();
 
-            ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+            //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
-            favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
+            //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
             sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);

@@ -34,6 +34,9 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITE_LATITUDE_PREF_NAME = "FAVORITE_LATITUDE_";
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
+    private final static String AVALIABLE_PROFILES_PREF_NAME = "AVALIABLE_PROFILES";
+    private final static String PROFILES_NAMES_PREF_NAME = "PROFILE_NAMES";
+    private final static String CURRENT_PROFILE_PREF_NAME = "CURRENT_PROFILE_PREF_NAME";
     private static List<RoadCamera> allRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
     private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
     private static HashMap<Integer, List<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
@@ -66,7 +69,6 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static List<RoadCamera> getFavorites(Context context) {
-        //ArrayList<RoadCamera> favorites = new ArrayList<>();
         synchronized (favoriteRoadCameras) {
             if (favoriteRoadCameras.size() == 0) {
                 SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -104,7 +106,9 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static void removeFavorite(RoadCamera roadCamera, Context context) {
-        getFavorites(context).remove(roadCamera);
+        synchronized (favoriteRoadCameras) {
+            getFavorites(context).remove(roadCamera);
+        }
 
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME, new HashSet<String>());
@@ -123,6 +127,11 @@ public final class RoadCameraArchiveHandler {
         editor.commit();
 
         Toast.makeText(context, R.string.toast_favorite_removed, Toast.LENGTH_SHORT).show();
+    }
+
+    public static int getCurrentProfile(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(CURRENT_PROFILE_PREF_NAME, 0);
     }
 
     public static void setFavoritesGridLayout(int cellsPerRow, Context context){
