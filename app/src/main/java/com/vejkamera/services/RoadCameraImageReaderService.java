@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Anders on 27-05-2015.
@@ -38,7 +39,7 @@ public class RoadCameraImageReaderService extends IntentService {
     private static ArrayList<RoadCamera> allRoadCameras = null;
     private static Boolean listReadingCompleted = false;
 
-    private ArrayList<RoadCamera> roadCameras = null;
+    private List<RoadCamera> roadCameras = null;
     private RoadCameraReadRequest readRequest = null;
 
     public RoadCameraImageReaderService() {
@@ -54,7 +55,7 @@ public class RoadCameraImageReaderService extends IntentService {
         super(name);
     }
 
-    public ArrayList<RoadCamera> getRoadCameras()  {
+    public List<RoadCamera> getRoadCameras()  {
         return roadCameras;
     }
 
@@ -103,7 +104,7 @@ public class RoadCameraImageReaderService extends IntentService {
         }
     }
 
-    private ArrayList<RoadCamera> getListOfCameras(Intent intent){
+    private List<RoadCamera> getListOfCameras(Intent intent){
         if(readRequest != null){
             return readRequest.getRequestedRoadCameras(getBaseContext());
         }
@@ -138,9 +139,9 @@ public class RoadCameraImageReaderService extends IntentService {
         return failedReadings;
     }
 
-    private void broadcastResult(ArrayList<RoadCamera> roadCameras) {
+    private void broadcastResult(List<RoadCamera> roadCameras) {
         Intent localIntent = new Intent(BROADCAST_IMAGE_READING_DONE);
-        localIntent.putExtra(ROAD_CAMERA_LIST_KEY, roadCameras);
+        //localIntent.putExtra(ROAD_CAMERA_LIST_KEY, roadCameras);
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 

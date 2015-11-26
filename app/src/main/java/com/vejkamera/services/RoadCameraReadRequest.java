@@ -8,6 +8,7 @@ import com.vejkamera.RoadCamera;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ad on 12-11-2015.
@@ -18,7 +19,7 @@ public class RoadCameraReadRequest implements Parcelable {
     public final static int READ_TYPE_SYNC_IDS = 2;
     public final static int READ_TYPE_AREA = 3;
     private int readType = 0;
-    private ArrayList<String> syncIds = new ArrayList<>();
+    private List<String> syncIds = new ArrayList<>();
     private boolean thumbNailsOnly = false;
 
     public RoadCameraReadRequest(int readType) {
@@ -30,7 +31,7 @@ public class RoadCameraReadRequest implements Parcelable {
         this.syncIds.add(syncId);
     }
 
-    public RoadCameraReadRequest(int readType, ArrayList<String> syncIds) {
+    public RoadCameraReadRequest(int readType, List<String> syncIds) {
         this.readType = readType;
         this.syncIds = syncIds;
     }
@@ -53,7 +54,7 @@ public class RoadCameraReadRequest implements Parcelable {
 
     public void setThumbNailsOnly(boolean thumbNailsOnly) { this.thumbNailsOnly = thumbNailsOnly; }
 
-    public ArrayList<RoadCamera> getRequestedRoadCameras(Context context){
+    public List<RoadCamera> getRequestedRoadCameras(Context context){
         if(readType == READ_TYPE_FAVORITES){
             return RoadCameraArchiveHandler.getFavorites(context);
         } else if(readType == READ_TYPE_ALL) {

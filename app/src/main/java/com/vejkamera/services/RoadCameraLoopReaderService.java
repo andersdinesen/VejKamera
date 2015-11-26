@@ -11,6 +11,7 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ad on 21-10-2015.
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 public class RoadCameraLoopReaderService extends IntentService{
     public static final String BROADCAST_IMAGE_LOOP_READING_UPDATE = "com.vejkamera.IMAGE_LOOP_READING_UPDATE";
     public static final String BROADCAST_IMAGE_LOOP_READING_STOP = "com.vejkamera.IMAGE_LOOP_READING_STOP";
-    private ArrayList<RoadCamera> roadCameras = new ArrayList<>();
+    private List<RoadCamera> roadCameras = new ArrayList<>();
     private RoadCameraImageReaderService roadCameraImageReaderService = new RoadCameraImageReaderService();
     private Boolean continueLoop = true;
     private LoopFavoritesResponseReceiver loopFavoritesResponseReceiver = new LoopFavoritesResponseReceiver();
@@ -52,7 +53,7 @@ public class RoadCameraLoopReaderService extends IntentService{
                 readRequest = originalIntent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
                 readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
             } else {
-                readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
+                //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
             }
             // Not starting the service a a separate thread, since we are already in separate (from main) thread
             roadCameraImageReaderService.onHandleIntent(readIntent);
@@ -95,7 +96,7 @@ public class RoadCameraLoopReaderService extends IntentService{
     private void broadcastResult() {
         Intent localIntent = new Intent(BROADCAST_IMAGE_LOOP_READING_UPDATE);
         if(originalIntent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY)) {
-            localIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
+            //localIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
         } else {
             localIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
         }

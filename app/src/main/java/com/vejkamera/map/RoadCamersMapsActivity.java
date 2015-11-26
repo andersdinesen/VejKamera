@@ -32,10 +32,11 @@ import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RoadCamersMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    ArrayList<RoadCamera> cameraList = new ArrayList();
+    List<RoadCamera> cameraList = new ArrayList();
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
     private GoogleMap mMap;
 

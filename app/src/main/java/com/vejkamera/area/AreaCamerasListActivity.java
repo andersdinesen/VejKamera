@@ -24,13 +24,14 @@ import com.vejkamera.services.RoadCameraListingReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AreaCamerasListActivity extends AppCompatActivity {
     public final static String EXTRA_AREA_NAME_KEY = "AREA_NAME";
     public final static String EXTRA_AREA_POSITION_KEY = "AREA_POSITION";
     ArrayAdapter<RoadCamera> adapter;
-    ArrayList<RoadCamera> cameraList = new ArrayList();
+    List<RoadCamera> cameraList = new ArrayList();
     int areaPosition = 0;
     RoadCameraReadRequest readRequest;
     private CameraImagesResponseReceiver cameraImageResponseReceiver;
@@ -66,7 +67,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
         if (Constants.AREA_IDS[areaPosition] == R.string.all_areas) {
             readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_ALL);
         } else {
-            ArrayList<String> areaSyncIds = RoadCameraArchiveHandler.getSyncIdsFromRoadCameras(RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this));
+            List<String> areaSyncIds = RoadCameraArchiveHandler.getSyncIdsFromRoadCameras(RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this));
             readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, areaSyncIds);
         }
         readRequest.setThumbNailsOnly(true);

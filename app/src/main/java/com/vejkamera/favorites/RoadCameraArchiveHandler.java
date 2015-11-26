@@ -14,9 +14,11 @@ import com.vejkamera.RoadCamera;
 import com.vejkamera.services.RoadCameraListingReaderService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 
@@ -32,10 +34,10 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITE_LATITUDE_PREF_NAME = "FAVORITE_LATITUDE_";
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
-    private static ArrayList<RoadCamera> allRoadCameras = new ArrayList<>();
+    private static List<RoadCamera> allRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
     private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
-    private static HashMap<Integer, ArrayList<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
-    private static ArrayList<RoadCamera> favoriteRoadCameras = new ArrayList<>();
+    private static HashMap<Integer, List<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
+    private static List<RoadCamera> favoriteRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
         synchronized (favoriteRoadCameras) {
@@ -63,7 +65,7 @@ public final class RoadCameraArchiveHandler {
         Toast.makeText(context, R.string.toast_favorite_added, Toast.LENGTH_SHORT).show();
     }
 
-    public static ArrayList<RoadCamera> getFavorites(Context context) {
+    public static List<RoadCamera> getFavorites(Context context) {
         //ArrayList<RoadCamera> favorites = new ArrayList<>();
         synchronized (favoriteRoadCameras) {
             if (favoriteRoadCameras.size() == 0) {
@@ -140,7 +142,7 @@ public final class RoadCameraArchiveHandler {
         getAllRoadCameras(context);
     }
 
-    public static ArrayList<RoadCamera> getAllRoadCameras(Context context){
+    public static List<RoadCamera> getAllRoadCameras(Context context){
         synchronized (allRoadCameras) {
             if (allRoadCameras.size() == 0) {
                 readAllCameraInfo(context);
@@ -150,7 +152,7 @@ public final class RoadCameraArchiveHandler {
         return allRoadCameras;
     }
 
-    public static void setAllRoadCameras(ArrayList<RoadCamera> allNewRoadCameras) {
+    public static void setAllRoadCameras(List<RoadCamera> allNewRoadCameras) {
         synchronized (allRoadCameras) {
             allRoadCameras.clear();
             allRoadCamerasHashMap.clear();
@@ -170,7 +172,7 @@ public final class RoadCameraArchiveHandler {
         return allRoadCamerasHashMap.get(syncId);
     }
 
-    public static ArrayList<RoadCamera> getRoadCameraFromSyncIdList(ArrayList<String> syncIdList, Context context){
+    public static List<RoadCamera> getRoadCameraFromSyncIdList(List<String> syncIdList, Context context){
         ArrayList<RoadCamera> result = new ArrayList<>();
         for(String syncId : syncIdList) {
             result.add(getRoadCameraFromSyncId(syncId, context));
@@ -178,8 +180,8 @@ public final class RoadCameraArchiveHandler {
         return result;
     }
 
-    public static ArrayList<RoadCamera> filterListOfCameras(int areaResourceId, Context context){
-        ArrayList<RoadCamera> result = areaRoadCamerasHashMap.get(areaResourceId);
+    public static List<RoadCamera> filterListOfCameras(int areaResourceId, Context context){
+        List<RoadCamera> result = areaRoadCamerasHashMap.get(areaResourceId);
 
         if(result == null){
             Polygon areaPolygon = getAreaPolygon(areaResourceId, context);
@@ -189,7 +191,7 @@ public final class RoadCameraArchiveHandler {
         return result;
     }
 
-    public static ArrayList<String> getSyncIdsFromRoadCameras(ArrayList<RoadCamera> roadCameras) {
+    public static List<String> getSyncIdsFromRoadCameras(List<RoadCamera> roadCameras) {
         ArrayList<String> syncIds = new ArrayList<>();
         for(RoadCamera roadCamera : roadCameras){
             syncIds.add(roadCamera.getSyncId());
@@ -198,7 +200,7 @@ public final class RoadCameraArchiveHandler {
     }
 
     @NonNull
-    private static ArrayList<RoadCamera> findRoadCameraInPolygon(ArrayList<RoadCamera> roadCameras, Polygon areaPolygon) {
+    private static List<RoadCamera> findRoadCameraInPolygon(List<RoadCamera> roadCameras, Polygon areaPolygon) {
         ArrayList<RoadCamera> resultCameras = new ArrayList<>();
         Iterator<RoadCamera> roadCameraIterator = roadCameras.iterator();
         while (roadCameraIterator.hasNext()){
