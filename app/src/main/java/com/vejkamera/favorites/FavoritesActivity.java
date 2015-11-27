@@ -93,22 +93,13 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         // adding nav drawer items to array
         navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
         navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
-        navDrawerItems.add(new NavDrawerItemLine("Profile 1"));
+        for(int i : RoadCameraArchiveHandler.getAllProfileIds(this)){
+            navDrawerItems.add(new NavDrawerItemLine(RoadCameraArchiveHandler.getProfileName(i, this)));
+        }
+        navDrawerItems.add(new NavDrawerItemLine("XXX"));
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
-        /*
-        String[] navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-        TypedArray navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
 
-        // Recycle the typed array
-        navMenuIcons.recycle();
-*/
         NavDrawerListAdapter drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(drawerListAdapter);
 
@@ -228,7 +219,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
         //readIntent.putExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY, RoadCameraImageReaderService.TYPE_TO_READ_FAVORITES);
         readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_FAVORITES));
-        //bindService(readIntent, mConnection, Context.BIND_AUTO_CREATE);
         startService(readIntent);
     }
 
