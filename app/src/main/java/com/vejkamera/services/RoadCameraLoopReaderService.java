@@ -23,6 +23,7 @@ public class RoadCameraLoopReaderService extends IntentService{
     private RoadCameraImageReaderService roadCameraImageReaderService = new RoadCameraImageReaderService();
     private Boolean continueLoop = true;
     private LoopFavoritesResponseReceiver loopFavoritesResponseReceiver = new LoopFavoritesResponseReceiver();
+    private LoopStopResponseReceiver loopStopResponseReceiver = new LoopStopResponseReceiver();
     RoadCameraReadRequest readRequest;
     private Intent originalIntent;
 
@@ -49,18 +50,11 @@ public class RoadCameraLoopReaderService extends IntentService{
     private void readCameraListInLoop() {
         while (continueLoop) {
             Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
-            if(originalIntent.hasExtra(RoadCameraImageReaderService.READ_REQUEST_KEY)){
-                readRequest = originalIntent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
-                readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
-            } else {
-                //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, roadCameras);
-            }
+            readRequest = originalIntent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
+            readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
             // Not starting the service a a separate thread, since we are already in separate (from main) thread
             roadCameraImageReaderService.onHandleIntent(readIntent);
-            /*
-            if(originalIntent.hasExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY)) {
-                roadCameras = roadCameraImageReaderService.getRoadCameras();
-            }*/
+
             broadcastResult();
             sleep();
         }
@@ -72,6 +66,11 @@ public class RoadCameraLoopReaderService extends IntentService{
 
         IntentFilter intentStopFilter = new IntentFilter(BROADCAST_IMAGE_LOOP_READING_STOP);
         LocalBroadcastManager.getInstance(this).registerReceiver(new LoopStopResponseReceiver(), intentStopFilter);
+    }
+
+    private void teardownReceivers(){
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(loopFavoritesResponseReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(loopStopResponseReceiver);
     }
 
     private void sleep(){
@@ -89,6 +88,7 @@ public class RoadCameraLoopReaderService extends IntentService{
     public void onDestroy() {
         super.onDestroy();
         continueLoop = false;
+        teardownReceivers();
         synchronized (this){
             this.notify();
         }

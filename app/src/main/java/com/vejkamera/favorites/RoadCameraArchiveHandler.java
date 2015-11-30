@@ -71,7 +71,7 @@ public final class RoadCameraArchiveHandler {
 
     public static List<RoadCamera> getFavorites(Context context) {
         synchronized (favoriteRoadCameras) {
-            if (favoriteRoadCameras.size() == 0) {
+            if (favoriteRoadCameras.size() == 0 && context != null) {
                 SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
                 Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>());
 
