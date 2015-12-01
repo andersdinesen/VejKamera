@@ -20,15 +20,18 @@ import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -56,6 +59,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     FavoriteRecycleListAdapter recycleListAdapter;
     ArrayList<RoadCamera> favorites = new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
+    ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<>();
+    NavDrawerListAdapter drawerListAdapter;
     Intent readIntent = null;
     AlertDialog.Builder addByDialogBuilder;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -87,20 +92,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        loadDrawerMenuItems();
 
-        ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<>();
-
-        // adding nav drawer items to array
-        navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
-        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
-        for(int i : RoadCameraArchiveHandler.getAllProfileIds(this)){
-            navDrawerItems.add(new NavDrawerItemLine(RoadCameraArchiveHandler.getProfileName(i, this)));
-        }
-        navDrawerItems.add(new NavDrawerItemLine("XXX"));
-        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
-        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
-
-        NavDrawerListAdapter drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+        drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(drawerListAdapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -128,10 +122,27 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     }
 
+    private void loadDrawerMenuItems() {
+        // adding nav drawer items to array
+        navDrawerItems.clear();
+        navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
+        navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
+        for(int i : RoadCameraArchiveHandler.getAllProfileIds(this)){
+            navDrawerItems.add(new NavDrawerItemLine(RoadCameraArchiveHandler.getProfileName(i, this)));
+        }
+        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
+        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
+        navDrawerItems.add(new NavDrawerItemAction(getString(R.string.rename_profile), R.drawable.ic_code_black_24dp));
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+        startReadingFavorites();
+    }
+
+    private void startReadingFavorites(){
         updateFavorites();
         readFavoriteCameras();
     }
@@ -139,6 +150,10 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     protected void onPause() {
         super.onPause();
+        stopReadingFavorites();
+    }
+
+    private void stopReadingFavorites(){
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
         // For some reason a waiting service does not stop on stopService. Broadcasting stop intent instead.
         //stopService(readIntent);
@@ -216,8 +231,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
 
         //Start service to read favorites
-        //readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, favorites);
-        //readIntent.putExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY, RoadCameraImageReaderService.TYPE_TO_READ_FAVORITES);
         readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_FAVORITES));
         startService(readIntent);
     }
@@ -410,7 +423,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            NavDrawerItem navDrawerItem =  (NavDrawerItem) parent.getItemAtPosition(position);
+            if(navDrawerItem instanceof NavDrawerItemAction){
+                handleNavDrawerActionClick((NavDrawerItemAction) navDrawerItem, view.getContext());
+            }
+
                 // display view for selected nav drawer item
+            /*
             switch (position) {
                 case 1:
                     Intent intent = new Intent(parent.getContext(), AreasListActivity.class);
@@ -418,7 +438,66 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     break;
                 default:
                     break;
+            }*/
+        }
+
+        private void handleNavDrawerActionClick(NavDrawerItemAction navDrawerItemAction, final Context context){
+            if(navDrawerItemAction.getTitle().equalsIgnoreCase(getString(R.string.add_profile))){
+                showAddProfileDialog();
+            } else if (navDrawerItemAction.getTitle().equalsIgnoreCase(getString(R.string.remove_profile))){
+                showRemoveProfileDialog();
             }
+            loadDrawerMenuItems();
+            drawerListAdapter.notifyDataSetChanged();
+        }
+
+        private void showAddProfileDialog(){
+            AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
+            builder.setTitle(getString(R.string.add_profile));
+
+            final EditText input = new EditText(FavoritesActivity.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String newProfileName = input.getText().toString();
+                    int newProfileId = RoadCameraArchiveHandler.createNewProfile(newProfileName, FavoritesActivity.this);
+                    RoadCameraArchiveHandler.changeCurrentProfile(newProfileId, FavoritesActivity.this);
+                    stopReadingFavorites();
+                    startReadingFavorites();
+                }
+            });
+            builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+
+        private void showRemoveProfileDialog(){
+            AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
+            final int currentProfileId = RoadCameraArchiveHandler.getCurrentProfile(FavoritesActivity.this);
+            builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraArchiveHandler.getProfileName(currentProfileId, FavoritesActivity.this));
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    RoadCameraArchiveHandler.removeProfile(currentProfileId, FavoritesActivity.this);
+                }
+            });
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
         }
     }
 }

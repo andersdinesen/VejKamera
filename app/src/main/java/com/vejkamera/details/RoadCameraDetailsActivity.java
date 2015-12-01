@@ -49,21 +49,8 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         setupLayout();
         setupFavoriteCheckBox();
     }
-/*
-    private ArrayList<RoadCamera> getListOfCameras(Intent intent) {
-        if (intent.hasExtra(RoadCameraImageReaderService.TYPE_TO_READ_KEY)) {
-            String syncId = intent.getStringExtra(RoadCameraImageReaderService.)
-            return RoadCameraArchiveHandler.getFavorites(getBaseContext());
-        }
 
-        if (intent.hasExtra(ROAD_CAMERA_LIST_KEY)) {
-            return intent.getParcelableArrayListExtra(ROAD_CAMERA_LIST_KEY);
-        }
-    }
-*/
     private void setupLayout() {
-        //setTitle(roadCamera.getTitle());
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_details);
         toolbar.setTitle(roadCamera.getTitle());
         setSupportActionBar(toolbar);
@@ -117,11 +104,6 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(cameraImagebroadcastReceiver, intentFilter);
 
         //Start service to read favorites
-        /*
-        ArrayList<RoadCamera> cameraList =  new ArrayList<>(1);
-        cameraList.add(roadCamera);
-        readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
-        */
         startService(readIntent);
 
 
