@@ -127,8 +127,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         navDrawerItems.clear();
         navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
         navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
-        for(int i : RoadCameraArchiveHandler.getAllProfileIds(this)){
-            navDrawerItems.add(new NavDrawerItemLine(RoadCameraArchiveHandler.getProfileName(i, this)));
+        for(int i : RoadCameraProfileHandler.getAllProfileIds(this)){
+            navDrawerItems.add(new NavDrawerItemLine(RoadCameraProfileHandler.getProfileName(i, this)));
         }
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
@@ -447,8 +447,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             } else if (navDrawerItemAction.getTitle().equalsIgnoreCase(getString(R.string.remove_profile))){
                 showRemoveProfileDialog();
             }
-            loadDrawerMenuItems();
-            drawerListAdapter.notifyDataSetChanged();
         }
 
         private void showAddProfileDialog(){
@@ -464,10 +462,15 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String newProfileName = input.getText().toString();
-                    int newProfileId = RoadCameraArchiveHandler.createNewProfile(newProfileName, FavoritesActivity.this);
-                    RoadCameraArchiveHandler.changeCurrentProfile(newProfileId, FavoritesActivity.this);
+                    int newProfileId = RoadCameraProfileHandler.createNewProfile(newProfileName, FavoritesActivity.this);
+                    RoadCameraProfileHandler.changeCurrentProfile(newProfileId, FavoritesActivity.this);
                     stopReadingFavorites();
                     startReadingFavorites();
+                    loadDrawerMenuItems();
+                    // notifyDataSetChanged() not working and resulting in inconsistent behaviour :-(
+                    //drawerListAdapter.notifyDataSetChanged();
+                    drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+                    mDrawerList.setAdapter(drawerListAdapter);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
@@ -482,12 +485,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         private void showRemoveProfileDialog(){
             AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
-            final int currentProfileId = RoadCameraArchiveHandler.getCurrentProfile(FavoritesActivity.this);
-            builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraArchiveHandler.getProfileName(currentProfileId, FavoritesActivity.this));
+            final int deleteProfileId = RoadCameraProfileHandler.getCurrentProfile(FavoritesActivity.this);
+            builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraProfileHandler.getProfileName(deleteProfileId, FavoritesActivity.this));
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    RoadCameraArchiveHandler.removeProfile(currentProfileId, FavoritesActivity.this);
+                    RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
+                    drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+                    mDrawerList.setAdapter(drawerListAdapter);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
