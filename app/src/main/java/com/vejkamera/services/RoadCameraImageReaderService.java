@@ -1,6 +1,7 @@
 package com.vejkamera.services;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -32,9 +33,15 @@ public class RoadCameraImageReaderService extends IntentService {
 
     private List<RoadCamera> roadCameras = null;
     private RoadCameraReadRequest readRequest = null;
+    private Context manualContext = null;
 
     public RoadCameraImageReaderService() {
         super(RoadCameraImageReaderService.class.getSimpleName());
+    }
+
+    public RoadCameraImageReaderService(Context context) {
+        super(RoadCameraImageReaderService.class.getSimpleName());
+        manualContext = context;
     }
 
     /**
@@ -54,7 +61,7 @@ public class RoadCameraImageReaderService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         //String urlPath = getString(R.string.URL_path);
         readRequest = intent.getParcelableExtra(READ_REQUEST_KEY);
-        roadCameras = readRequest.getRequestedRoadCameras(getBaseContext());
+        roadCameras = readRequest.getRequestedRoadCameras((getBaseContext() != null ? getBaseContext() : manualContext));
         String failedReadings = null;
         boolean thumbnailsOnly = readRequest.isThumbNailsOnly();
 

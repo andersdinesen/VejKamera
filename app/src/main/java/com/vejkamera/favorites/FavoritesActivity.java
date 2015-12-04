@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,7 +30,6 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,7 +41,7 @@ import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
 import com.vejkamera.favorites.adapter.NavDrawerItemAction;
 import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
-import com.vejkamera.favorites.adapter.NavDrawerItemLine;
+import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.map.RoadCamersMapsActivity;
@@ -61,11 +59,11 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
     ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<>();
     NavDrawerListAdapter drawerListAdapter;
-    Intent readIntent = null;
+    //Intent readIntent = null;
     AlertDialog.Builder addByDialogBuilder;
-    private ActionBarDrawerToggle mDrawerToggle;
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
+    private ActionBarDrawerToggle drawerToggle;
+    DrawerLayout drawerLayout;
+    ListView drawerList;
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
     private Sorting currentSorting = Sorting.BY_ADDED;
@@ -74,7 +72,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        readIntent = new Intent(this, RoadCameraLoopReaderService.class);
+        //readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         setContentView(R.layout.activity_favorites);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -90,17 +88,17 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         final CharSequence mTitle = getTitle();
         final CharSequence mDrawerTitle = mTitle;
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.list_slidermenu);
         loadDrawerMenuItems();
 
         drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
-        mDrawerList.setAdapter(drawerListAdapter);
+        drawerList.setAdapter(drawerListAdapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.app_name, // nav drawer open - description for accessibility
                 R.string.app_name // nav drawer close - description for accessibility
         ){
@@ -116,9 +114,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                 invalidateOptionsMenu();
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        drawerLayout.setDrawerListener(drawerToggle);
 
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        drawerList.setOnItemClickListener(new SlideMenuClickListener());
 
     }
 
@@ -127,8 +125,13 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         navDrawerItems.clear();
         navDrawerItems.add(new NavDrawerItemMainHeading(R.drawable.app_icon));
         navDrawerItems.add(new NavDrawerItemHeading(getString(R.string.profiles), R.drawable.ic_filter_black_24dp));
+        Integer currentProfileId = RoadCameraProfileHandler.getCurrentProfileId(this);
         for(int i : RoadCameraProfileHandler.getAllProfileIds(this)){
-            navDrawerItems.add(new NavDrawerItemLine(RoadCameraProfileHandler.getProfileName(i, this)));
+            NavDrawerProfileLine newNavDrawerProfileLine = new NavDrawerProfileLine(RoadCameraProfileHandler.getProfileName(i, this), i);
+            navDrawerItems.add(newNavDrawerProfileLine);
+            if(currentProfileId != null && i == currentProfileId){
+                newNavDrawerProfileLine.setIsSelected(true);
+            }
         }
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.add_profile), R.drawable.ic_add_circle_outline_black_24dp));
         navDrawerItems.add(new NavDrawerItemAction(getString(R.string.remove_profile), R.drawable.ic_remove_circle_outline_black_24dp));
@@ -137,8 +140,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPostResume() {
+        super.onPostResume();
         startReadingFavorites();
     }
 
@@ -231,6 +234,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritesResponseReceiver, intentFilter);
 
         //Start service to read favorites
+        Intent readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_FAVORITES));
         startService(readIntent);
     }
@@ -246,7 +250,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     @TargetApi(21)
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         int id = item.getItemId();
@@ -339,7 +343,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
-        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
         //menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -360,7 +364,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        drawerToggle.syncState();
     }
 
 
@@ -369,7 +373,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -428,17 +432,25 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             if(navDrawerItem instanceof NavDrawerItemAction){
                 handleNavDrawerActionClick((NavDrawerItemAction) navDrawerItem, view.getContext());
             }
+            else if(navDrawerItem instanceof NavDrawerProfileLine){
+                handleNavDrawerProfileClick((NavDrawerProfileLine) navDrawerItem, view);
+            }
+        }
 
-                // display view for selected nav drawer item
-            /*
-            switch (position) {
-                case 1:
-                    Intent intent = new Intent(parent.getContext(), AreasListActivity.class);
-                    startActivity(intent);
-                    break;
-                default:
-                    break;
-            }*/
+        private void handleNavDrawerProfileClick(NavDrawerProfileLine navDrawerProfileLine, final View view){
+            // Remove selection from current line
+            for(NavDrawerItem listNavDrawerItem : navDrawerItems){
+                if(listNavDrawerItem instanceof NavDrawerProfileLine){
+                    ((NavDrawerProfileLine)listNavDrawerItem).handleNotSelected();
+                }
+            }
+
+            // Handle select of profile
+            RoadCameraProfileHandler.changeCurrentProfile(navDrawerProfileLine.getProfileId(), view.getContext());
+            navDrawerProfileLine.handleSelected();
+
+            updateFavorites();
+            drawerLayout.closeDrawer(drawerList);
         }
 
         private void handleNavDrawerActionClick(NavDrawerItemAction navDrawerItemAction, final Context context){
@@ -470,7 +482,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     // notifyDataSetChanged() not working and resulting in inconsistent behaviour :-(
                     //drawerListAdapter.notifyDataSetChanged();
                     drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
-                    mDrawerList.setAdapter(drawerListAdapter);
+                    drawerList.setAdapter(drawerListAdapter);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
@@ -485,14 +497,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         private void showRemoveProfileDialog(){
             AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
-            final int deleteProfileId = RoadCameraProfileHandler.getCurrentProfile(FavoritesActivity.this);
+            final int deleteProfileId = RoadCameraProfileHandler.getCurrentProfileId(FavoritesActivity.this);
             builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraProfileHandler.getProfileName(deleteProfileId, FavoritesActivity.this));
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
                     drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
-                    mDrawerList.setAdapter(drawerListAdapter);
+                    drawerList.setAdapter(drawerListAdapter);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

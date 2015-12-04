@@ -67,7 +67,7 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static List<RoadCamera> getFavorites(Context context) {
-        if(RoadCameraProfileHandler.getCurrentProfile(context) == null){
+        if(RoadCameraProfileHandler.getCurrentProfileId(context) == null){
             return new ArrayList<>();
         }
 
@@ -132,7 +132,7 @@ public final class RoadCameraArchiveHandler {
     }
 
     private static String getProfilePrefPostfix(Context context){
-        return "_" + RoadCameraProfileHandler.getCurrentProfile(context);
+        return "_" + RoadCameraProfileHandler.getCurrentProfileId(context);
     }
 
     public static void setFavoritesGridLayout(int cellsPerRow, Context context){

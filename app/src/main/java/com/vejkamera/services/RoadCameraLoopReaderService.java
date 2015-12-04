@@ -20,7 +20,7 @@ public class RoadCameraLoopReaderService extends IntentService{
     public static final String BROADCAST_IMAGE_LOOP_READING_UPDATE = "com.vejkamera.IMAGE_LOOP_READING_UPDATE";
     public static final String BROADCAST_IMAGE_LOOP_READING_STOP = "com.vejkamera.IMAGE_LOOP_READING_STOP";
     private List<RoadCamera> roadCameras = new ArrayList<>();
-    private RoadCameraImageReaderService roadCameraImageReaderService = new RoadCameraImageReaderService();
+    private RoadCameraImageReaderService roadCameraImageReaderService;
     private Boolean continueLoop = true;
     private LoopFavoritesResponseReceiver loopFavoritesResponseReceiver = new LoopFavoritesResponseReceiver();
     private LoopStopResponseReceiver loopStopResponseReceiver = new LoopStopResponseReceiver();
@@ -38,7 +38,6 @@ public class RoadCameraLoopReaderService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent) {
         originalIntent = intent;
-        System.out.println("Started RoadCameraLoopReaderService");
         if( !intent.hasExtra(RoadCameraImageReaderService.READ_REQUEST_KEY)){
             throw new IllegalArgumentException("Intent missing Extra value for Read Request: " +RoadCameraImageReaderService.READ_REQUEST_KEY);
         }
@@ -48,6 +47,7 @@ public class RoadCameraLoopReaderService extends IntentService{
     }
 
     private void readCameraListInLoop() {
+        roadCameraImageReaderService =  new RoadCameraImageReaderService(getApplicationContext());
         while (continueLoop) {
             Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
             readRequest = originalIntent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);

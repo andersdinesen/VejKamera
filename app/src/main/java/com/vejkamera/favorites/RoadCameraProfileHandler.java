@@ -14,10 +14,10 @@ public class RoadCameraProfileHandler {
     private final static String CURRENT_PROFILE_PREF_NAME = "CURRENT_PROFILE";
     private final static String DEFAULT_PROFILE_NAME = "Profile";
 
-    public static Integer getCurrentProfile(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        int currentProfileId = sharedPref.getInt(CURRENT_PROFILE_PREF_NAME, -1);
-        return (currentProfileId != -1 ? currentProfileId : null);
+    public static Integer getCurrentProfileId(Context context){
+         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+         int currentProfileId = sharedPref.getInt(CURRENT_PROFILE_PREF_NAME, -1);
+         return (currentProfileId != -1 ? currentProfileId : null);
     }
 
     public static ArrayList<Integer> getAllProfileIds(Context context){
@@ -31,13 +31,13 @@ public class RoadCameraProfileHandler {
     }
 
     public static String getProfileName(int profileId, Context context){
-        //int currentProfileId = getCurrentProfile(context);
+        //int currentProfileId = getCurrentProfileId(context);
         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(PROFILES_NAMES_PREF_NAME + "_" + profileId, DEFAULT_PROFILE_NAME + " " + profileId);
     }
 
     public static void setCurrentProfileName(String newName, Context context){
-        int currentProfileId = getCurrentProfile(context);
+        int currentProfileId = getCurrentProfileId(context);
         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(PROFILES_NAMES_PREF_NAME + "_" + currentProfileId, newName);
