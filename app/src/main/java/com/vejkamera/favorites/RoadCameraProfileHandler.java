@@ -50,6 +50,8 @@ public class RoadCameraProfileHandler {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(CURRENT_PROFILE_PREF_NAME, newProfile);
         editor.commit();
+
+        RoadCameraArchiveHandler.clearCachedFavorites(context);
     }
 
     public static int createNewProfile(String name, Context context){

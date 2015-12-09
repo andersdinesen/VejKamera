@@ -22,8 +22,6 @@ import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
-import java.util.ArrayList;
-
 
 public class RoadCameraDetailsActivity extends AppCompatActivity {
     public final static String ROAD_CAMERA_KEY = "ROAD_CAMERA";
@@ -96,7 +94,7 @@ public class RoadCameraDetailsActivity extends AppCompatActivity {
         super.onPause();
         stopService(readIntent);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraImagebroadcastReceiver);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_STOP));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_WAKE_UP));
     }
 
     private void startImageUpdatingService(){

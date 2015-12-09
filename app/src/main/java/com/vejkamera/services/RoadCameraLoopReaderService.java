@@ -18,12 +18,13 @@ import java.util.List;
  */
 public class RoadCameraLoopReaderService extends IntentService{
     public static final String BROADCAST_IMAGE_LOOP_READING_UPDATE = "com.vejkamera.IMAGE_LOOP_READING_UPDATE";
-    public static final String BROADCAST_IMAGE_LOOP_READING_STOP = "com.vejkamera.IMAGE_LOOP_READING_STOP";
+    public static final String BROADCAST_IMAGE_LOOP_READING_WAKE_UP = "com.vejkamera.IMAGE_LOOP_READING_WAIE_UP";
+    public static final String STOP_READING_KEY = "STOP_READING";
     private List<RoadCamera> roadCameras = new ArrayList<>();
     private RoadCameraImageReaderService roadCameraImageReaderService;
     private Boolean continueLoop = true;
     private LoopFavoritesResponseReceiver loopFavoritesResponseReceiver = new LoopFavoritesResponseReceiver();
-    private LoopStopResponseReceiver loopStopResponseReceiver = new LoopStopResponseReceiver();
+    private LoopWakeUpStopResponseReceiver loopStopResponseReceiver = new LoopWakeUpStopResponseReceiver();
     RoadCameraReadRequest readRequest;
     private Intent originalIntent;
 
@@ -64,8 +65,8 @@ public class RoadCameraLoopReaderService extends IntentService{
         IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
         LocalBroadcastManager.getInstance(this).registerReceiver(loopFavoritesResponseReceiver, intentFilter);
 
-        IntentFilter intentStopFilter = new IntentFilter(BROADCAST_IMAGE_LOOP_READING_STOP);
-        LocalBroadcastManager.getInstance(this).registerReceiver(new LoopStopResponseReceiver(), intentStopFilter);
+        IntentFilter intentStopFilter = new IntentFilter(BROADCAST_IMAGE_LOOP_READING_WAKE_UP);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new LoopWakeUpStopResponseReceiver(), intentStopFilter);
     }
 
     private void teardownReceivers(){
@@ -89,6 +90,9 @@ public class RoadCameraLoopReaderService extends IntentService{
         super.onDestroy();
         continueLoop = false;
         teardownReceivers();
+    }
+
+    private void wakeUp() {
         synchronized (this){
             this.notify();
         }
@@ -112,11 +116,15 @@ public class RoadCameraLoopReaderService extends IntentService{
         }
     }
 
-    private class LoopStopResponseReceiver extends BroadcastReceiver {
+    private class LoopWakeUpStopResponseReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            onDestroy();
+            String stopReading = intent.getStringExtra(STOP_READING_KEY);
+            if("Y".equalsIgnoreCase(stopReading)) {
+                onDestroy();
+            }
+            wakeUp();
         }
     }
 

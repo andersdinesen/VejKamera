@@ -68,7 +68,7 @@ public final class RoadCameraArchiveHandler {
 
     public static List<RoadCamera> getFavorites(Context context) {
         if(RoadCameraProfileHandler.getCurrentProfileId(context) == null){
-            return new ArrayList<>();
+            return favoriteRoadCameras;
         }
 
         synchronized (favoriteRoadCameras) {
@@ -91,6 +91,10 @@ public final class RoadCameraArchiveHandler {
             }
         }
         return favoriteRoadCameras;
+    }
+
+    public static void clearCachedFavorites(Context context){
+        favoriteRoadCameras.clear();
     }
 
     public static boolean isFavorite(RoadCamera roadCamera, Context context) {

@@ -51,11 +51,12 @@ import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 
 public class FavoritesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     FavoriteRecycleListAdapter recycleListAdapter;
-    ArrayList<RoadCamera> favorites = new ArrayList<>();
+    List<RoadCamera> favorites = null;// new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
     ArrayList<NavDrawerItem> navDrawerItems = new ArrayList<>();
     NavDrawerListAdapter drawerListAdapter;
@@ -79,9 +80,10 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         setSupportActionBar(toolbar);
 
         RoadCameraArchiveHandler.initRoadCamerasArchive(this);
-
+        updateFavorites();
         setupDrawerMenu();
         setupRecycleAdapter();
+        setupFloatingButtonListener();
     }
 
     private void setupDrawerMenu() {
@@ -158,14 +160,24 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     private void stopReadingFavorites(){
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
+        wakeUpFavoritesReaderService(true);
+        /*
+        Intent stopReadingFavorites = new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_WAKE_UP);
+        stopReadingFavorites.putExtra(RoadCameraLoopReaderService.STOP_READING_KEY, "Y");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(stopReadingFavorites);*/
+    }
+
+    private void wakeUpFavoritesReaderService(boolean stopReading){
         // For some reason a waiting service does not stop on stopService. Broadcasting stop intent instead.
         //stopService(readIntent);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_STOP));
+        Intent stopReadingFavorites = new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_WAKE_UP);
+        stopReadingFavorites.putExtra(RoadCameraLoopReaderService.STOP_READING_KEY, (stopReading ? "Y" : "N"));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(stopReadingFavorites);
     }
 
     private void updateFavorites() {
-        favorites.clear();
-        favorites.addAll(RoadCameraArchiveHandler.getFavorites(this));
+        //favorites.clear();
+        favorites = (RoadCameraArchiveHandler.getFavorites(this));
 
         //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
         //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
@@ -178,7 +190,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
         recyclerView.setAdapter(recycleListAdapter);
-        setupFloatingButtonListener();
     }
 
     private void setupFloatingButtonListener(){
@@ -450,6 +461,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             navDrawerProfileLine.handleSelected();
 
             updateFavorites();
+            wakeUpFavoritesReaderService(false);
             drawerLayout.closeDrawer(drawerList);
         }
 
