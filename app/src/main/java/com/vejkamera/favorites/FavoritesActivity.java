@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -270,7 +271,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else if (id == R.id.menu_grid_layout) {
             changeGridLayout();
         } else if (id == R.id.menu_sorting) {
-            final String[] sort_options = {getString(R.string.sort_by_alfabeth), getString(R.string.sort_by_near), getString(R.string.sort_by_added)};
+            final String[] sort_options = {getString(R.string.sort_by_alpha), getString(R.string.sort_by_near), getString(R.string.sort_by_added)};
             AlertDialog.Builder sortByDialogBuilder = new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.sort_by))
                     .setItems(sort_options, new DialogInterface.OnClickListener(){
@@ -504,24 +505,28 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         }
 
         private void showRemoveProfileDialog(){
-            AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
-            final int deleteProfileId = RoadCameraProfileHandler.getCurrentProfileId(FavoritesActivity.this);
-            builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraProfileHandler.getProfileName(deleteProfileId, FavoritesActivity.this));
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
-                    refreshNavDrawer();
-                }
-            });
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            if(RoadCameraProfileHandler.getAllProfileIds(FavoritesActivity.this).size()<=1) {
+                Toast.makeText(FavoritesActivity.this, R.string.min_1_profile, Toast.LENGTH_SHORT);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
+                final int deleteProfileId = RoadCameraProfileHandler.getCurrentProfileId(FavoritesActivity.this);
+                builder.setMessage(getString(R.string.remove_profile_with_name) + " " + RoadCameraProfileHandler.getProfileName(deleteProfileId, FavoritesActivity.this));
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
+                        refreshNavDrawer();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
 
-            builder.show();
+                builder.show();
+            }
         }
 
         private void showRenameProfileDialog(){

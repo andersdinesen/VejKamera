@@ -19,6 +19,18 @@
     <string name="remove_profile_with_name">Remove profile: </string>
     <string name="rename_profile_with_name">Rename profile: </string>
 
+    <color name="white">#FFFFFF</color>
+    <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
+    <string name="title_activity_road_camers_maps">Road Camera Map</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string name="sort_by">Sort by...</string>
+    <string name="sort_by_alpha">Alphabetically</string>
+    <string name="sort_by_near">Driving direction</string>
+    <string name="sort_by_added">Order added</string>
+    <string name="pick_area">Pick area</string>
+    <string name="min_1_profile" >Minimum one profile is required</string>
+    <string name="default_profile_name">Profile 1</string>
+
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
 
     <!-- Nav Drawer Menu Items -->
@@ -254,15 +266,4 @@
         <item>Mars</item>
     </string-array>
 
-    <string name="hello_world">Hello world!</string>
-
-    <color name="white">#FFFFFF</color>
-    <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
-    <string name="title_activity_road_camers_maps">Road Camera Map</string>
-    <string name="keep_screen_on">Keep screen on</string>
-    <string name="sort_by">Sort by...</string>
-    <string name="sort_by_alfabeth">Alphabetically</string>
-    <string name="sort_by_near">Driving direction</string>
-    <string name="sort_by_added">Order added</string>
-    <string name="pick_area">Pick area</string>
 </resources>

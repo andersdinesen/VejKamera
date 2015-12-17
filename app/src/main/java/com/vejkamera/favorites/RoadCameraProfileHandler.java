@@ -3,6 +3,8 @@ package com.vejkamera.favorites;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.vejkamera.R;
+
 import java.util.ArrayList;
 
 /**
@@ -23,6 +25,10 @@ public class RoadCameraProfileHandler {
     public static ArrayList<Integer> getAllProfileIds(Context context){
         ArrayList<Integer> result = new ArrayList<>();
         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
+        if(!sharedPref.contains(AVAILABLE_PROFILE_IDS_PREF_NAME)){
+            createNewProfile(context.getString(R.string.default_profile_name), context);
+        }
         String[] availableProfilesArray = sharedPref.getString(AVAILABLE_PROFILE_IDS_PREF_NAME, "").split(",");
         for (int i = 0; i < availableProfilesArray.length; i++) {
             result.add(Integer.valueOf(availableProfilesArray[i]));

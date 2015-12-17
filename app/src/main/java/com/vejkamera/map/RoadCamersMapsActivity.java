@@ -28,6 +28,7 @@ import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
+import com.vejkamera.services.RoadCameraLoopReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
@@ -159,8 +160,10 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     private class MapCameraInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mapCameraContent;
         private RoadCamera roadCamera;
+        ImageView thumbnail;
 
-        MapCameraInfoWindowAdapter() {
+
+         MapCameraInfoWindowAdapter() {
             super();
             mapCameraContent = getLayoutInflater().inflate(R.layout.map_camera_info, null);
         }
@@ -174,13 +177,37 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         @Override
         public View getInfoContents(Marker marker) {
             roadCamera = markerToRoadCameras.get(marker);
-            ImageView thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
+            thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
             TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
 
             title.setText(roadCamera.getTitle());
             thumbnail.setImageBitmap(roadCamera.getBitmap());
+            readThumbnailImage(roadCamera);
 
             return mapCameraContent;
+        }
+
+        private void readThumbnailImage(RoadCamera roadCamera){
+            Intent readIntent = new Intent(RoadCamersMapsActivity.this, RoadCameraImageReaderService.class);
+            RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
+            readRequest.setThumbNailsOnly(true);
+            readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
+            startService(readIntent);
+
+            IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
+            LocalBroadcastManager.getInstance(RoadCamersMapsActivity.this).registerReceiver(new CameraImagesResponseReceiver(), intentFilter);
+        }
+
+        private class CameraImagesResponseReceiver extends BroadcastReceiver {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
+                RoadCameraReadRequest readRequest = intent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
+                roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
+                thumbnail.setImageBitmap(roadCamera.getBitmap());
+                LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+            }
         }
     }
 }
