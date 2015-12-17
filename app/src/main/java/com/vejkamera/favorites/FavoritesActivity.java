@@ -470,6 +470,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                 showAddProfileDialog();
             } else if (navDrawerItemAction.getTitle().equalsIgnoreCase(getString(R.string.remove_profile))){
                 showRemoveProfileDialog();
+            } else if (navDrawerItemAction.getTitle().equalsIgnoreCase(getString(R.string.rename_profile))){
+                showRenameProfileDialog();
             }
         }
 
@@ -488,13 +490,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     String newProfileName = input.getText().toString();
                     int newProfileId = RoadCameraProfileHandler.createNewProfile(newProfileName, FavoritesActivity.this);
                     RoadCameraProfileHandler.changeCurrentProfile(newProfileId, FavoritesActivity.this);
-                    stopReadingFavorites();
-                    startReadingFavorites();
-                    loadDrawerMenuItems();
-                    // notifyDataSetChanged() not working and resulting in inconsistent behaviour :-(
-                    //drawerListAdapter.notifyDataSetChanged();
-                    drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
-                    drawerList.setAdapter(drawerListAdapter);
+                    refreshNavDrawer();
                 }
             });
             builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
@@ -515,8 +511,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
-                    drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
-                    drawerList.setAdapter(drawerListAdapter);
+                    refreshNavDrawer();
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -527,6 +522,44 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             });
 
             builder.show();
+        }
+
+        private void showRenameProfileDialog(){
+            AlertDialog.Builder builder = new AlertDialog.Builder(FavoritesActivity.this);
+            builder.setTitle(getString(R.string.rename_profile_with_name));
+
+            final EditText input = new EditText(FavoritesActivity.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setText(RoadCameraProfileHandler.getProfileName(RoadCameraProfileHandler.getCurrentProfileId(FavoritesActivity.this), FavoritesActivity.this));
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String newProfileName = input.getText().toString();
+                    RoadCameraProfileHandler.setCurrentProfileName(newProfileName, FavoritesActivity.this);
+                    refreshNavDrawer();
+                }
+            });
+            builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+
+
+        private void refreshNavDrawer() {
+            wakeUpFavoritesReaderService(false);
+            loadDrawerMenuItems();
+            // notifyDataSetChanged() not working and resulting in inconsistent behaviour :-(
+            //drawerListAdapter.notifyDataSetChanged();
+            drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+            drawerList.setAdapter(drawerListAdapter);
         }
     }
 }

@@ -17,6 +17,7 @@
     <string name="remove_profile">Remove profile...</string>
     <string name="rename_profile">Rename profile...</string>
     <string name="remove_profile_with_name">Remove profile: </string>
+    <string name="rename_profile_with_name">Rename profile: </string>
 
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
 
