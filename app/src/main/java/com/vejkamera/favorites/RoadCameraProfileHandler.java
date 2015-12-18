@@ -61,13 +61,16 @@ public class RoadCameraProfileHandler {
     }
 
     public static int createNewProfile(String name, Context context){
-        int currentMaxId = -1;
-        for(int currentId : getAllProfileIds(context)){
-            currentMaxId = (currentId > currentMaxId ? currentId : currentMaxId);
-        }
-        int newProfileId = currentMaxId + 1;
         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String availableProfileIds = sharedPref.getString(AVAILABLE_PROFILE_IDS_PREF_NAME, null);
+
+        int currentMaxId = -1;
+        if(availableProfileIds!=null) {
+            for (int currentId : getAllProfileIds(context)) {
+                currentMaxId = (currentId > currentMaxId ? currentId : currentMaxId);
+            }
+        }
+        int newProfileId = currentMaxId + 1;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(AVAILABLE_PROFILE_IDS_PREF_NAME, (availableProfileIds != null ? availableProfileIds + "," : "" ) + newProfileId);
         editor.putString(PROFILES_NAMES_PREF_NAME + "_" + newProfileId, name);
