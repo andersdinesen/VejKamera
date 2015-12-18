@@ -110,6 +110,7 @@ public class RoadCameraImageReaderService extends IntentService {
 
     private void broadcastResult(List<RoadCamera> roadCameras) {
         Intent localIntent = new Intent(BROADCAST_IMAGE_READING_DONE);
+        localIntent.putExtra(READ_REQUEST_KEY, readRequest);
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 

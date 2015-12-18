@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -71,9 +74,13 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void addCameraMarkers() {
+        Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
         for (RoadCamera camera : cameraList) {
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
-            Marker marker = mMap.addMarker(new MarkerOptions().position(letLng).title(camera.getTitle()));
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(letLng)
+                    .title(camera.getTitle())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon)));
             markerToRoadCameras.put(marker, camera);
         }
     }
@@ -88,18 +95,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraListingResponseReceiver);
                 addCameraMarkers();
             }
-
-            //LocalBroadcastManager.getInstance(this).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
-
-            /*
-            Intent readIntent = new Intent(this, RoadCameraImageReaderService.class);
-            readIntent.putExtra(RoadCameraImageReaderService.THUMBNAILS_ONLY_KEY, "Y");
-            startService(readIntent);*/
         }
-        /*
-        Intent listReadIntent = new Intent(this, RoadCameraListingReaderService.class);
-        startService(listReadIntent);
-        */
     }
 
     private void moveMapToDK() {
@@ -161,6 +157,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         private final View mapCameraContent;
         private RoadCamera roadCamera;
         ImageView thumbnail;
+        Marker marker;
 
 
          MapCameraInfoWindowAdapter() {
@@ -176,13 +173,17 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
         @Override
         public View getInfoContents(Marker marker) {
+            this.marker = marker;
             roadCamera = markerToRoadCameras.get(marker);
             thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
             TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
 
             title.setText(roadCamera.getTitle());
-            thumbnail.setImageBitmap(roadCamera.getBitmap());
-            readThumbnailImage(roadCamera);
+            if(roadCamera.getThumbnail() != null) {
+                thumbnail.setImageBitmap(roadCamera.getThumbnail());
+            } else {
+                readThumbnailImage(roadCamera);
+            }
 
             return mapCameraContent;
         }
@@ -207,6 +208,10 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                 roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
                 thumbnail.setImageBitmap(roadCamera.getBitmap());
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+
+                if(marker != null && marker.isInfoWindowShown()) {
+                    marker.showInfoWindow();
+                }
             }
         }
     }
