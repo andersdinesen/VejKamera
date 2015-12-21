@@ -79,8 +79,8 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(letLng)
-                    .title(camera.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon)));
+                    .title(camera.getTitle()));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon)));
             markerToRoadCameras.put(marker, camera);
         }
     }

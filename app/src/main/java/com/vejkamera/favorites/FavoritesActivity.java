@@ -34,17 +34,19 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
+import com.vejkamera.area.AreasListActivity;
 import com.vejkamera.favorites.adapter.FavoriteRecycleListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerItem;
 import com.vejkamera.favorites.adapter.NavDrawerItemAction;
 import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
-import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
+import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
 import com.vejkamera.map.RoadCamersMapsActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
@@ -55,7 +57,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class FavoritesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class FavoritesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     FavoriteRecycleListAdapter recycleListAdapter;
     List<RoadCamera> favorites = null;// new ArrayList<>();
     FavoritesResponseReceiver favoritesResponseReceiver = new FavoritesResponseReceiver();
@@ -69,22 +71,25 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private GoogleApiClient googleApiClient;
     private Location lastLocation;
     private Sorting currentSorting = Sorting.BY_ADDED;
+    private LocationRequest locationRequest;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //readIntent = new Intent(this, RoadCameraLoopReaderService.class);
         setContentView(R.layout.activity_favorites);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-
         RoadCameraArchiveHandler.initRoadCamerasArchive(this);
+        setupToolbar();
         updateFavorites();
         setupDrawerMenu();
         setupRecycleAdapter();
         setupFloatingButtonListener();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
     }
 
     private void setupDrawerMenu() {
@@ -162,10 +167,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private void stopReadingFavorites(){
         LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(favoritesResponseReceiver);
         wakeUpFavoritesReaderService(true);
-        /*
-        Intent stopReadingFavorites = new Intent(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_WAKE_UP);
-        stopReadingFavorites.putExtra(RoadCameraLoopReaderService.STOP_READING_KEY, "Y");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(stopReadingFavorites);*/
     }
 
     private void wakeUpFavoritesReaderService(boolean stopReading){
@@ -179,7 +180,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     private void updateFavorites() {
         //favorites.clear();
         favorites = (RoadCameraArchiveHandler.getFavorites(this));
-
         //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
         //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
     }
@@ -240,6 +240,22 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         });
     }
 
+    private void setupGoogleAPIClient(){
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+        if(locationRequest == null) {
+            locationRequest = new LocationRequest();
+            locationRequest.setInterval(R.integer.location_update_interval);
+            locationRequest.setFastestInterval(R.integer.location_update_interval);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        }
+    }
+
     private void readFavoriteCameras() {
         // Prepare for receiving the result when the favorites are read
         IntentFilter intentFilter = new IntentFilter(RoadCameraLoopReaderService.BROADCAST_IMAGE_LOOP_READING_UPDATE);
@@ -281,16 +297,31 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                             switch (i){
                                 case 0:
                                     currentSorting = Sorting.BY_NAME;
+                                    disconnectFromGoogleApi();
                                     break;
                                 case 1:
                                     currentSorting = Sorting.BY_NEAR;
+                                    connectToGoogleApi();
                                     break;
                                 case 2:
                                     currentSorting = Sorting.BY_ADDED;
+                                    disconnectFromGoogleApi();
                                     break;
                             }
                             sortFavorites();
                         }
+
+                        private void connectToGoogleApi(){
+                            setupGoogleAPIClient();
+                            googleApiClient.connect();
+                        }
+
+                        private void disconnectFromGoogleApi(){
+                            if(googleApiClient != null){
+                                googleApiClient.disconnect();
+                            }
+                        }
+
                     });
             sortByDialogBuilder.show();
         }
@@ -298,10 +329,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         return super.onOptionsItemSelected(item);
     }
 
-    private void sortFavorites(){
+    protected void sortFavorites(){
         if(currentSorting == Sorting.BY_NAME) {
             Collections.sort(favorites);
+        } else if( currentSorting == Sorting.BY_NEAR && lastLocation != null) {
+            RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
+            Collections.sort(favorites, locationComparator);
         }
+        // No need to apply sorting for Sorting.BY_ADDED
 
         recycleListAdapter.notifyDataSetChanged();
     }
@@ -367,10 +402,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         getActionBar().setTitle(title);
     }
 
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -378,7 +409,6 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState();
     }
-
 
 
     @Override
@@ -389,26 +419,44 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     protected synchronized void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        if(googleApiClient==null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
+    public void onConnected(Bundle connectionHint) {
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if(lastLocation == null){
+            Toast.makeText(this, "Location null", Toast.LENGTH_SHORT);
+        } else {
+            Toast.makeText(this, "Location" + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude(), Toast.LENGTH_SHORT);
+        }
+        sortFavorites();
+        if(currentSorting == Sorting.BY_NEAR){
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Toast.makeText(this, "Connection suspended", Toast.LENGTH_LONG);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "Connection failed", Toast.LENGTH_LONG);
+    }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        this.lastLocation = location;
+        Toast.makeText(this,"Location Changed " + location.getLatitude() + " ; " + location.getLongitude(), Toast.LENGTH_SHORT);
+        sortFavorites();
     }
 
     private enum Sorting {
