@@ -20,6 +20,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,6 +86,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         setupDrawerMenu();
         setupRecycleAdapter();
         setupFloatingButtonListener();
+        Log.i(this.getClass().getSimpleName(), "Startup completed");
     }
 
     private void setupToolbar() {
@@ -287,46 +289,51 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else if (id == R.id.menu_grid_layout) {
             changeGridLayout();
         } else if (id == R.id.menu_sorting) {
-            final String[] sort_options = {getString(R.string.sort_by_alpha), getString(R.string.sort_by_near), getString(R.string.sort_by_added)};
-            AlertDialog.Builder sortByDialogBuilder = new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.sort_by))
-                    .setItems(sort_options, new DialogInterface.OnClickListener(){
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            switch (i){
-                                case 0:
-                                    currentSorting = Sorting.BY_NAME;
-                                    disconnectFromGoogleApi();
-                                    break;
-                                case 1:
-                                    currentSorting = Sorting.BY_NEAR;
-                                    connectToGoogleApi();
-                                    break;
-                                case 2:
-                                    currentSorting = Sorting.BY_ADDED;
-                                    disconnectFromGoogleApi();
-                                    break;
-                            }
-                            sortFavorites();
-                        }
-
-                        private void connectToGoogleApi(){
-                            setupGoogleAPIClient();
-                            googleApiClient.connect();
-                        }
-
-                        private void disconnectFromGoogleApi(){
-                            if(googleApiClient != null){
-                                googleApiClient.disconnect();
-                            }
-                        }
-
-                    });
-            sortByDialogBuilder.show();
+            changeFavoritesSorting();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void changeFavoritesSorting() {
+        final String[] sort_options = {getString(R.string.sort_by_alpha), getString(R.string.sort_by_near), getString(R.string.sort_by_added)};
+        AlertDialog.Builder sortByDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.sort_by))
+                .setItems(sort_options, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                currentSorting = Sorting.BY_NAME;
+                                disconnectFromGoogleApi();
+                                break;
+                            case 1:
+                                currentSorting = Sorting.BY_NEAR;
+                                connectToGoogleApi();
+                                break;
+                            case 2:
+                                currentSorting = Sorting.BY_ADDED;
+                                disconnectFromGoogleApi();
+                                break;
+                        }
+                        Log.i(this.getClass().getSimpleName(), "Sorting by " + currentSorting);
+                        sortFavorites();
+                    }
+
+                    private void connectToGoogleApi() {
+                        setupGoogleAPIClient();
+                        googleApiClient.connect();
+                    }
+
+                    private void disconnectFromGoogleApi() {
+                        if (googleApiClient != null) {
+                            googleApiClient.disconnect();
+                        }
+                    }
+
+                });
+        sortByDialogBuilder.show();
     }
 
     protected void sortFavorites(){
@@ -335,8 +342,10 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else if( currentSorting == Sorting.BY_NEAR && lastLocation != null) {
             RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
             Collections.sort(favorites, locationComparator);
+        } else if(currentSorting == Sorting.BY_ADDED) {
+            RoadCameraArchiveHandler.clearCachedFavorites(this);
+            favorites = RoadCameraArchiveHandler.getFavorites(this);
         }
-        // No need to apply sorting for Sorting.BY_ADDED
 
         recycleListAdapter.notifyDataSetChanged();
     }
@@ -417,7 +426,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         // Pass any configuration change to the drawer toggls
         drawerToggle.onConfigurationChanged(newConfig);
     }
-
+/*
     protected synchronized void buildGoogleApiClient() {
         if(googleApiClient==null) {
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -427,14 +436,16 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     .build();
         }
     }
-
+*/
     @Override
     public void onConnected(Bundle connectionHint) {
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if(lastLocation == null){
             Toast.makeText(this, "Location null", Toast.LENGTH_SHORT);
+            Log.i(this.getClass().getSimpleName(), "Location null");
         } else {
-            Toast.makeText(this, "Location" + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude(), Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude(), Toast.LENGTH_SHORT);
+            Log.i(this.getClass().getSimpleName(), "New location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
         }
         sortFavorites();
         if(currentSorting == Sorting.BY_NEAR){
@@ -456,6 +467,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     public void onLocationChanged(Location location) {
         this.lastLocation = location;
         Toast.makeText(this,"Location Changed " + location.getLatitude() + " ; " + location.getLongitude(), Toast.LENGTH_SHORT);
+        Log.i(this.getClass().getSimpleName(), "Location changed " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
         sortFavorites();
     }
 
@@ -472,7 +484,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
-            sortFavorites();
+            //sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);
             }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -75,12 +76,14 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
     private void addCameraMarkers() {
         Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
+        Matrix matrix = new Matrix();
+        matrix.po
         for (RoadCamera camera : cameraList) {
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(letLng)
-                    .title(camera.getTitle()));
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon)));
+                    .title(camera.getTitle())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin)));
             markerToRoadCameras.put(marker, camera);
         }
     }
