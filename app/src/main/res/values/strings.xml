@@ -258,6 +258,14 @@
     <string name="http_request_property_appversion_value">500</string>
     <string name="http_request_property_appid_key">X-VD-APPID</string>
     <string name="http_request_property_appid_value">ANDROID</string>
+    <string name="north_info_search">NORD</string>
+    <string name="northeast_info_search">NORDØST</string>
+    <string name="east_info_search">ØST</string>
+    <string name="southheast_info_search">SYDØST</string>
+    <string name="south_info_search">SYD</string>
+    <string name="southwest_info_search">SYDVEST</string>
+    <string name="west_info_search">VEST</string>
+    <string name="northwest_info_search">NORDVEST</string>
 
     <string-array name="planets">
         <item>Mercury</item>

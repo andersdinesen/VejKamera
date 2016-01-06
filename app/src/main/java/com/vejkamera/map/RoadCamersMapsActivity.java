@@ -43,6 +43,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
     List<RoadCamera> cameraList = new ArrayList();
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
+    HashMap<RoadCamera, RoadCamera> roadCamerasAtSamePosition = new HashMap<>();
     private GoogleMap mMap;
 
     @Override
@@ -75,18 +76,85 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void addCameraMarkers() {
-        Bitmap appIcon = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
-        Matrix matrix = new Matrix();
-        matrix.po
-        for (RoadCamera camera : cameraList) {
+        updateListOfCamerasAtSamePosition();
+        for (int i=0; i<cameraList.size(); i++) {
+            RoadCamera camera = cameraList.get(i);
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(letLng)
                     .title(camera.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin)));
+                    .icon(BitmapDescriptorFactory.fromResource(getMapPinIconFromRoadCamera(camera))));
+            if(roadCamerasAtSamePosition.containsValue(camera)) {
+                marker.setAlpha(0.5f);
+            }
             markerToRoadCameras.put(marker, camera);
         }
     }
+
+    private int getMapPinIconFromRoadCamera(RoadCamera roadCamera){
+        if (roadCamera.getDirection()>337.5 || (roadCamera.getDirection()>0 && roadCamera.getDirection()<22.5) ){
+            return R.drawable.app_icon_map_pin_000;
+        } else if (roadCamera.getDirection() < 67.5){
+            return R.drawable.app_icon_map_pin_045;
+        } else if (roadCamera.getDirection() < 112.5){
+            return R.drawable.app_icon_map_pin_090;
+        } else if (roadCamera.getDirection() < 157.5){
+            return R.drawable.app_icon_map_pin_135;
+        } else if (roadCamera.getDirection() < 202.5){
+            return R.drawable.app_icon_map_pin_180;
+        } else if (roadCamera.getDirection() < 247.5){
+            return R.drawable.app_icon_map_pin_225;
+        } else if (roadCamera.getDirection() < 292.5){
+            return R.drawable.app_icon_map_pin_270;
+        } else if (roadCamera.getDirection() < 337.5){
+            return R.drawable.app_icon_map_pin_315;
+        } else if (roadCamera.getDirection() == -1){
+            return getCameraDirectionFromInfo(roadCamera);
+        } else {
+            return R.drawable.app_icon_map_pin_090;
+        }
+    }
+
+    private int getCameraDirectionFromInfo(RoadCamera roadCamera){
+        if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.northeast_info_search))){
+            return R.drawable.app_icon_map_pin_045;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.southheast_info_search))){
+            return R.drawable.app_icon_map_pin_135;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.southwest_info_search))){
+            return R.drawable.app_icon_map_pin_225;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.northwest_info_search))){
+            return R.drawable.app_icon_map_pin_315;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.north_info_search))){
+            return R.drawable.app_icon_map_pin_000;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.east_info_search))){
+            return R.drawable.app_icon_map_pin_090;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.south_info_search))){
+            return R.drawable.app_icon_map_pin_180;
+        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.west_info_search))){
+            return R.drawable.app_icon_map_pin_270;
+        } else {
+            return R.drawable.app_icon_map_pin_090;
+        }
+    }
+
+    private void updateListOfCamerasAtSamePosition() {
+        roadCamerasAtSamePosition.clear();
+        for(int i=0; i<cameraList.size(); i++) {
+            RoadCamera currentCamera = cameraList.get(i);
+            for (int j = i+1; j < cameraList.size(); j++) {
+                RoadCamera otherCamera = cameraList.get(j);
+                if (currentCamera != otherCamera) {
+                    double diffInLong = Math.abs(currentCamera.getLongitude() - otherCamera.getLongitude());
+                    double diffInLang = Math.abs(currentCamera.getLatitude() - otherCamera.getLatitude());
+                    if (diffInLang <= 0.0003 && diffInLong <= 0.003) {
+                        roadCamerasAtSamePosition.put(currentCamera, otherCamera);
+                        roadCamerasAtSamePosition.put(otherCamera, currentCamera);
+                    }
+                }
+            }
+        }
+    }
+
 
     private void readAllCameras() {
         if(cameraList.size() == 0) {
