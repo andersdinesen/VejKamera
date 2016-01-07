@@ -51,6 +51,7 @@ public class RoadCameraListingReaderService extends IntentService {
         roadCameras = convertJSONIntoRoadCamList(rawReading);
 
         updateFavoritesInArchive(roadCameras);
+        updateRoadCamerasAtSamePosition();
         broadcastResult(roadCameras);
     }
 
@@ -117,6 +118,10 @@ public class RoadCameraListingReaderService extends IntentService {
 
     private void updateFavoritesInArchive(ArrayList<RoadCamera> roadCameras){
         RoadCameraArchiveHandler.setAllRoadCameras(roadCameras);
+    }
+
+    private void updateRoadCamerasAtSamePosition(){
+        RoadCameraArchiveHandler.updateRoadCamerasAtSamePosition();
     }
 
     private void broadcastResult(ArrayList<RoadCamera> roadCameras) {

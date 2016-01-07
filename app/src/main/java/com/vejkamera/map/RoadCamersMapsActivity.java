@@ -43,7 +43,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
     List<RoadCamera> cameraList = new ArrayList();
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
-    HashMap<RoadCamera, RoadCamera> roadCamerasAtSamePosition = new HashMap<>();
+//    HashMap<RoadCamera, RoadCamera> roadCamerasAtSamePosition = new HashMap<>();
     private GoogleMap mMap;
 
     @Override
@@ -76,16 +76,26 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     }
 
     private void addCameraMarkers() {
-        updateListOfCamerasAtSamePosition();
         for (int i=0; i<cameraList.size(); i++) {
             RoadCamera camera = cameraList.get(i);
             LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(letLng)
-                    .title(camera.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(getMapPinIconFromRoadCamera(camera))));
-            if(roadCamerasAtSamePosition.containsValue(camera)) {
-                marker.setAlpha(0.5f);
+                    .title(camera.getTitle()));
+            if(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(camera) != null) {
+                switch (RoadCameraArchiveHandler.getRoadCameraAtSamePosition(camera).size()){
+                    case 1:
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_2markers));
+                        break;
+                    case 2:
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_3markers));
+                        break;
+                    case 3:
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_3markers));
+                        break;
+                }
+            } else {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(getMapPinIconFromRoadCamera(camera)));
             }
             markerToRoadCameras.put(marker, camera);
         }
@@ -137,6 +147,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         }
     }
 
+    /*
     private void updateListOfCamerasAtSamePosition() {
         roadCamerasAtSamePosition.clear();
         for(int i=0; i<cameraList.size(); i++) {
@@ -155,7 +166,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         }
     }
 
-
+*/
     private void readAllCameras() {
         if(cameraList.size() == 0) {
             CameraListingResponseReceiver cameraListingResponseReceiver = new CameraListingResponseReceiver();

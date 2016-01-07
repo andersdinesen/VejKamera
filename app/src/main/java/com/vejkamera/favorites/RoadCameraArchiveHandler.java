@@ -39,6 +39,8 @@ public final class RoadCameraArchiveHandler {
     private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
     private static HashMap<Integer, List<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
     private static List<RoadCamera> favoriteRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
+    private static HashMap<RoadCamera, List<RoadCamera>> roadCamerasAtSamePosition = new HashMap<>();
+
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
         synchronized (favoriteRoadCameras) {
@@ -260,5 +262,37 @@ public final class RoadCameraArchiveHandler {
         return polygonBuilder.build();
     }
 
+    public static void updateRoadCamerasAtSamePosition(){
+        roadCamerasAtSamePosition.clear();
 
+        for(int i=0; i<allRoadCameras.size(); i++) {
+            RoadCamera currentCamera = allRoadCameras.get(i);
+            for (int j = i+1; j < allRoadCameras.size(); j++) {
+                RoadCamera otherCamera = allRoadCameras.get(j);
+                if (currentCamera != otherCamera) {
+                    double diffInLong = Math.abs(currentCamera.getLongitude() - otherCamera.getLongitude());
+                    double diffInLang = Math.abs(currentCamera.getLatitude() - otherCamera.getLatitude());
+                    double distance = Math.sqrt(diffInLong*diffInLong + diffInLang*diffInLang);
+                    if (distance <= 0.0003) {
+                        addToRoadCamerasAtSamePosition(currentCamera, otherCamera);
+                        addToRoadCamerasAtSamePosition(otherCamera, currentCamera);
+                    }
+                }
+            }
+        }
+    }
+    private static void addToRoadCamerasAtSamePosition(RoadCamera roadCamera1, RoadCamera roadCamera2){
+        if(roadCamerasAtSamePosition.containsValue(roadCamera1)){
+            List<RoadCamera> list = roadCamerasAtSamePosition.get(roadCamera1);
+            list.add(roadCamera2);
+        } else {
+            List<RoadCamera> list = new ArrayList<>();
+            list.add(roadCamera2);
+            roadCamerasAtSamePosition.put(roadCamera1, list);
+        }
+    }
+
+    public static List getRoadCameraAtSamePosition(RoadCamera roadCamera){
+        return roadCamerasAtSamePosition.get(roadCamera);
+    }
 }
