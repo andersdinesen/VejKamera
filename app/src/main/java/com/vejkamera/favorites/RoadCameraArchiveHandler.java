@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.sromku.polygon.Point;
@@ -40,7 +41,7 @@ public final class RoadCameraArchiveHandler {
     private static HashMap<Integer, List<RoadCamera>> areaRoadCamerasHashMap = new HashMap<>();
     private static List<RoadCamera> favoriteRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
     private static HashMap<RoadCamera, List<RoadCamera>> roadCamerasAtSamePosition = new HashMap<>();
-
+    private static boolean doneReadingCameraList = false;
 
     public static void addFavorite(RoadCamera roadCamera, Context context) {
         synchronized (favoriteRoadCameras) {
@@ -184,6 +185,15 @@ public final class RoadCameraArchiveHandler {
         context.startService(readIntent);
     }
 
+
+    public static boolean isDoneReadingCameraList() {
+        return doneReadingCameraList;
+    }
+
+    public static void setDoneReadingCameraList(boolean doneReadingCameraList) {
+        RoadCameraArchiveHandler.doneReadingCameraList = doneReadingCameraList;
+    }
+
     public static RoadCamera getRoadCameraFromSyncId(String syncId, Context context){
         return allRoadCamerasHashMap.get(syncId);
     }
@@ -282,13 +292,30 @@ public final class RoadCameraArchiveHandler {
         }
     }
     private static void addToRoadCamerasAtSamePosition(RoadCamera roadCamera1, RoadCamera roadCamera2){
-        if(roadCamerasAtSamePosition.containsValue(roadCamera1)){
+        if(roadCamerasAtSamePosition.containsKey(roadCamera1)){
             List<RoadCamera> list = roadCamerasAtSamePosition.get(roadCamera1);
             list.add(roadCamera2);
         } else {
             List<RoadCamera> list = new ArrayList<>();
             list.add(roadCamera2);
             roadCamerasAtSamePosition.put(roadCamera1, list);
+        }
+
+        if(roadCamera1.getInfo().startsWith("E20 ved frakørsel 20")){
+            Log.d("SamePosition", "Found \"" + roadCamera1.getTitle() + "\" connected to \"" + roadCamera2.getTitle() + "\"");
+            Iterator<RoadCamera> iterator = roadCamerasAtSamePosition.keySet().iterator();
+            while (iterator.hasNext()){
+                RoadCamera printRoadCamera = iterator.next();
+                if(printRoadCamera.getInfo().startsWith("E20 ved frakørsel 20")) {
+                    String linkedRoadCamerasString = "";
+                    if (roadCamerasAtSamePosition.containsKey(printRoadCamera)) {
+                        for (RoadCamera linkedRoadCamera : roadCamerasAtSamePosition.get(printRoadCamera)) {
+                            linkedRoadCamerasString = linkedRoadCamerasString + ", " + linkedRoadCamera.getTitle();
+                        }
+                    }
+                    Log.d("SamePosition", "  \"" + printRoadCamera.getTitle() + "\" -> " + linkedRoadCamerasString);
+                }
+            }
         }
     }
 

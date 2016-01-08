@@ -32,7 +32,6 @@ import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
-import com.vejkamera.services.RoadCameraLoopReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
 
     List<RoadCamera> cameraList = new ArrayList();
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
-//    HashMap<RoadCamera, RoadCamera> roadCamerasAtSamePosition = new HashMap<>();
     private GoogleMap mMap;
 
     @Override
@@ -91,7 +89,10 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_3markers));
                         break;
                     case 3:
-                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_3markers));
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_4markers));
+                        break;
+                    case 4:
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_5markers));
                         break;
                 }
             } else {
@@ -147,36 +148,19 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         }
     }
 
-    /*
-    private void updateListOfCamerasAtSamePosition() {
-        roadCamerasAtSamePosition.clear();
-        for(int i=0; i<cameraList.size(); i++) {
-            RoadCamera currentCamera = cameraList.get(i);
-            for (int j = i+1; j < cameraList.size(); j++) {
-                RoadCamera otherCamera = cameraList.get(j);
-                if (currentCamera != otherCamera) {
-                    double diffInLong = Math.abs(currentCamera.getLongitude() - otherCamera.getLongitude());
-                    double diffInLang = Math.abs(currentCamera.getLatitude() - otherCamera.getLatitude());
-                    if (diffInLang <= 0.0003 && diffInLong <= 0.003) {
-                        roadCamerasAtSamePosition.put(currentCamera, otherCamera);
-                        roadCamerasAtSamePosition.put(otherCamera, currentCamera);
-                    }
-                }
-            }
-        }
-    }
-
-*/
     private void readAllCameras() {
-        if(cameraList.size() == 0) {
+        if(!RoadCameraArchiveHandler.isDoneReadingCameraList()) {
             CameraListingResponseReceiver cameraListingResponseReceiver = new CameraListingResponseReceiver();
             LocalBroadcastManager.getInstance(this).registerReceiver(cameraListingResponseReceiver, new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
-            cameraList = RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext());
             // If list of road cameras are not all ready read, then wait for them. Reading started in FavoritesActivity
-            if(cameraList.size() != 0) {
+            if(RoadCameraArchiveHandler.isDoneReadingCameraList()) {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraListingResponseReceiver);
+                cameraList = RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext());
                 addCameraMarkers();
             }
+        } else {
+            cameraList = RoadCameraArchiveHandler.getAllRoadCameras(getBaseContext());
+            addCameraMarkers();
         }
     }
 
@@ -238,7 +222,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     private class MapCameraInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mapCameraContent;
         private RoadCamera roadCamera;
-        ImageView thumbnail;
+        ImageView thumbnail0;
         Marker marker;
 
 
@@ -257,12 +241,15 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         public View getInfoContents(Marker marker) {
             this.marker = marker;
             roadCamera = markerToRoadCameras.get(marker);
-            thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail));
-            TextView title = ((TextView) mapCameraContent.findViewById(R.id.title));
+            thumbnail0 = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail_in_map_info_view0));
+            TextView title0 = ((TextView) mapCameraContent.findViewById(R.id.title_in_map_info_view0));
+            title0.setText(roadCamera.getTitle());
 
-            title.setText(roadCamera.getTitle());
+            ImageView mapPin = ((ImageView) mapCameraContent.findViewById(R.id.map_pin_in_map_info_view0));
+            mapPin.setImageResource(getMapPinIconFromRoadCamera(roadCamera));
+
             if(roadCamera.getThumbnail() != null) {
-                thumbnail.setImageBitmap(roadCamera.getThumbnail());
+                thumbnail0.setImageBitmap(roadCamera.getThumbnail());
             } else {
                 readThumbnailImage(roadCamera);
             }
@@ -288,7 +275,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                 //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
                 RoadCameraReadRequest readRequest = intent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
                 roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
-                thumbnail.setImageBitmap(roadCamera.getBitmap());
+                thumbnail0.setImageBitmap(roadCamera.getBitmap());
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
 
                 if(marker != null && marker.isInfoWindowShown()) {

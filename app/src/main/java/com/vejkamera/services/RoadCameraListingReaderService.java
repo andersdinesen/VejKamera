@@ -52,6 +52,7 @@ public class RoadCameraListingReaderService extends IntentService {
 
         updateFavoritesInArchive(roadCameras);
         updateRoadCamerasAtSamePosition();
+        RoadCameraArchiveHandler.setDoneReadingCameraList(true);
         broadcastResult(roadCameras);
     }
 

@@ -198,7 +198,7 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
     };
 
     public int compareTo(RoadCamera compareRoadCamera){
-        return this.title.compareTo(compareRoadCamera.getTitle());
+        return this.syncId.compareTo(compareRoadCamera.getSyncId());
     }
 
     @Override
