@@ -185,6 +185,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         //favorites.clear();
         if(isNetworkAvailable()) {
             favorites = (RoadCameraArchiveHandler.getFavorites(this));
+            if(recycleListAdapter!=null) {
+                recycleListAdapter.notifyDataSetChanged();
+            }
         } else {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.no_network)
@@ -640,6 +643,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             //drawerListAdapter.notifyDataSetChanged();
             drawerListAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
             drawerList.setAdapter(drawerListAdapter);
+            recycleListAdapter.notifyDataSetChanged();
         }
     }
 }
