@@ -266,6 +266,8 @@
     <string name="southwest_info_search">SYDVEST</string>
     <string name="west_info_search">VEST</string>
     <string name="northwest_info_search">NORDVEST</string>
+    <string name="no_network">"No network"</string>
+    <string name="network_missing">"No network connection"</string>
 
     <string-array name="planets">
         <item>Mercury</item>

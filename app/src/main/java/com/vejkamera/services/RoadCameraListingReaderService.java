@@ -48,10 +48,12 @@ public class RoadCameraListingReaderService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         String rawReading = getReadJsonObjectsFromNetwork();
 
-        roadCameras = convertJSONIntoRoadCamList(rawReading);
+        if(roadCameras != null) {
+            roadCameras = convertJSONIntoRoadCamList(rawReading);
 
-        updateFavoritesInArchive(roadCameras);
-        updateRoadCamerasAtSamePosition();
+            updateFavoritesInArchive(roadCameras);
+            updateRoadCamerasAtSamePosition();
+        }
         RoadCameraArchiveHandler.setDoneReadingCameraList(true);
         broadcastResult(roadCameras);
     }

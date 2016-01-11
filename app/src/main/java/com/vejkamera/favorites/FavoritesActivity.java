@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -181,9 +183,22 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     private void updateFavorites() {
         //favorites.clear();
-        favorites = (RoadCameraArchiveHandler.getFavorites(this));
+        if(isNetworkAvailable()) {
+            favorites = (RoadCameraArchiveHandler.getFavorites(this));
+        } else {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.no_network)
+                    .setMessage(R.string.network_missing).show();
+
+        }
         //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
         //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void setupRecycleAdapter() {
