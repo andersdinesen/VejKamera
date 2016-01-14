@@ -1,34 +1,30 @@
-package com.vejkamera.area;
+package com.vejkamera.map;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.vejkamera.Constants;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
-import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
-import com.vejkamera.services.RoadCameraListingReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class AreaCamerasListActivity extends AppCompatActivity {
-    public final static String EXTRA_AREA_POSITION_KEY = "AREA_POSITION";
+public class MapCamerasListActivity extends AppCompatActivity {
+    public final static String MAP_READ_REQUEST_KEY = "MAP_READ_REQUEST";
     ArrayAdapter<RoadCamera> adapter;
     List<RoadCamera> cameraList = new ArrayList();
     int areaPosition = 0;
@@ -38,56 +34,40 @@ public class AreaCamerasListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        areaPosition = getIntent().getIntExtra(EXTRA_AREA_POSITION_KEY, 0);
-        setContentView(R.layout.activity_area_camers_list);
-
+        readRequest = getIntent().getParcelableExtra(MAP_READ_REQUEST_KEY);
+        setContentView(R.layout.map_camera_info_list);
+/*
         if (getIntent() != null) {
             Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_area_list);
             toolbar.setTitle(getString(Constants.AREA_IDS[areaPosition]));
             setSupportActionBar(toolbar);
         }
+*/
 
         setupReadRequest();
         readAreaCamerasList();
         setupAdapter();
-        readAreaCamerasImages();
+        readMapMarkerCamerasImages();
 
         setupListListener();
     }
 
     private void setupReadRequest(){
-
-        if (Constants.AREA_IDS[areaPosition] == R.string.all_areas) {
-            readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_ALL);
-        } else {
-            List<String> areaSyncIds = RoadCameraArchiveHandler.getSyncIdsFromRoadCameras(RoadCameraArchiveHandler.filterListOfCameras(Constants.AREA_IDS[areaPosition], this));
-            readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, areaSyncIds);
-        }
         readRequest.setThumbNailsOnly(true);
     }
 
     private void setupAdapter() {
-        final ListView camerasListView = (ListView) findViewById(R.id.area_cameras_listview);
-        adapter = new AreaCameraListAdapter(this, cameraList);
+        final ListView camerasListView = (ListView) findViewById(R.id.map_camera_info_listview);
+        adapter = new MapCameraListAdapter(this, cameraList);
         camerasListView.setAdapter(adapter);
     }
 
+
     private void readAreaCamerasList() {
         cameraList = readRequest.getRequestedRoadCameras(this);
-        // Full camera list reading started on app startup. If not done (list==0) the wait for the response
-        if(cameraList.size()==0){
-            CameraListingResponseReceiver cameraListingResponseReceiver = new CameraListingResponseReceiver();
-            LocalBroadcastManager.getInstance(this).registerReceiver(cameraListingResponseReceiver, new IntentFilter(RoadCameraListingReaderService.BROADCAST_LIST_READING_DONE));
-            cameraList = readRequest.getRequestedRoadCameras(this);
-            // If list of road cameras are not all ready read, then wait for them. Reading started in FavoritesActivity
-            if(cameraList.size() != 0) {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraListingResponseReceiver);
-            }
-        }
     }
 
-
-    private void readAreaCamerasImages() {
+    private void readMapMarkerCamerasImages() {
         cameraImageResponseReceiver = new CameraImagesResponseReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(cameraImageResponseReceiver, new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
 
@@ -100,7 +80,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
 
     private void setupListListener() {
-        final ListView areaCamerasListView = (ListView) findViewById(R.id.area_cameras_listview);
+        final ListView areaCamerasListView = (ListView) findViewById(R.id.map_camera_info_listview);
 
         areaCamerasListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -111,7 +91,6 @@ public class AreaCamerasListActivity extends AppCompatActivity {
                                                            Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
                                                            RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, item.getSyncId());
                                                            intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
-                                                           //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, item);
                                                            startActivity(intent);
 
                                                        }
@@ -127,34 +106,10 @@ public class AreaCamerasListActivity extends AppCompatActivity {
     }
 
 
-        private class CameraListingResponseReceiver extends BroadcastReceiver {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //cameraList.clear();
-
-                //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraListingReaderService.ROAD_CAMERA_LIST_KEY);
-                cameraList = (readRequest.getRequestedRoadCameras(context));
-                adapter.notifyDataSetChanged();
-                //readCameraImages(context);
-            }
-/*
-            private void readCameraImages(Context context){
-                LocalBroadcastManager.getInstance(context).registerReceiver(new CameraImagesResponseReceiver(), new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE));
-
-                Intent readIntent = new Intent(context, RoadCameraImageReaderService.class);
-                readIntent.putExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY, cameraList);
-                startService(readIntent);
-            }*/
-        }
-
     private class CameraImagesResponseReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //cameraList.clear();
-
-            //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             cameraList = (readRequest.getRequestedRoadCameras(context));
             adapter.notifyDataSetChanged();
             LocalBroadcastManager.getInstance(context).unregisterReceiver(cameraImageResponseReceiver);

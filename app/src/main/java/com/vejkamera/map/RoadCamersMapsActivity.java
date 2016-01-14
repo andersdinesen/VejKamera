@@ -96,57 +96,12 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                         break;
                 }
             } else {
-                marker.setIcon(BitmapDescriptorFactory.fromResource(getMapPinIconFromRoadCamera(camera)));
+                marker.setIcon(BitmapDescriptorFactory.fromResource(DirectionToMapPin.getMapPinIconFromRoadCamera(camera, this)));
             }
             markerToRoadCameras.put(marker, camera);
         }
     }
 
-    private int getMapPinIconFromRoadCamera(RoadCamera roadCamera){
-        if (roadCamera.getDirection()>337.5 || (roadCamera.getDirection()>0 && roadCamera.getDirection()<22.5) ){
-            return R.drawable.app_icon_map_pin_000;
-        } else if (roadCamera.getDirection() < 67.5){
-            return R.drawable.app_icon_map_pin_045;
-        } else if (roadCamera.getDirection() < 112.5){
-            return R.drawable.app_icon_map_pin_090;
-        } else if (roadCamera.getDirection() < 157.5){
-            return R.drawable.app_icon_map_pin_135;
-        } else if (roadCamera.getDirection() < 202.5){
-            return R.drawable.app_icon_map_pin_180;
-        } else if (roadCamera.getDirection() < 247.5){
-            return R.drawable.app_icon_map_pin_225;
-        } else if (roadCamera.getDirection() < 292.5){
-            return R.drawable.app_icon_map_pin_270;
-        } else if (roadCamera.getDirection() < 337.5){
-            return R.drawable.app_icon_map_pin_315;
-        } else if (roadCamera.getDirection() == -1){
-            return getCameraDirectionFromInfo(roadCamera);
-        } else {
-            return R.drawable.app_icon_map_pin_090;
-        }
-    }
-
-    private int getCameraDirectionFromInfo(RoadCamera roadCamera){
-        if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.northeast_info_search))){
-            return R.drawable.app_icon_map_pin_045;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.southheast_info_search))){
-            return R.drawable.app_icon_map_pin_135;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.southwest_info_search))){
-            return R.drawable.app_icon_map_pin_225;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.northwest_info_search))){
-            return R.drawable.app_icon_map_pin_315;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.north_info_search))){
-            return R.drawable.app_icon_map_pin_000;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.east_info_search))){
-            return R.drawable.app_icon_map_pin_090;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.south_info_search))){
-            return R.drawable.app_icon_map_pin_180;
-        } else if(roadCamera.getInfo().toUpperCase().contains(getString(R.string.west_info_search))){
-            return R.drawable.app_icon_map_pin_270;
-        } else {
-            return R.drawable.app_icon_map_pin_090;
-        }
-    }
 
     private void readAllCameras() {
         if(!RoadCameraArchiveHandler.isDoneReadingCameraList()) {
@@ -222,7 +177,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     private class MapCameraInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mapCameraContent;
         private RoadCamera roadCamera;
-        ImageView thumbnail0;
+        ImageView thumbnail;
         Marker marker;
 
 
@@ -241,17 +196,26 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         public View getInfoContents(Marker marker) {
             this.marker = marker;
             roadCamera = markerToRoadCameras.get(marker);
-            thumbnail0 = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail_in_map_info_view0));
-            TextView title0 = ((TextView) mapCameraContent.findViewById(R.id.title_in_map_info_view0));
-            title0.setText(roadCamera.getTitle());
 
-            ImageView mapPin = ((ImageView) mapCameraContent.findViewById(R.id.map_pin_in_map_info_view0));
-            mapPin.setImageResource(getMapPinIconFromRoadCamera(roadCamera));
+            if(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera) == null) {
 
-            if(roadCamera.getThumbnail() != null) {
-                thumbnail0.setImageBitmap(roadCamera.getThumbnail());
+                thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail_in_map_info_view));
+                TextView title0 = ((TextView) mapCameraContent.findViewById(R.id.title_in_map_info_view));
+                title0.setText(roadCamera.getTitle());
+
+                ImageView mapPin = ((ImageView) mapCameraContent.findViewById(R.id.map_pin_in_map_info_view));
+                mapPin.setImageResource(DirectionToMapPin.getMapPinIconFromRoadCamera(roadCamera, getParent()));
+
+                if (roadCamera.getThumbnail() != null) {
+                    thumbnail.setImageBitmap(roadCamera.getThumbnail());
+                } else {
+                    readThumbnailImage(roadCamera);
+                }
             } else {
-                readThumbnailImage(roadCamera);
+                Intent intent = new Intent(getBaseContext(), MapCamerasListActivity.class);
+
+                RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS)
+                intent.putExtra(MapCamerasListActivity.MAP_READ_REQUEST_KEY, RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
             }
 
             return mapCameraContent;
@@ -275,7 +239,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                 //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
                 RoadCameraReadRequest readRequest = intent.getParcelableExtra(RoadCameraImageReaderService.READ_REQUEST_KEY);
                 roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
-                thumbnail0.setImageBitmap(roadCamera.getBitmap());
+                thumbnail.setImageBitmap(roadCamera.getBitmap());
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
 
                 if(marker != null && marker.isInfoWindowShown()) {
