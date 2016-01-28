@@ -57,7 +57,7 @@ public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
             DisplayMetrics metrics = new DisplayMetrics();
             wm.getDefaultDisplay().getMetrics(metrics);
 
-            // Adjusting with to 1/6 of screen width
+            // Adjusting with to 1/4 of screen width
             imageWidth = Math.round(metrics.widthPixels/4);
 
             // Adjusting height to wide-screen format 16:9

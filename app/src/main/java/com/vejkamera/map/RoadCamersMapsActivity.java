@@ -204,7 +204,8 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                 title0.setText(roadCamera.getTitle());
 
                 ImageView mapPin = ((ImageView) mapCameraContent.findViewById(R.id.map_pin_in_map_info_view));
-                mapPin.setImageResource(DirectionToMapPin.getMapPinIconFromRoadCamera(roadCamera, getParent()));
+                //mapPin.setImageResource(DirectionToMapPin.getMapPinIconFromRoadCamera(roadCamera, getParent()));
+                mapPin.setVisibility(View.GONE);
 
                 if (roadCamera.getThumbnail() != null) {
                     thumbnail.setImageBitmap(roadCamera.getThumbnail());
@@ -212,10 +213,14 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                     readThumbnailImage(roadCamera);
                 }
             } else {
+                marker.hideInfoWindow();
                 Intent intent = new Intent(getBaseContext(), MapCamerasListActivity.class);
 
-                RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS)
-                intent.putExtra(MapCamerasListActivity.MAP_READ_REQUEST_KEY, RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
+                RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
+                readRequest.addRoadCameras(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
+                intent.putExtra(MapCamerasListActivity.MAP_READ_REQUEST_KEY, readRequest);
+
+                startActivity(intent);
             }
 
             return mapCameraContent;

@@ -36,13 +36,6 @@ public class RoadCameraReadRequest implements Parcelable {
         this.syncIds = syncIds;
     }
 
-    public RoadCameraReadRequest(int readType, ArrayList<RoadCamera> roadCameras) {
-        this.readType = readType;
-        for(RoadCamera roadCamera : roadCameras){
-            syncIds.add(roadCamera.getSyncId());
-        }
-    }
-
     protected RoadCameraReadRequest(Parcel in) {
         readType = in.readInt();
         syncIds = in.createStringArrayList();
@@ -52,6 +45,11 @@ public class RoadCameraReadRequest implements Parcelable {
     public void addSyncId(String syncId) {
         syncIds.add(syncId);
     }
+
+    public void addRoadCameras(List<RoadCamera> roadCameras) {
+        for(RoadCamera roadCamera : roadCameras){
+            syncIds.add(roadCamera.getSyncId());
+        }    }
 
     public void setSyncIds(ArrayList<String> syncIds){
         this.syncIds = syncIds;

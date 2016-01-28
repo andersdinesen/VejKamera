@@ -21,7 +21,8 @@
 
     <color name="white">#FFFFFF</color>
     <string name="title_activity_road_camera_details">RoadCameraDetailsActivity</string>
-    <string name="title_activity_road_camers_maps">Road Camera Map</string>
+    <string name="title_activity_road_cameras_maps">Road Camera Map</string>
+    <string name="title_activity_road_camera_map_marker_list">Map Marker Camera list</string>
     <string name="keep_screen_on">Keep screen on</string>
     <string name="sort_by">Sort by...</string>
     <string name="sort_by_alpha">Alphabetically</string>

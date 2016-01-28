@@ -81,7 +81,12 @@
 
         <activity
             android:name=".map.RoadCamersMapsActivity"
-            android:label="@string/title_activity_road_camers_maps" >
+            android:label="@string/title_activity_road_cameras_maps" >
+        </activity>
+
+        <activity
+            android:name=".map.MapCamerasListActivity"
+            android:label="@string/title_activity_road_camera_map_marker_list" >
         </activity>
 
         <!-- <meta-data
