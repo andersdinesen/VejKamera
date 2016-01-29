@@ -5,9 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -38,19 +35,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RoadCamersMapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapReadyCallback {
 
     List<RoadCamera> cameraList = new ArrayList();
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
     private GoogleMap mMap;
+    private Marker currentMultiMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_road_camers_maps);
+        setContentView(R.layout.activity_road_camers_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(mMap != null && currentMultiMarker != null){
+            currentMultiMarker.hideInfoWindow();
+        }
     }
 
     @Override
@@ -76,9 +82,9 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
     private void addCameraMarkers() {
         for (int i=0; i<cameraList.size(); i++) {
             RoadCamera camera = cameraList.get(i);
-            LatLng letLng = new LatLng(camera.getLatitude(), camera.getLongitude());
+            LatLng latLng = new LatLng(camera.getLatitude(), camera.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(letLng)
+                    .position(latLng)
                     .title(camera.getTitle()));
             if(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(camera) != null) {
                 switch (RoadCameraArchiveHandler.getRoadCameraAtSamePosition(camera).size()){
@@ -198,7 +204,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
             roadCamera = markerToRoadCameras.get(marker);
 
             if(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera) == null) {
-
+                currentMultiMarker = null;
                 thumbnail = ((ImageView) mapCameraContent.findViewById(R.id.thumbnail_in_map_info_view));
                 TextView title0 = ((TextView) mapCameraContent.findViewById(R.id.title_in_map_info_view));
                 title0.setText(roadCamera.getTitle());
@@ -213,7 +219,7 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
                     readThumbnailImage(roadCamera);
                 }
             } else {
-                marker.hideInfoWindow();
+                currentMultiMarker = marker;
                 Intent intent = new Intent(getBaseContext(), MapCamerasListActivity.class);
 
                 RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
@@ -227,14 +233,14 @@ public class RoadCamersMapsActivity extends FragmentActivity implements OnMapRea
         }
 
         private void readThumbnailImage(RoadCamera roadCamera){
-            Intent readIntent = new Intent(RoadCamersMapsActivity.this, RoadCameraImageReaderService.class);
+            Intent readIntent = new Intent(MapOfRoadCamerasActivity.this, RoadCameraImageReaderService.class);
             RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
             readRequest.setThumbNailsOnly(true);
             readIntent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
             startService(readIntent);
 
             IntentFilter intentFilter = new IntentFilter(RoadCameraImageReaderService.BROADCAST_IMAGE_READING_DONE);
-            LocalBroadcastManager.getInstance(RoadCamersMapsActivity.this).registerReceiver(new CameraImagesResponseReceiver(), intentFilter);
+            LocalBroadcastManager.getInstance(MapOfRoadCamerasActivity.this).registerReceiver(new CameraImagesResponseReceiver(), intentFilter);
         }
 
         private class CameraImagesResponseReceiver extends BroadcastReceiver {

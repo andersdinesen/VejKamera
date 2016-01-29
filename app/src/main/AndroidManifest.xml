@@ -80,7 +80,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".map.RoadCamersMapsActivity"
+            android:name=".map.MapOfRoadCamerasActivity"
             android:label="@string/title_activity_road_cameras_maps" >
         </activity>
 

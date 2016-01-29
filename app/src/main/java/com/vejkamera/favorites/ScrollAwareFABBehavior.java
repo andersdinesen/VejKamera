@@ -1,19 +1,11 @@
 package com.vejkamera.favorites;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
-import android.view.MenuItem;
 import android.view.View;
-
-import com.vejkamera.R;
-import com.vejkamera.map.RoadCamersMapsActivity;
-
-import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by ad on 30-10-2015.
@@ -55,7 +47,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_by_map:
-                Intent intent = new Intent(view.getContext(), RoadCamersMapsActivity.class);
+                Intent intent = new Intent(view.getContext(), MapOfRoadCamerasActivity.class);
 
                 startActivity(view.getContext(), intent, null);
                 return true;

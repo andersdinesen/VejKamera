@@ -50,7 +50,7 @@ import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
-import com.vejkamera.map.RoadCamersMapsActivity;
+import com.vejkamera.map.MapOfRoadCamerasActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
@@ -241,7 +241,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
                             case 0:
-                                Intent mapIntent = new Intent(getBaseContext(), RoadCamersMapsActivity.class);
+                                Intent mapIntent = new Intent(getBaseContext(), MapOfRoadCamerasActivity.class);
                                 startActivity(mapIntent);
                                 break;
                             case 1:

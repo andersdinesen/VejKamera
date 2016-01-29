@@ -1,18 +1,30 @@
 package com.vejkamera.map;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
@@ -23,26 +35,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapCamerasListActivity extends AppCompatActivity {
+public class MapCamerasListActivity extends AppCompatActivity implements OnMapReadyCallback {
     public final static String MAP_READ_REQUEST_KEY = "MAP_READ_REQUEST";
     ArrayAdapter<RoadCamera> adapter;
     List<RoadCamera> cameraList = new ArrayList();
     int areaPosition = 0;
     RoadCameraReadRequest readRequest;
     private CameraImagesResponseReceiver cameraImageResponseReceiver;
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readRequest = getIntent().getParcelableExtra(MAP_READ_REQUEST_KEY);
         setContentView(R.layout.map_camera_info_list);
-/*
-        if (getIntent() != null) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_area_list);
-            toolbar.setTitle(getString(Constants.AREA_IDS[areaPosition]));
-            setSupportActionBar(toolbar);
-        }
-*/
 
         setupReadRequest();
         readAreaCamerasList();
@@ -50,6 +56,8 @@ public class MapCamerasListActivity extends AppCompatActivity {
         readMapMarkerCamerasImages();
 
         setupListListener();
+
+        setupMapFragment();
     }
 
     private void setupReadRequest(){
@@ -115,6 +123,64 @@ public class MapCamerasListActivity extends AppCompatActivity {
             LocalBroadcastManager.getInstance(context).unregisterReceiver(cameraImageResponseReceiver);
         }
     }
+
+    private void setupMapFragment() {
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_for_multi_marker);
+        mapFragment.getView().setClickable(false);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        this.googleMap.getUiSettings().setMapToolbarEnabled(false);
+        this.googleMap.getUiSettings().setAllGesturesEnabled(false);
+        addMarker();
+        moveCamera();
+    }
+
+    private void addMarker(){
+        RoadCamera camera = cameraList.get(0);
+        LatLng latLng = new LatLng(camera.getLatitude(), camera.getLongitude());
+        Marker newMarker = googleMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title(camera.getTitle()));
+        switch (cameraList.size()){
+            case 2:
+                newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_2markers));
+                break;
+            case 3:
+                newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_3markers));
+                break;
+            case 4:
+                newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.app_icon_map_pin_4markers));
+                break;
+        }
+    }
+
+    private void moveCamera(){
+        final View mapView = getFragmentManager().findFragmentById(R.id.map_for_multi_marker).getView();
+        if (mapView.getViewTreeObserver().isAlive()) {
+            mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @SuppressWarnings("deprecation") // We use the new method when supported
+                @SuppressLint("NewApi") // We check which build version we are using.
+                @Override
+                public void onGlobalLayout() {
+
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    } else {
+                        mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+
+                    RoadCamera camera = cameraList.get(0);
+                    LatLng latLng = new LatLng(camera.getLatitude(), camera.getLongitude());
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+                }
+            });
+        }
+    }
+
 /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

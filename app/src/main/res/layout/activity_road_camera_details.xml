@@ -34,4 +34,14 @@
         android:layout_weight="1"
         android:layout_gravity="center_horizontal"
         />
+    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/map_for_details_marker"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        tools:ignore="MissingPrefix"
+        map:cameraZoom="13"
+        map:mapType="normal"
+        map:liteMode="true"/>
 </LinearLayout>

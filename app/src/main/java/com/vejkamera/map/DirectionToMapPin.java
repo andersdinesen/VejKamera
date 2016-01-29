@@ -10,7 +10,7 @@ import com.vejkamera.RoadCamera;
  */
 public class DirectionToMapPin {
 
-    protected static int getMapPinIconFromRoadCamera(RoadCamera roadCamera, Context context){
+    public static int getMapPinIconFromRoadCamera(RoadCamera roadCamera, Context context){
         if (roadCamera.getDirection()>337.5 || (roadCamera.getDirection()>0 && roadCamera.getDirection()<22.5) ){
             return R.drawable.app_icon_map_pin_000;
         } else if (roadCamera.getDirection() < 67.5){
