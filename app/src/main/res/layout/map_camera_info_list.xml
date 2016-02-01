@@ -6,23 +6,21 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context="com.vejkamera.map.MapCamerasListActivity">
-<!--
+
     <include
         android:id="@+id/tool_bar_map_list"
         layout="@layout/tool_bar"/>
--->
+
     <ListView
         android:id="@+id/map_camera_info_listview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="wrap_content"/>
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
         android:name="com.google.android.gms.maps.MapFragment"
         android:id="@+id/map_for_multi_marker"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="fill_parent"
         tools:ignore="MissingPrefix"
         map:cameraZoom="13"
         map:mapType="normal"

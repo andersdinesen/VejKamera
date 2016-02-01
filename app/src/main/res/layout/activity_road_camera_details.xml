@@ -14,7 +14,8 @@
     <ImageView
         android:id="@+id/detailed_image"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="9"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="horizontal"
         android:adjustViewBounds="true"
@@ -25,7 +26,8 @@
         android:id="@+id/detailed_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/abc_text_size_medium_material"
+        android:textSize="14sp"
+        android:layout_weight="1"
         android:layout_alignParentRight="true" />
     <CheckBox android:id="@+id/detailed_star"
         style="?android:attr/starStyle"

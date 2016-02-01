@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -39,7 +40,6 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
     public final static String MAP_READ_REQUEST_KEY = "MAP_READ_REQUEST";
     ArrayAdapter<RoadCamera> adapter;
     List<RoadCamera> cameraList = new ArrayList();
-    int areaPosition = 0;
     RoadCameraReadRequest readRequest;
     private CameraImagesResponseReceiver cameraImageResponseReceiver;
     private GoogleMap googleMap;
@@ -50,6 +50,7 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
         readRequest = getIntent().getParcelableExtra(MAP_READ_REQUEST_KEY);
         setContentView(R.layout.map_camera_info_list);
 
+        setupToolBar();
         setupReadRequest();
         readAreaCamerasList();
         setupAdapter();
@@ -62,6 +63,16 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
 
     private void setupReadRequest(){
         readRequest.setThumbNailsOnly(true);
+    }
+
+    private void setupToolBar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_map_list);
+        String toolbarTitle = "";
+        for(RoadCamera roadCamera :readRequest.getRequestedRoadCameras(this)) {
+            toolbarTitle = toolbarTitle + (toolbarTitle.length() == 0 ? "" : " / ") + roadCamera.getTitle();
+        }
+        toolbar.setTitle(toolbarTitle);
+        setSupportActionBar(toolbar);
     }
 
     private void setupAdapter() {
