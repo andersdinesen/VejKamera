@@ -50,6 +50,7 @@ import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
+import com.vejkamera.favorites.adapter.RoadCameraTitleComparator;
 import com.vejkamera.map.MapOfRoadCamerasActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
@@ -356,7 +357,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     protected void sortFavorites(){
         if(currentSorting == Sorting.BY_NAME) {
-            Collections.sort(favorites);
+            Collections.sort(favorites, new RoadCameraTitleComparator());
         } else if( currentSorting == Sorting.BY_NEAR && lastLocation != null) {
             RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
             Collections.sort(favorites, locationComparator);
