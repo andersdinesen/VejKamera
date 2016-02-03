@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.vejkamera.Constants;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
@@ -76,7 +79,26 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
         );
 
         readAllCameras();
+
+        addAreaMap(mMap);
         moveMapToDK();
+
+    }
+
+    private void addAreaMap(GoogleMap googleMap){
+        String[] coordinatesStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(R.array.aalborg_coordinates));
+        PolygonOptions polygonOptions = new PolygonOptions();
+
+        for(int i=0; coordinatesStrings != null && i<coordinatesStrings.length; i++){
+            if(coordinatesStrings[i] != null){
+                String[] pointArray = coordinatesStrings[i].split(",");
+                float x = Float.valueOf(pointArray[1]);
+                float y = Float.valueOf(pointArray[0]);
+                polygonOptions.add(new LatLng(x, y));
+            }
+        }
+        polygonOptions.strokeColor(Color.RED).fillColor(Color.BLUE);
+        googleMap.addPolygon(polygonOptions);
     }
 
     private void addCameraMarkers() {
