@@ -45,5 +45,5 @@
         tools:ignore="MissingPrefix"
         map:cameraZoom="13"
         map:mapType="normal"
-        map:liteMode="true"/>
+        map:liteMode="true" />
 </LinearLayout>

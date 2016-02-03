@@ -57,6 +57,7 @@ import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -458,12 +459,18 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onConnected(Bundle connectionHint) {
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        TextView locationInfo = (TextView) findViewById(R.id.current_coordinates);
+        Date now = new Date();
+
         if(lastLocation == null){
             Toast.makeText(this, "Location null", Toast.LENGTH_SHORT);
             Log.i(this.getClass().getSimpleName(), "Location null");
+            locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - null");
+
         } else {
             Toast.makeText(this, "Location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude(), Toast.LENGTH_SHORT);
             Log.i(this.getClass().getSimpleName(), "New location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
+            locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat" + lastLocation.getLatitude() + ", Lon " + lastLocation.getLongitude());
         }
         sortFavorites();
         if(currentSorting == Sorting.BY_NEAR){
@@ -484,8 +491,12 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onLocationChanged(Location location) {
         this.lastLocation = location;
-        Toast.makeText(this,"Location Changed " + location.getLatitude() + " ; " + location.getLongitude(), Toast.LENGTH_SHORT);
+        Toast.makeText(this, "Location Changed " + location.getLatitude() + " ; " + location.getLongitude(), Toast.LENGTH_SHORT);
         Log.i(this.getClass().getSimpleName(), "Location changed " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
+        TextView locationInfo = (TextView) findViewById(R.id.current_coordinates);
+        Date now = new Date();
+        locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat" + lastLocation.getLatitude() + ", Lon " + lastLocation.getLongitude());
+
         sortFavorites();
     }
 

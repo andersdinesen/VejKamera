@@ -21,7 +21,7 @@ public class FavoriteListAdapter extends ArrayAdapter<RoadCamera> {
     private List<RoadCamera> values;
 
     public FavoriteListAdapter(Context context, List<RoadCamera> values){
-        super(context, R.layout.favorite_camera_row, values);
+        super(context, R.layout.row_favorite_camera, values);
         this.context = context;
         this.values = values;
     }
@@ -29,7 +29,7 @@ public class FavoriteListAdapter extends ArrayAdapter<RoadCamera> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.favorite_camera_row, parent, false);
+        View rowView = inflater.inflate(R.layout.row_favorite_camera, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
 

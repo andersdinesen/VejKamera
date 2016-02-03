@@ -300,7 +300,7 @@ public final class RoadCameraArchiveHandler {
             list.add(roadCamera2);
             roadCamerasAtSamePosition.put(roadCamera1, list);
         }
-
+/*
         if(roadCamera1.getInfo().startsWith("E20 ved frakørsel 20")){
             Log.d("SamePosition", "Found \"" + roadCamera1.getTitle() + "\" connected to \"" + roadCamera2.getTitle() + "\"");
             Iterator<RoadCamera> iterator = roadCamerasAtSamePosition.keySet().iterator();
@@ -316,7 +316,7 @@ public final class RoadCameraArchiveHandler {
                     Log.d("SamePosition", "  \"" + printRoadCamera.getTitle() + "\" -> " + linkedRoadCamerasString);
                 }
             }
-        }
+        }*/
     }
 
     public static List getRoadCameraAtSamePosition(RoadCamera roadCamera){

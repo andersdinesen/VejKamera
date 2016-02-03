@@ -16,37 +16,47 @@
                 android:id="@+id/tool_bar"
                 layout="@layout/tool_bar"></include>
 
+            <TextView
+                android:id="@+id/current_coordinates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Coordinates"
+                android:textSize="8sp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_below="@+id/tool_bar"/>
+
             <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/tool_bar">
+                android:layout_below="@+id/current_coordinates">
 
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/favorites_listview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/tool_bar"
+                    android:scrollbars="vertical"
+                    android:layout_marginTop="@dimen/TextDimTop" />
 
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/favorites_listview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/tool_bar"
-                android:scrollbars="vertical"
-                android:layout_marginTop="@dimen/TextDimTop" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/add_floating_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:layout_margin="12sp"
-                android:clickable="true"
-                android:src="@drawable/ic_add_white_24dp"
-                app:backgroundTint="@color/floating_button"
-                app:layout_anchor="@id/favorites_listview"
-                app:layout_anchorGravity="bottom|right|end"
-                app:borderWidth="0dp"
-                app:layout_behavior="com.vejkamera.favorites.ScrollAwareFABBehavior"/>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/add_floating_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:layout_margin="12sp"
+                    android:clickable="true"
+                    android:src="@drawable/ic_add_white_24dp"
+                    app:backgroundTint="@color/floating_button"
+                    app:layout_anchor="@id/favorites_listview"
+                    app:layout_anchorGravity="bottom|right|end"
+                    app:borderWidth="0dp"
+                    app:layout_behavior="com.vejkamera.favorites.ScrollAwareFABBehavior"/>
 
             </android.support.design.widget.CoordinatorLayout>
+
 
         </RelativeLayout>
     <!-- The navigation drawer -->

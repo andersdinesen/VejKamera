@@ -25,7 +25,7 @@ public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
     private List<RoadCamera> roadCameras;
 
     public AreaCameraListAdapter(Context context, List<RoadCamera> values){
-        super(context, R.layout.area_camera_row, values);
+        super(context, R.layout.row_area_camera, values);
         this.context = context;
         this.roadCameras = values;
     }
@@ -33,7 +33,7 @@ public class AreaCameraListAdapter extends ArrayAdapter<RoadCamera> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.area_camera_row, parent, false);
+        View rowView = inflater.inflate(R.layout.row_area_camera, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
         ProgressBar progressBar = (ProgressBar) rowView.findViewById(R.id.imgProgress);

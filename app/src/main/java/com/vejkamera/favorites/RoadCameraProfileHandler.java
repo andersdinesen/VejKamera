@@ -26,8 +26,10 @@ public class RoadCameraProfileHandler {
         ArrayList<Integer> result = new ArrayList<>();
         SharedPreferences sharedPref = context.getSharedPreferences(RoadCameraArchiveHandler.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
+        // If no profiles exist, then create one.
         if(!sharedPref.contains(AVAILABLE_PROFILE_IDS_PREF_NAME)){
-            createNewProfile(context.getString(R.string.default_profile_name), context);
+            int newProfileId = createNewProfile(context.getString(R.string.default_profile_name), context);
+            changeCurrentProfile(newProfileId, context);
         }
         String[] availableProfilesArray = sharedPref.getString(AVAILABLE_PROFILE_IDS_PREF_NAME, "").split(",");
         for (int i = 0; i < availableProfilesArray.length; i++) {

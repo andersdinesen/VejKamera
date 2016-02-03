@@ -67,7 +67,7 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         // Inflate the custom layout
-        View roadCameraView = inflater.inflate(R.layout.favorite_camera_row, parent, false);
+        View roadCameraView = inflater.inflate(R.layout.row_favorite_camera, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(roadCameraView);

@@ -166,6 +166,10 @@ public class RoadCameraDetailsActivity extends AppCompatActivity implements OnMa
         this.googleMap = googleMap;
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setAllGesturesEnabled(false);
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_for_details_marker);
+        mapFragment.getView().setClickable(false);
+
         addMarker();
         moveCamera();
     }
