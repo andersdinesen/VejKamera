@@ -19,11 +19,13 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
+import com.vejkamera.favorites.RoadCameraTitleComparator;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -82,7 +84,10 @@ public class AreaCamerasListActivity extends AppCompatActivity {
             // If list of road cameras are not all ready read, then wait for them. Reading started in FavoritesActivity
             if(cameraList.size() != 0) {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraListingResponseReceiver);
+                Collections.sort(cameraList, new RoadCameraTitleComparator());
             }
+        } else {
+            Collections.sort(cameraList, new RoadCameraTitleComparator());
         }
     }
 
@@ -135,6 +140,7 @@ public class AreaCamerasListActivity extends AppCompatActivity {
 
                 //ArrayList<RoadCamera> updatedCameras = intent.getParcelableArrayListExtra(RoadCameraListingReaderService.ROAD_CAMERA_LIST_KEY);
                 cameraList = (readRequest.getRequestedRoadCameras(context));
+                Collections.sort(cameraList, new RoadCameraTitleComparator());
                 adapter.notifyDataSetChanged();
                 //readCameraImages(context);
             }

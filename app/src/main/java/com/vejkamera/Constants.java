@@ -30,7 +30,7 @@ public class Constants {
         AREA_COORDINATES.put(R.string.all_areas, null);
         AREA_COORDINATES.put(R.string.copenhagen, R.array.copenhagen_coordinates);
         AREA_COORDINATES.put(R.string.zealand, R.array.zealand_coordinates);
-        AREA_COORDINATES.put(R.string.aalborg, R.array.aahus_coordinates);
+        AREA_COORDINATES.put(R.string.aalborg, R.array.aalborg_coordinates);
         AREA_COORDINATES.put(R.string.northjutland, R.array.northjutland_coordindates);
         AREA_COORDINATES.put(R.string.aarhus, R.array.aahus_coordinates);
         AREA_COORDINATES.put(R.string.middlejutland, R.array.middlejutland_coordindates);

@@ -79,26 +79,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
         );
 
         readAllCameras();
-
-        addAreaMap(mMap);
         moveMapToDK();
-
-    }
-
-    private void addAreaMap(GoogleMap googleMap){
-        String[] coordinatesStrings = getResources().getStringArray(Constants.AREA_COORDINATES.get(R.array.aalborg_coordinates));
-        PolygonOptions polygonOptions = new PolygonOptions();
-
-        for(int i=0; coordinatesStrings != null && i<coordinatesStrings.length; i++){
-            if(coordinatesStrings[i] != null){
-                String[] pointArray = coordinatesStrings[i].split(",");
-                float x = Float.valueOf(pointArray[1]);
-                float y = Float.valueOf(pointArray[0]);
-                polygonOptions.add(new LatLng(x, y));
-            }
-        }
-        polygonOptions.strokeColor(Color.RED).fillColor(Color.BLUE);
-        googleMap.addPolygon(polygonOptions);
     }
 
     private void addCameraMarkers() {

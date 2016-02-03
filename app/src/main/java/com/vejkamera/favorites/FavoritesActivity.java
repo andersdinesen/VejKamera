@@ -50,7 +50,6 @@ import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
-import com.vejkamera.favorites.adapter.RoadCameraTitleComparator;
 import com.vejkamera.map.MapOfRoadCamerasActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
