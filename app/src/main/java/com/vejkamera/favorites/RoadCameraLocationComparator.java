@@ -33,6 +33,6 @@ public class RoadCameraLocationComparator implements Comparator<RoadCamera> {
         rhsLocation.setLongitude(rhsRoadCamera.getLongitude());
         float distanceToRhs = currentLocation.distanceTo(rhsLocation);
 
-        return (distanceToLhs < distanceToRhs ? 1 : -1);
+        return (distanceToLhs < distanceToRhs ? -1 : 1);
     }
 }

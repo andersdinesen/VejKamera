@@ -470,7 +470,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else {
             Toast.makeText(this, "Location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude(), Toast.LENGTH_SHORT);
             Log.i(this.getClass().getSimpleName(), "New location " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
-            locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat" + lastLocation.getLatitude() + ", Lon " + lastLocation.getLongitude());
+            locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat: " + lastLocation.getLatitude() + ", Lon: " + lastLocation.getLongitude());
         }
         sortFavorites();
         if(currentSorting == Sorting.BY_NEAR){
@@ -495,7 +495,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         Log.i(this.getClass().getSimpleName(), "Location changed " + lastLocation.getLatitude() + " ; " + lastLocation.getLongitude());
         TextView locationInfo = (TextView) findViewById(R.id.current_coordinates);
         Date now = new Date();
-        locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat" + lastLocation.getLatitude() + ", Lon " + lastLocation.getLongitude());
+        locationInfo.setText(now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " - Lat: " + lastLocation.getLatitude() + ", Lon: " + lastLocation.getLongitude());
 
         sortFavorites();
     }
@@ -513,10 +513,11 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
-            //sortFavorites();
+            sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);
             }
+
             //recycleListAdapter.notifyDataSetChanged();
 
         }
