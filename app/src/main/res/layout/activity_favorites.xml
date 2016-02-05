@@ -5,7 +5,7 @@
     android:layout_height="match_parent">-->
     <!-- The main content view -->
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -26,20 +26,31 @@
                 android:singleLine="true"
                 android:layout_below="@+id/tool_bar"/>
 
-            <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <android.support.design.widget.CoordinatorLayout
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/current_coordinates">
 
-                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/favorites_listview"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/tool_bar"
                     android:scrollbars="vertical"
                     android:layout_marginTop="@dimen/TextDimTop" />
+
+                <TextView
+                    android:id="@+id/favorites_intro_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:text="@string/intro_info"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    app:layout_anchor="@id/favorites_listview"
+                    app:layout_anchorGravity="center_vertical|center_horizontal"/>
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/add_floating_button"

@@ -89,7 +89,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         setupDrawerMenu();
         setupRecycleAdapter();
         setupFloatingButtonListener();
-        Log.i(this.getClass().getSimpleName(), "Startup completed");
+
     }
 
     private void setupToolbar() {
@@ -184,6 +184,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
     private void updateFavorites() {
         //favorites.clear();
+        //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
+        //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
         if(isNetworkAvailable()) {
             favorites = (RoadCameraArchiveHandler.getFavorites(this));
             if(recycleListAdapter!=null) {
@@ -195,8 +197,13 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     .setMessage(R.string.network_missing).show();
 
         }
-        //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
-        //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
+/*
+        TextView introText = (TextView) findViewById(R.id.favorites_intro_text);
+        if(favorites == null || favorites.size() == 0){
+            introText.setVisibility(View.VISIBLE);
+        } else {
+            introText.setVisibility(View.GONE);
+        }*/
     }
 
     private boolean isNetworkAvailable() {
