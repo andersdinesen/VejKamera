@@ -29,8 +29,8 @@
         android:textSize="14sp"
         android:layout_weight="1"
         android:layout_alignParentRight="true" />
-    <CheckBox android:id="@+id/detailed_star"
-        style="?android:attr/starStyle"
+    <ImageView android:id="@+id/detailed_favorite_star"
+        android:src="@drawable/ic_star_outline_grey600_48dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -42,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
+        android:clickable="false"
         tools:ignore="MissingPrefix"
         map:cameraZoom="13"
         map:mapType="normal"

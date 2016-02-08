@@ -31,7 +31,8 @@
     <string name="pick_area">Pick area</string>
     <string name="min_1_profile" >Minimum one profile is required</string>
     <string name="default_profile_name">Profile 1</string>
-    <string name="intro_info">Click on the + button to add a camera to this profile</string>
+    <string name="intro_add_info">Click on the + button to look for new cameras</string>
+    <string name="intro_star_info">On the camera, click on the star to add the camera to your favorites</string>
 
     <string name="URL_path">http://webcam.trafikken.dk/webcam/</string>
 

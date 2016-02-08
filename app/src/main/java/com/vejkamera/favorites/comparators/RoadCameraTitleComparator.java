@@ -1,4 +1,4 @@
-package com.vejkamera.favorites;
+package com.vejkamera.favorites.comparators;
 
 import android.location.Location;
 

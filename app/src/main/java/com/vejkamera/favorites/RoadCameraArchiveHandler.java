@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.sromku.polygon.Point;
@@ -94,6 +93,13 @@ public final class RoadCameraArchiveHandler {
             }
         }
         return favoriteRoadCameras;
+    }
+
+    public static List<String> getFavoritesSyncIds(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        ArrayList<String> favoritesSyncIds = new ArrayList<>(sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>()));
+
+        return favoritesSyncIds;
     }
 
     public static void clearCachedFavorites(Context context){

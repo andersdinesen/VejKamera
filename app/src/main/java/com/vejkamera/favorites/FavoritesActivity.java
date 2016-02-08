@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +51,9 @@ import com.vejkamera.favorites.adapter.NavDrawerItemHeading;
 import com.vejkamera.favorites.adapter.NavDrawerItemMainHeading;
 import com.vejkamera.favorites.adapter.NavDrawerListAdapter;
 import com.vejkamera.favorites.adapter.NavDrawerProfileLine;
+import com.vejkamera.favorites.comparators.RoadCameraLocationComparator;
+import com.vejkamera.favorites.comparators.RoadCameraOriginalSortingComparator;
+import com.vejkamera.favorites.comparators.RoadCameraTitleComparator;
 import com.vejkamera.map.MapOfRoadCamerasActivity;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraLoopReaderService;
@@ -156,9 +160,10 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     protected void onPostResume() {
         super.onPostResume();
         startReadingFavorites();
+        sortFavorites();
     }
 
-    private void startReadingFavorites(){
+    private void startReadingFavorites() {
         updateFavorites();
         readFavoriteCameras();
     }
@@ -197,13 +202,13 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     .setMessage(R.string.network_missing).show();
 
         }
-/*
-        TextView introText = (TextView) findViewById(R.id.favorites_intro_text);
+
+        LinearLayout introLayout = (LinearLayout) findViewById(R.id.intro_layout);
         if(favorites == null || favorites.size() == 0){
-            introText.setVisibility(View.VISIBLE);
+            introLayout.setVisibility(View.VISIBLE);
         } else {
-            introText.setVisibility(View.GONE);
-        }*/
+            introLayout.setVisibility(View.GONE);
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -266,6 +271,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                 addByDialogBuilder.show();
             }
         });
+        FloatingActionButton floatingActionButtonIntro = (FloatingActionButton) findViewById(R.id.add_floating_button_intro);
+        floatingActionButtonIntro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addByDialogBuilder.show();
+            }
+        });
+
     }
 
     private void setupGoogleAPIClient(){
@@ -369,8 +382,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
             Collections.sort(favorites, locationComparator);
         } else if(currentSorting == Sorting.BY_ADDED) {
-            RoadCameraArchiveHandler.clearCachedFavorites(this);
-            favorites = RoadCameraArchiveHandler.getFavorites(this);
+            //RoadCameraArchiveHandler.clearCachedFavorites(this);
+            RoadCameraOriginalSortingComparator originalSortingComparator = new RoadCameraOriginalSortingComparator(RoadCameraArchiveHandler.getFavoritesSyncIds(this));
+            Collections.sort(favorites, originalSortingComparator);
         }
 
         recycleListAdapter.notifyDataSetChanged();
@@ -520,12 +534,12 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
-            sortFavorites();
+            //sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);
             }
 
-            //recycleListAdapter.notifyDataSetChanged();
+            recycleListAdapter.notifyDataSetChanged();
 
         }
     }
@@ -589,6 +603,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     int newProfileId = RoadCameraProfileHandler.createNewProfile(newProfileName, FavoritesActivity.this);
                     RoadCameraProfileHandler.changeCurrentProfile(newProfileId, FavoritesActivity.this);
                     refreshNavDrawer();
+
+                    updateFavorites();
+                    wakeUpFavoritesReaderService(false);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel , new DialogInterface.OnClickListener() {
@@ -613,6 +630,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
                     public void onClick(DialogInterface dialog, int which) {
                         RoadCameraProfileHandler.removeProfile(deleteProfileId, FavoritesActivity.this);
                         refreshNavDrawer();
+
+                        updateFavorites();
+                        wakeUpFavoritesReaderService(false);
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

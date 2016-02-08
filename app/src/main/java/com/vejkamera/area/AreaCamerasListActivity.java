@@ -19,7 +19,7 @@ import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
 import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
-import com.vejkamera.favorites.RoadCameraTitleComparator;
+import com.vejkamera.favorites.comparators.RoadCameraTitleComparator;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
 import com.vejkamera.services.RoadCameraReadRequest;
