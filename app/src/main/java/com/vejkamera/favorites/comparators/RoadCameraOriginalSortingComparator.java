@@ -26,10 +26,10 @@ public class RoadCameraOriginalSortingComparator implements Comparator<RoadCamer
 
 
         for (String currentSyncId : originalSorting){
-            if (lhsRoadCamera.getSyncId() == currentSyncId){
+            if (lhsRoadCamera.getSyncId().equals(currentSyncId)){
                 return -1;
             }
-            if (rhsRoadCamera.getSyncId() == currentSyncId){
+            if (rhsRoadCamera.getSyncId().equals(currentSyncId)){
                 return 1;
             }
         }
