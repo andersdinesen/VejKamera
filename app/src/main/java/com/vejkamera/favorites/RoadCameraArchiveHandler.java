@@ -14,12 +14,11 @@ import com.vejkamera.RoadCamera;
 import com.vejkamera.services.RoadCameraListingReaderService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -34,6 +33,7 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITE_LATITUDE_PREF_NAME = "FAVORITE_LATITUDE_";
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
+    private final static String SYNC_ID_SPLITTER = ";";
 
     private static List<RoadCamera> allRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
     private static HashMap<String, RoadCamera> allRoadCamerasHashMap = new HashMap<>();
@@ -46,6 +46,23 @@ public final class RoadCameraArchiveHandler {
         synchronized (favoriteRoadCameras) {
             favoriteRoadCameras.add(roadCamera);
             SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
+            String favoriteSyncIdsStr = sharedPref.getString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), "");
+            String[] favoriteSyncIdsArray = favoriteSyncIdsStr.split(SYNC_ID_SPLITTER);
+            ArrayList<String> favoriteSyncIds = new ArrayList<>(Arrays.asList(favoriteSyncIdsArray));
+
+            if(!favoriteSyncIds.contains(roadCamera.getSyncId())) {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                favoriteSyncIdsStr = favoriteSyncIdsStr + (favoriteSyncIdsStr.length() == 0 ? "" : SYNC_ID_SPLITTER) + roadCamera.getSyncId();
+                editor.putString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), favoriteSyncIdsStr);
+                editor.putString(FAVORITE_IMAGE_LINK_PREF_NAME + roadCamera.getSyncId(), roadCamera.getImageLink());
+                editor.putString(FAVORITE_TITLE_PREF_NAME + roadCamera.getSyncId(), roadCamera.getTitle());
+                editor.putString(FAVORITE_INFO_PREF_NAME + roadCamera.getSyncId(), roadCamera.getInfo());
+                editor.putString(FAVORITE_LATITUDE_PREF_NAME + roadCamera.getSyncId(), Double.toString(roadCamera.getLatitude()));
+                editor.putString(FAVORITE_LONGITUDE_PREF_NAME + roadCamera.getSyncId(), Double.toString(roadCamera.getLongitude()));
+                editor.commit();
+            }
+/*
             Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>());
 
             int oldSize = existingSyncIds.size();
@@ -64,6 +81,7 @@ public final class RoadCameraArchiveHandler {
             }
 
             editor.commit();
+            */
         }
         Toast.makeText(context, R.string.toast_favorite_added, Toast.LENGTH_SHORT).show();
     }
@@ -76,12 +94,20 @@ public final class RoadCameraArchiveHandler {
         synchronized (favoriteRoadCameras) {
             if (favoriteRoadCameras.size() == 0 && context != null) {
                 SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
+                /*
                 Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>());
 
                 Iterator<String> syncIdsIterator = existingSyncIds.iterator();
                 while (syncIdsIterator.hasNext()) {
                     RoadCamera favoriteCamera = new RoadCamera();
                     String favoriteSyncId = syncIdsIterator.next();
+                */
+                String favoriteSyncIdsStr = sharedPref.getString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), "");
+                String[] favoriteSyncIdsArray = (favoriteSyncIdsStr.trim().length() > 0 ? favoriteSyncIdsStr.split(SYNC_ID_SPLITTER) : new String[0]);
+                ArrayList<String> favoriteSyncIds = new ArrayList<>(Arrays.asList(favoriteSyncIdsArray));
+                for (String favoriteSyncId : favoriteSyncIds){
+                    RoadCamera favoriteCamera = new RoadCamera();
                     favoriteCamera.setSyncId(favoriteSyncId);
                     favoriteCamera.setImageLink(sharedPref.getString(FAVORITE_IMAGE_LINK_PREF_NAME + favoriteSyncId, null));
                     favoriteCamera.setTitle(sharedPref.getString(FAVORITE_TITLE_PREF_NAME + favoriteSyncId, null));
@@ -97,12 +123,13 @@ public final class RoadCameraArchiveHandler {
 
     public static List<String> getFavoritesSyncIds(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        ArrayList<String> favoritesSyncIds = new ArrayList<>(sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>()));
-
-        return favoritesSyncIds;
+        //ArrayList<String> favoritesSyncIds = new ArrayList<>(sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>()));
+        String favoriteSyncIdsStr = sharedPref.getString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), "");
+        String[] favoriteSyncIdsArray = (favoriteSyncIdsStr.trim().length() > 0 ? favoriteSyncIdsStr.split(SYNC_ID_SPLITTER) : new String[0]);
+        return new ArrayList<>(Arrays.asList(favoriteSyncIdsArray));
     }
 
-    public static void clearCachedFavorites(Context context){
+    public static void clearCachedFavorites(){
         favoriteRoadCameras.clear();
     }
 
@@ -126,12 +153,23 @@ public final class RoadCameraArchiveHandler {
         }
 
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>());
+        //Set<String> existingSyncIds = sharedPref.getStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), new HashSet<String>());
+        String favoriteSyncIdsStr = sharedPref.getString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), null);
+        String[] favoriteSyncIdsArray = (favoriteSyncIdsStr.trim().length() > 0 ? favoriteSyncIdsStr.split(SYNC_ID_SPLITTER) : new String[0]);
+        ArrayList<String> favoriteSyncIds = new ArrayList<>(Arrays.asList(favoriteSyncIdsArray));
+        StringBuffer newFavoriteSyncIdsBuffer = new StringBuffer();
+        for(String favoriteSyncId : favoriteSyncIds ){
+            if(!favoriteSyncId.equalsIgnoreCase(roadCamera.getSyncId())) {
+                newFavoriteSyncIdsBuffer.append(newFavoriteSyncIdsBuffer.length() > 0 ? SYNC_ID_SPLITTER : "").append(favoriteSyncId);
+            }
+        }
+
         SharedPreferences.Editor editor = sharedPref.edit();
 
         String syncId = roadCamera.getSyncId();
-        existingSyncIds.remove(roadCamera.getSyncId());
-        editor.putStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), existingSyncIds);
+        //existingSyncIds.remove(roadCamera.getSyncId());
+        //editor.putStringSet(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), existingSyncIds);
+        editor.putString(FAVORITE_SYNC_IDS_PREF_NAME + getProfilePrefPostfix(context), newFavoriteSyncIdsBuffer.toString());
 
         editor.remove(FAVORITE_TITLE_PREF_NAME + syncId);
         editor.remove(FAVORITE_IMAGE_LINK_PREF_NAME + syncId);

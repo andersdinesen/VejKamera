@@ -59,7 +59,7 @@ public class RoadCameraProfileHandler {
         editor.putInt(CURRENT_PROFILE_PREF_NAME, newProfile);
         editor.commit();
 
-        RoadCameraArchiveHandler.clearCachedFavorites(context);
+        RoadCameraArchiveHandler.clearCachedFavorites();
     }
 
     public static int createNewProfile(String name, Context context){

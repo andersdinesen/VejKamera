@@ -23,7 +23,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.vejkamera.R;
@@ -48,7 +47,7 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readRequest = getIntent().getParcelableExtra(MAP_READ_REQUEST_KEY);
-        setContentView(R.layout.map_camera_info_list);
+        setContentView(R.layout.activity_map_camera_list);
 
         setupToolBar();
         setupReadRequest();

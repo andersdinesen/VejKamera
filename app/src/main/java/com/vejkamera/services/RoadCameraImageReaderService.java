@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +76,7 @@ public class RoadCameraImageReaderService extends IntentService {
                 } else if(!thumbnailsOnly) {
                     updateImageFromURL(roadCamera, false);
                 }
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException|URISyntaxException e) {
                 //TODO Add image of broken camera
                 failedReadings = updateFailedReading(failedReadings, roadCamera, e);
             } catch (IOException e) {
@@ -87,10 +90,11 @@ public class RoadCameraImageReaderService extends IntentService {
         broadcastResult(roadCameras);
     }
 
-    private void updateImageFromURL(RoadCamera roadCamera, boolean thumbnail) throws IOException {
+    private void updateImageFromURL(RoadCamera roadCamera, boolean thumbnail) throws IOException, URISyntaxException {
         String urlLink = thumbnail ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
         if(urlLink.startsWith("http:")) {
-            URL url = new URL(urlLink);
+            URI uri = new URI(urlLink);
+            URL url = new URL(uri.toASCIIString());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream is = connection.getInputStream();
             if(thumbnail) {
