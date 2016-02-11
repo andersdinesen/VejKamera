@@ -66,6 +66,14 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                RoadCamera roadCamera = markerToRoadCameras.get(marker);
+                return false;
+            }
+        });
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                               @Override
                                               public void onInfoWindowClick(Marker marker) {
