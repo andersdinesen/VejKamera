@@ -363,6 +363,10 @@ public final class RoadCameraArchiveHandler {
         }*/
     }
 
+    public static boolean isThereOtherRoadCamerasAtSamePosition(RoadCamera roadCamera){
+        return roadCamerasAtSamePosition.containsKey(roadCamera);
+    }
+
     public static List getRoadCameraAtSamePosition(RoadCamera roadCamera){
         return roadCamerasAtSamePosition.get(roadCamera);
     }

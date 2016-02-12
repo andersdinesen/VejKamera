@@ -1,15 +1,17 @@
-package com.vejkamera.favorites.adapter;
+package com.vejkamera.map;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
@@ -23,12 +25,12 @@ import java.util.List;
 /**
  * Created by Anders on 02-11-2015.
  */
-public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRecycleListAdapter.ViewHolder>{
+public class MapCameraRecycleListAdapter extends RecyclerView.Adapter<MapCameraRecycleListAdapter.ViewHolder>{
     private static int imageHeightGrid1, imageHeightGrid2, imageHeightGrid3 = 0;
     private List<RoadCamera> roadCameras;
     private ViewGroup parent;
 
-    public FavoriteRecycleListAdapter(List<RoadCamera> roadCameras){
+    public MapCameraRecycleListAdapter(List<RoadCamera> roadCameras){
         this.roadCameras = roadCameras;
     }
 
@@ -48,12 +50,16 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
 
         @Override
         public void onClick(View v) {
+            Toast.makeText(v.getContext(), "Clicked!", Toast.LENGTH_LONG);
+            Log.d("Map", "Clicked on REcycle View");
+            /*
             RoadCamera roadCamera = roadCameras.get(getLayoutPosition());
 
             Intent intent = new Intent(v.getContext(), RoadCameraDetailsActivity.class);
             RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, roadCamera.getSyncId());
             intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
             v.getContext().startActivity(intent);
+            */
         }
     }
 
@@ -91,6 +97,8 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
             imageHeightGrid2 = Math.round(metrics.widthPixels/2 * 0.5625f);
             imageHeightGrid3 = Math.round(metrics.widthPixels/3 * 0.5625f);
         }
+        image.getLayoutParams().height = imageHeightGrid3;
+        /*
         switch (RoadCameraArchiveHandler.getFavoritesGridLayout(parent.getContext())) {
             case 1:
                 image.getLayoutParams().height = imageHeightGrid1;
@@ -101,7 +109,7 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
             case 3:
                 image.getLayoutParams().height = imageHeightGrid3;
                 break;
-        }
+        }*/
     }
 
     @Override

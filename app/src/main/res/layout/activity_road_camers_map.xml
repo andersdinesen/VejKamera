@@ -17,14 +17,31 @@
         map:mapType="normal"
         map:uiZoomControls="true"
         />
-
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map_header_listview"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/map"
+        android:layout_gravity="center_horizontal|top"
+        android:gravity="center_horizontal"
+        android:src="@drawable/universitetsboulevarden" />
+    <ListView
+        android:id="@+id/map_header_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_anchor="@+id/map"
         android:layout_gravity="center_horizontal|top"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"  />
+<!--
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_header_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/map"
+        android:layout_gravity="center_horizontal|top"
+        android:gravity="center_horizontal"
+        android:backgroundTint="@color/list_background"/>
+        -->
 <!--
     <TextView
         android:id="@+id/map_text"

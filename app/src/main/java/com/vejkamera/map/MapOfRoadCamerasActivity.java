@@ -10,10 +10,16 @@ import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,6 +50,8 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     HashMap<Marker, RoadCamera> markerToRoadCameras = new HashMap<>();
     private GoogleMap mMap;
     private Marker currentMultiMarker;
+    private MapCameraRecycleListAdapter mapCameraRecycleListAdapter;
+    private ArrayList<RoadCamera> selectedRoadCameras = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,8 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        setupHeaderListRoadCameraAdapter();
     }
 
     @Override
@@ -66,11 +76,18 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
+        /*
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
 
             @Override
             public boolean onMarkerClick(Marker marker) {
+                selectedRoadCameras.clear();
                 RoadCamera roadCamera = markerToRoadCameras.get(marker);
+                selectedRoadCameras.add(roadCamera);
+                if(RoadCameraArchiveHandler.isThereOtherRoadCamerasAtSamePosition(roadCamera)){
+                    selectedRoadCameras.addAll(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
+                }
+                mapCameraRecycleListAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -85,7 +102,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                                               }
                                           }
         );
-
+*/
         readAllCameras();
         moveMapToDK();
     }
@@ -161,6 +178,36 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                 }
             });
         }
+    }
+
+    private void setupHeaderListRoadCameraAdapter() {
+        final ArrayList<String> listOfCameras = new ArrayList<>();
+        listOfCameras.add("Camera 1");
+        listOfCameras.add("Camera 2");
+        listOfCameras.add("Camera 3");
+
+        ListView headerListView = (ListView) findViewById(R.id.map_header_listView);
+        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfCameras);
+        headerListView.setAdapter(adapter);
+/*
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.map_header_recyclerview);
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));//new GridLayoutManager(this, RoadCameraArchiveHandler.getFavoritesGridLayout(this)));
+
+        mapCameraRecycleListAdapter = new MapCameraRecycleListAdapter(RoadCameraArchiveHandler.getFavorites(this));//selectedRoadCameras);
+        recyclerView.setAdapter(mapCameraRecycleListAdapter);
+
+        recyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "Click on the View.OnClickListner", Toast.LENGTH_LONG);
+                Log.d("Map", "Click on the View.OnClickListner");
+            }
+        });
+*/
+/*
+        recycleListAdapter = new FavoriteRecycleListAdapter(favorites);
+        recyclerView.setAdapter(recycleListAdapter);*/
     }
 /*
     private class CameraImagesResponseReceiver extends BroadcastReceiver {
