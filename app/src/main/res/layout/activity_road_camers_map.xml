@@ -17,20 +17,15 @@
         map:mapType="normal"
         map:uiZoomControls="true"
         />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@+id/map"
-        android:layout_gravity="center_horizontal|top"
-        android:gravity="center_horizontal"
-        android:src="@drawable/universitetsboulevarden" />
     <ListView
         android:id="@+id/map_header_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_anchor="@+id/map"
         android:layout_gravity="center_horizontal|top"
-        android:gravity="center_horizontal"  />
+        android:gravity="center_horizontal"
+        android:background="@color/white_low_transparent"
+        android:cacheColorHint="#00000000"/>
 <!--
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -203,11 +203,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         }
 
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_floating_button);
         LinearLayout introLayout = (LinearLayout) findViewById(R.id.intro_layout);
         if(favorites == null || favorites.size() == 0){
             introLayout.setVisibility(View.VISIBLE);
+            floatingActionButton.setVisibility(View.GONE);
         } else {
             introLayout.setVisibility(View.GONE);
+            floatingActionButton.setVisibility(View.VISIBLE);
         }
     }
 

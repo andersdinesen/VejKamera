@@ -7,5 +7,6 @@
     <color name="counter_text_bg">#FF0000</color>
     <color name="list_item_title">#000000</color>
     <color name="floating_button">#F44336</color>
+    <color name="white_low_transparent">#DDFFFFFF</color>
 
 </resources>

@@ -5,21 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,11 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
-import com.vejkamera.Constants;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
-import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
@@ -51,6 +42,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     private GoogleMap mMap;
     private Marker currentMultiMarker;
     private MapCameraRecycleListAdapter mapCameraRecycleListAdapter;
+    MapCameraListAdapter mapHeaderLisAdapter;
     private ArrayList<RoadCamera> selectedRoadCameras = new ArrayList<>();
 
     @Override
@@ -76,7 +68,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
-        /*
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
 
             @Override
@@ -87,10 +79,12 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                 if(RoadCameraArchiveHandler.isThereOtherRoadCamerasAtSamePosition(roadCamera)){
                     selectedRoadCameras.addAll(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
                 }
-                mapCameraRecycleListAdapter.notifyDataSetChanged();
+                mapHeaderLisAdapter.notifyDataSetChanged();
+                //mapCameraRecycleListAdapter.notifyDataSetChanged();
                 return false;
             }
         });
+        /*
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                               @Override
                                               public void onInfoWindowClick(Marker marker) {
@@ -181,14 +175,9 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
     }
 
     private void setupHeaderListRoadCameraAdapter() {
-        final ArrayList<String> listOfCameras = new ArrayList<>();
-        listOfCameras.add("Camera 1");
-        listOfCameras.add("Camera 2");
-        listOfCameras.add("Camera 3");
-
         ListView headerListView = (ListView) findViewById(R.id.map_header_listView);
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfCameras);
-        headerListView.setAdapter(adapter);
+        mapHeaderLisAdapter = new MapCameraListAdapter(this, selectedRoadCameras); // new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfCameras);
+        headerListView.setAdapter(mapHeaderLisAdapter);
 /*
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.map_header_recyclerview);
         recyclerView.setHasFixedSize(false);
@@ -277,6 +266,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                     readThumbnailImage(roadCamera);
                 }
             } else {
+                /*
                 currentMultiMarker = marker;
                 Intent intent = new Intent(getBaseContext(), MapCamerasListActivity.class);
 
@@ -285,6 +275,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                 intent.putExtra(MapCamerasListActivity.MAP_READ_REQUEST_KEY, readRequest);
 
                 startActivity(intent);
+                */
             }
 
             return mapCameraContent;
@@ -310,6 +301,7 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
                 roadCamera = readRequest.getRequestedRoadCameras(context).get(0);
                 thumbnail.setImageBitmap(roadCamera.getBitmap());
                 LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+                mapHeaderLisAdapter.notifyDataSetChanged();
 
                 if(marker != null && marker.isInfoWindowShown()) {
                     marker.showInfoWindow();

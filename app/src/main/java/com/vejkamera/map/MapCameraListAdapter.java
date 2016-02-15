@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
+import com.vejkamera.favorites.RoadCameraArchiveHandler;
 
 import java.util.List;
 
@@ -33,16 +34,18 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.map_camera_info, parent, false);
+        View rowView = inflater.inflate(R.layout.row_map_camera_header, parent, false);
         RoadCamera roadCamera = roadCameras.get(position);
 
-        ImageView thumbnail = ((ImageView) rowView.findViewById(R.id.thumbnail_in_map_info_view));
+        ImageView thumbnail = ((ImageView) rowView.findViewById(R.id.thumbnail_in_map_header_row));
         adjustImageSize(thumbnail);
-        TextView title = ((TextView) rowView.findViewById(R.id.title_in_map_info_view));
+        TextView title = ((TextView) rowView.findViewById(R.id.title_in_map_header_row));
         title.setText(roadCamera.getTitle());
 
-        ImageView mapPin = ((ImageView) rowView.findViewById(R.id.map_pin_in_map_info_view));
+        ImageView mapPin = ((ImageView) rowView.findViewById(R.id.map_pin_in_map_header_row));
         mapPin.setImageResource(DirectionToMapPin.getMapPinIconFromRoadCamera(roadCamera, context));
+
+        setupFavoriteStar(rowView, roadCamera);
 
         if(roadCamera.getThumbnail() != null) {
             thumbnail.setImageBitmap(roadCamera.getThumbnail());
@@ -50,6 +53,29 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
 
         return rowView;
     }
+
+    private void setupFavoriteStar(View view, final RoadCamera roadCamera) {
+        final ImageView favoriteStar = (ImageView) view.findViewById(R.id.map_header_favorite_star);
+
+        if (RoadCameraArchiveHandler.isFavorite(roadCamera, view.getContext())) {
+            favoriteStar.setImageResource(R.drawable.ic_star_gold_large);
+        }
+
+        favoriteStar.setOnClickListener(new ImageView.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (RoadCameraArchiveHandler.isFavorite(roadCamera, view.getContext())) {
+                    RoadCameraArchiveHandler.removeFavorite(roadCamera, view.getContext());
+                    favoriteStar.setImageResource(R.drawable.ic_star_outline_grey600_48dp);
+                } else {
+                    RoadCameraArchiveHandler.addFavorite(roadCamera, view.getContext());
+                    favoriteStar.setImageResource(R.drawable.ic_star_gold_large);
+                }
+            }
+        });
+    }
+
 
     private void adjustImageSize(ImageView imageView) {
         if(imageWidth == 0){
