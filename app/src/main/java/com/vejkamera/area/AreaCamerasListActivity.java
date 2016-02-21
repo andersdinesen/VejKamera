@@ -116,7 +116,6 @@ public class AreaCamerasListActivity extends AppCompatActivity {
                                                            Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
                                                            RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, item.getSyncId());
                                                            intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
-                                                           //intent.putExtra(RoadCameraDetailsActivity.ROAD_CAMERA_KEY, item);
                                                            startActivity(intent);
 
                                                        }

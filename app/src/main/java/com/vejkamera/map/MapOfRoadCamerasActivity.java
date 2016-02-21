@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.vejkamera.R;
 import com.vejkamera.RoadCamera;
+import com.vejkamera.details.RoadCameraDetailsActivity;
 import com.vejkamera.favorites.RoadCameraArchiveHandler;
 import com.vejkamera.services.RoadCameraImageReaderService;
 import com.vejkamera.services.RoadCameraListingReaderService;
@@ -69,19 +71,27 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new MapCameraInfoWindowAdapter());
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
                 selectedRoadCameras.clear();
                 RoadCamera roadCamera = markerToRoadCameras.get(marker);
                 selectedRoadCameras.add(roadCamera);
-                if(RoadCameraArchiveHandler.isThereOtherRoadCamerasAtSamePosition(roadCamera)){
+                if (RoadCameraArchiveHandler.isThereOtherRoadCamerasAtSamePosition(roadCamera)) {
                     selectedRoadCameras.addAll(RoadCameraArchiveHandler.getRoadCameraAtSamePosition(roadCamera));
                 }
                 mapHeaderLisAdapter.notifyDataSetChanged();
                 //mapCameraRecycleListAdapter.notifyDataSetChanged();
                 return false;
+            }
+        });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                selectedRoadCameras.clear();
+                mapHeaderLisAdapter.notifyDataSetChanged();
             }
         });
         /*
@@ -178,6 +188,22 @@ public class MapOfRoadCamerasActivity extends FragmentActivity implements OnMapR
         ListView headerListView = (ListView) findViewById(R.id.map_header_listView);
         mapHeaderLisAdapter = new MapCameraListAdapter(this, selectedRoadCameras); // new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfCameras);
         headerListView.setAdapter(mapHeaderLisAdapter);
+
+        headerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                                       @Override
+                                                       public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                                                           final RoadCamera item = (RoadCamera) parent.getItemAtPosition(position);
+
+                                                           Intent intent = new Intent(parent.getContext(), RoadCameraDetailsActivity.class);
+                                                           RoadCameraReadRequest readRequest = new RoadCameraReadRequest(RoadCameraReadRequest.READ_TYPE_SYNC_IDS, item.getSyncId());
+                                                           intent.putExtra(RoadCameraImageReaderService.READ_REQUEST_KEY, readRequest);
+                                                           startActivity(intent);
+
+                                                       }
+                                                   }
+
+        );
 /*
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.map_header_recyclerview);
         recyclerView.setHasFixedSize(false);
