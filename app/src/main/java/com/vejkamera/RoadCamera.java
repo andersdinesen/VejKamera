@@ -19,7 +19,9 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
     private Long time = new Long(0L);
     private Integer direction = new Integer(0);
     private Bitmap bitmap = null;
+    private boolean bitmapReadingFailed = false;
     private Bitmap thumbnail = null;
+    private boolean thumbnailReadingFailed = false;
 
     public RoadCamera() {
     }
@@ -157,6 +159,22 @@ public class RoadCamera implements Parcelable, Comparable<RoadCamera> {
     public Bitmap getThumbnail() { return thumbnail; }
 
     public void setThumbnail(Bitmap thumbnail) { this.thumbnail = thumbnail; }
+
+    public boolean isBitmapReadingFailed() {
+        return bitmapReadingFailed;
+    }
+
+    public void setBitmapReadingFailed(boolean bitmapReadingFailed) {
+        this.bitmapReadingFailed = bitmapReadingFailed;
+    }
+
+    public boolean isThumbnailReadingFailed() {
+        return thumbnailReadingFailed;
+    }
+
+    public void setThumbnailReadingFailed(boolean thumbnailReadingFailed) {
+        this.thumbnailReadingFailed = thumbnailReadingFailed;
+    }
 
     @Override
     public int describeContents() {

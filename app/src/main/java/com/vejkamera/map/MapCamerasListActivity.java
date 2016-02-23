@@ -75,7 +75,7 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
     }
 
     private void setupAdapter() {
-        final ListView camerasListView = (ListView) findViewById(R.id.map_camera_info_listview);
+        final ListView camerasListView = (ListView) findViewById(R.id.map_camera_info_listviewXXX);
         adapter = new MapCameraListAdapter(this, cameraList);
         camerasListView.setAdapter(adapter);
     }
@@ -98,7 +98,7 @@ public class MapCamerasListActivity extends AppCompatActivity implements OnMapRe
 
 
     private void setupListListener() {
-        final ListView areaCamerasListView = (ListView) findViewById(R.id.map_camera_info_listview);
+        final ListView areaCamerasListView = (ListView) findViewById(R.id.map_camera_info_listviewXXX);
 
         areaCamerasListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

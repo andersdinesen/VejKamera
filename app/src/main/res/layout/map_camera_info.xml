@@ -4,34 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_camera_info_marker_listview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/map_pin_in_map_info_view"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:adjustViewBounds="true"></ImageView>
-
-        <ImageView
-            android:id="@+id/thumbnail_in_map_info_view"
-            android:layout_width="300px"
-            android:layout_height="222px"
-            android:layout_marginRight="5dp"
-            android:adjustViewBounds="true"></ImageView>
-
-        <TextView
-            android:id="@+id/title_in_map_info_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="#ff000000"
-            android:textSize="12sp" />
-    </LinearLayout>
 </LinearLayout>

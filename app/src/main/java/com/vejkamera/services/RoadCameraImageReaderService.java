@@ -78,10 +78,10 @@ public class RoadCameraImageReaderService extends IntentService {
                 }
             } catch (MalformedURLException|URISyntaxException e) {
                 //TODO Add image of broken camera
-                failedReadings = updateFailedReading(failedReadings, roadCamera, e);
+                failedReadings = updateFailedReading(failedReadings, roadCamera, e, thumbnailsOnly);
             } catch (IOException e) {
                 //TODO Add image of broken camera
-                failedReadings = updateFailedReading(failedReadings, roadCamera, e);
+                failedReadings = updateFailedReading(failedReadings, roadCamera, e, thumbnailsOnly);
             }
         }
         if(failedReadings != null) {
@@ -99,16 +99,23 @@ public class RoadCameraImageReaderService extends IntentService {
             InputStream is = connection.getInputStream();
             if(thumbnail) {
                 roadCamera.setThumbnail(BitmapFactory.decodeStream(is));
+                roadCamera.setThumbnailReadingFailed(false);
             } else {
                 roadCamera.setBitmap(BitmapFactory.decodeStream(is));
-
+                roadCamera.setBitmapReadingFailed(false);
             }
         }
     }
 
-    private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e) {
+    private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e, boolean thumbnail) {
+        if(thumbnail) {
+            roadCamera.setThumbnailReadingFailed(true);
+        } else {
+            roadCamera.setBitmapReadingFailed(true);
+        }
         failedReadings = (failedReadings != null ? failedReadings + ", " : "\n") + roadCamera.getTitle() + " (Thumbnail: " + roadCamera.getThumbnailLink() + ", " + ", URL: " + roadCamera.getImageLink() + ")\n";
         e.printStackTrace();
+        Log.d(getClass().getSimpleName(), "Failed to read camera " + roadCamera.getTitle(), e);
         return failedReadings;
     }
 

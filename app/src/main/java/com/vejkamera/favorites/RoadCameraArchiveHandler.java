@@ -367,7 +367,7 @@ public final class RoadCameraArchiveHandler {
         return roadCamerasAtSamePosition.containsKey(roadCamera);
     }
 
-    public static List getRoadCameraAtSamePosition(RoadCamera roadCamera){
+    public static List<RoadCamera> getRoadCameraAtSamePosition(RoadCamera roadCamera){
         return roadCamerasAtSamePosition.get(roadCamera);
     }
 }
