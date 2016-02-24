@@ -1,11 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:vejkamera="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_keep_screen_on"
-        android:title="@string/keep_screen_on"
-        android:orderInCategory="100"
-        vejkamera:showAsAction="never"
-        android:checkable="true"
-        android:icon="@drawable/ic_check_box_outline_blank_white_24dp"/>
     <!--
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
@@ -13,13 +7,19 @@
         android:icon="@drawable/common_ic_googleplayservices"
         vejkamera:showAsAction="never" />-->
     <item android:id="@+id/menu_grid_layout"
-        android:orderInCategory="200"
+        android:orderInCategory="100"
         android:icon="@drawable/ic_view_grid2_white_24dp"
         android:title="@string/menu_grid_layout"
         vejkamera:showAsAction="always" />
     <item android:id="@+id/menu_sorting"
-        android:orderInCategory="300"
+        android:orderInCategory="200"
         android:icon="@drawable/ic_sort_by_alpha_white_24dp"
         android:title="@string/menu_sorting"
         vejkamera:showAsAction="always" />
+    <item android:id="@+id/menu_keep_screen_on"
+        android:title="@string/keep_screen_on"
+        android:orderInCategory="300"
+        vejkamera:showAsAction="always"
+        android:icon="@drawable/ic_cellphone_android_white_24dp"/>
+
 </menu>

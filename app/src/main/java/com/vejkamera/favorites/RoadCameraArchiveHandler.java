@@ -253,7 +253,17 @@ public final class RoadCameraArchiveHandler {
     }
 
     public static RoadCamera getRoadCameraFromSyncId(String syncId, Context context){
-        return allRoadCamerasHashMap.get(syncId);
+        // If network is down or slow allRoadCamerasHashMap may not have been initialized yet -> then also check the favorites
+        if(allRoadCamerasHashMap.containsKey(syncId)){
+            return allRoadCamerasHashMap.get(syncId);
+        } else {
+            for(RoadCamera favoriteRoadCamera : getFavorites(context)){
+                if(favoriteRoadCamera.getSyncId().equals(syncId)){
+                    return favoriteRoadCamera;
+                }
+            }
+        }
+        return null;
     }
 
     public static List<RoadCamera> getRoadCameraFromSyncIdList(List<String> syncIdList, Context context){

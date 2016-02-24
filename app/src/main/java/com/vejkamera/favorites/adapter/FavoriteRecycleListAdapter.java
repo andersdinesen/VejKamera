@@ -106,6 +106,6 @@ public class FavoriteRecycleListAdapter extends RecyclerView.Adapter<FavoriteRec
 
     @Override
     public int getItemCount() {
-        return roadCameras.size();
+        return roadCameras != null ? roadCameras.size() : 0;
     }
 }

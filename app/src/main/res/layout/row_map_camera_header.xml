@@ -23,7 +23,8 @@
             android:layout_marginRight="3dp"
             android:layout_weight="0.1"
             android:adjustViewBounds="true"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:scaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/title_in_map_header_row"

@@ -160,6 +160,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        checkNetwork();
         startReadingFavorites();
         sortFavorites();
     }
@@ -189,20 +190,11 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     private void updateFavorites() {
-        //favorites.clear();
-        //favorites.add(new RoadCamera("E20 Lilleb\u00E6ldt", "http://webcam.trafikken.dk/webcam/VejleN_Horsensvej_Cam1.jpg", null));
-        //favorites.add(new RoadCamera("E20 Kauslunde V", "http://webcam.trafikken.dk/webcam/kauslunde2.jpg", null));
-        if(isNetworkAvailable()) {
+
             favorites = (RoadCameraArchiveHandler.getFavorites(this));
             if(recycleListAdapter!=null) {
                 recycleListAdapter.notifyDataSetChanged();
             }
-        } else {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.no_network)
-                    .setMessage(R.string.network_missing).show();
-
-        }
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_floating_button);
         LinearLayout introLayout = (LinearLayout) findViewById(R.id.intro_layout);
@@ -212,6 +204,14 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else {
             introLayout.setVisibility(View.GONE);
             floatingActionButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void checkNetwork(){
+        if(!isNetworkAvailable()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.no_network)
+                    .setMessage(R.string.network_missing).show();
         }
     }
 
@@ -382,30 +382,37 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     protected void sortFavorites(){
-        if(currentSorting == Sorting.BY_NAME) {
-            Collections.sort(favorites, new RoadCameraTitleComparator());
-        } else if( currentSorting == Sorting.BY_NEAR && lastLocation != null) {
-            RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
-            Collections.sort(favorites, locationComparator);
-        } else if(currentSorting == Sorting.BY_ADDED) {
-            //RoadCameraArchiveHandler.clearCachedFavorites(this);
-            RoadCameraOriginalSortingComparator originalSortingComparator = new RoadCameraOriginalSortingComparator(RoadCameraArchiveHandler.getFavoritesSyncIds(this));
-            Collections.sort(favorites, originalSortingComparator);
-        }
+        if(favorites != null) {
+            if (currentSorting == Sorting.BY_NAME) {
+                Collections.sort(favorites, new RoadCameraTitleComparator());
+            } else if (currentSorting == Sorting.BY_NEAR && lastLocation != null) {
+                RoadCameraLocationComparator locationComparator = new RoadCameraLocationComparator(lastLocation);
+                Collections.sort(favorites, locationComparator);
+            } else if (currentSorting == Sorting.BY_ADDED) {
+                //RoadCameraArchiveHandler.clearCachedFavorites(this);
+                RoadCameraOriginalSortingComparator originalSortingComparator = new RoadCameraOriginalSortingComparator(RoadCameraArchiveHandler.getFavoritesSyncIds(this));
+                Collections.sort(favorites, originalSortingComparator);
+            }
 
-        recycleListAdapter.notifyDataSetChanged();
+            recycleListAdapter.notifyDataSetChanged();
+        }
     }
 
     private void setKeepScreenOn(MenuItem menuItem){
+        boolean newScreenOnStatus = !RoadCameraArchiveHandler.isKeepScreenOnSet(this);
+        RoadCameraArchiveHandler.setKeepScreenOn(newScreenOnStatus, this);
+
         int newIcon = 0;
-        if(menuItem.isChecked()){
+        if(newScreenOnStatus){
+            newIcon = R.drawable.ic_cellphone_android_screen_on_24dp;
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             menuItem.setTitle(R.string.auto_screen_off);
-            newIcon = R.drawable.ic_check_box_white_24dp;
+            Toast.makeText(this, "Screen always on enabled", Toast.LENGTH_SHORT).show();
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            newIcon = R.drawable.ic_check_box_white_24dp;
+            newIcon = R.drawable.ic_cellphone_android_white_24dp;
             menuItem.setTitle(R.string.keep_screen_on);
+            Toast.makeText(this, "Screen always on disabled", Toast.LENGTH_SHORT).show();
         }
 
         if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -554,18 +561,13 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //favorites.clear();
+            if(favorites != null) {
+                for (int i = 0; i < favorites.size(); i++) {
+                    recycleListAdapter.notifyItemChanged(i);
+                }
 
-            //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
-            //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
-            //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
-             //sortFavorites();
-            for (int i=0; i<favorites.size() ; i++) {
-                recycleListAdapter.notifyItemChanged(i);
+                recycleListAdapter.notifyDataSetChanged();
             }
-
-            recycleListAdapter.notifyDataSetChanged();
-
         }
     }
 
