@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -71,10 +72,10 @@ public class RoadCameraImageReaderService extends IntentService {
         for (RoadCamera roadCamera : roadCameras) {
             try {
                 //TODO Timeout for reading thumbnails again
-                if(thumbnailsOnly && roadCamera.getThumbnail() == null) {
-                    updateImageFromURL(roadCamera, true);
+                if(thumbnailsOnly && (roadCamera.getThumbnail() == null || roadCamera.isThumbnailReadingFailed())) {
+                    updateImageFromURL(roadCamera, true, failedReadings);
                 } else if(!thumbnailsOnly) {
-                    updateImageFromURL(roadCamera, false);
+                    updateImageFromURL(roadCamera, false, failedReadings);
                 }
             } catch (MalformedURLException|URISyntaxException e) {
                 //TODO Add image of broken camera
@@ -90,8 +91,13 @@ public class RoadCameraImageReaderService extends IntentService {
         broadcastResult(roadCameras);
     }
 
-    private void updateImageFromURL(RoadCamera roadCamera, boolean thumbnail) throws IOException, URISyntaxException {
-        String urlLink = thumbnail ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
+    private void updateImageFromURL(RoadCamera roadCamera, boolean thumbnail, String failedReadings) throws IOException, URISyntaxException {
+        String urlLink = thumbnail ? roadCamera.getThumbnailLink() : roadCamera.getImageLink() + "x";
+        if(!urlLink.startsWith("http:")){
+            // Use the other image URL if thumbnail or full image is missing
+            urlLink = !thumbnail ? roadCamera.getThumbnailLink() : roadCamera.getImageLink();
+        }
+
         if(urlLink.startsWith("http:")) {
             URI uri = new URI(urlLink);
             URL url = new URL(uri.toASCIIString());
@@ -104,18 +110,24 @@ public class RoadCameraImageReaderService extends IntentService {
                 roadCamera.setBitmap(BitmapFactory.decodeStream(is));
                 roadCamera.setBitmapReadingFailed(false);
             }
+        } else {
+            updateFailedReading(failedReadings, roadCamera, null, thumbnail);
         }
     }
 
     private String updateFailedReading(String failedReadings, RoadCamera roadCamera, Exception e, boolean thumbnail) {
         if(thumbnail) {
             roadCamera.setThumbnailReadingFailed(true);
+            roadCamera.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.camera_image_missing_thumbnail));
         } else {
             roadCamera.setBitmapReadingFailed(true);
+            roadCamera.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.camera_image_missing));
         }
         failedReadings = (failedReadings != null ? failedReadings + ", " : "\n") + roadCamera.getTitle() + " (Thumbnail: " + roadCamera.getThumbnailLink() + ", " + ", URL: " + roadCamera.getImageLink() + ")\n";
-        e.printStackTrace();
-        Log.d(getClass().getSimpleName(), "Failed to read camera " + roadCamera.getTitle(), e);
+        if(e!=null) {
+            e.printStackTrace();
+            Log.d(getClass().getSimpleName(), "Failed to read camera " + roadCamera.getTitle(), e);
+        }
         return failedReadings;
     }
 

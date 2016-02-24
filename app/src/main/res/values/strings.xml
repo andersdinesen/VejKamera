@@ -24,6 +24,7 @@
     <string name="title_activity_road_cameras_maps">Road Camera Map</string>
     <string name="title_activity_road_camera_map_marker_list">Map Marker Camera list</string>
     <string name="keep_screen_on">Keep screen on</string>
+    <string name="auto_screen_off">Auto screen off</string>
     <string name="sort_by">Sort by...</string>
     <string name="sort_by_alpha">Alphabetically</string>
     <string name="sort_by_near">Driving direction</string>
@@ -269,8 +270,8 @@
     <string name="southwest_info_search">SYDVEST</string>
     <string name="west_info_search">VEST</string>
     <string name="northwest_info_search">NORDVEST</string>
-    <string name="no_network">"No network"</string>
-    <string name="network_missing">"No network connection"</string>
+    <string name="no_network">No network</string>
+    <string name="network_missing">No network connection</string>
 
     <string-array name="planets">
         <item>Mercury</item>

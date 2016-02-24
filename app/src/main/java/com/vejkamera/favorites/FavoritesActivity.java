@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -332,6 +333,8 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             changeGridLayout();
         } else if (id == R.id.menu_sorting) {
             changeFavoritesSorting();
+        } else if (id == R.id.menu_keep_screen_on){
+            setKeepScreenOn(item);
         }
 
         return super.onOptionsItemSelected(item);
@@ -391,6 +394,25 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         }
 
         recycleListAdapter.notifyDataSetChanged();
+    }
+
+    private void setKeepScreenOn(MenuItem menuItem){
+        int newIcon = 0;
+        if(menuItem.isChecked()){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            menuItem.setTitle(R.string.auto_screen_off);
+            newIcon = R.drawable.ic_check_box_white_24dp;
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            newIcon = R.drawable.ic_check_box_white_24dp;
+            menuItem.setTitle(R.string.keep_screen_on);
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            menuItem.setIcon(getDrawable(newIcon));
+        } else {
+            menuItem.setIcon(getResources().getDrawable(newIcon));
+        }
     }
 
     private void changeGridLayout() {
@@ -537,7 +559,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
             //ArrayList<RoadCamera> updatedFavorites = intent.getParcelableArrayListExtra(RoadCameraImageReaderService.ROAD_CAMERA_LIST_KEY);
             //TODO: Check if this look in really needed, can we set favorites = updatedFavorites
             //favorites.addAll(RoadCameraArchiveHandler.getFavorites(context));
-            //sortFavorites();
+             //sortFavorites();
             for (int i=0; i<favorites.size() ; i++) {
                 recycleListAdapter.notifyItemChanged(i);
             }

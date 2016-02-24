@@ -1,10 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:vejkamera="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/keep_screen_on"
+    <item android:id="@+id/menu_keep_screen_on"
         android:title="@string/keep_screen_on"
         android:orderInCategory="100"
-        android:icon="@drawable/common_ic_googleplayservices"
-        vejkamera:showAsAction="never" />
+        vejkamera:showAsAction="never"
+        android:checkable="true"
+        android:icon="@drawable/ic_check_box_outline_blank_white_24dp"/>
     <!--
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"

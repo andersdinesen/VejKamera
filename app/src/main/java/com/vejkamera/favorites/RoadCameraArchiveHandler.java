@@ -33,6 +33,7 @@ public final class RoadCameraArchiveHandler {
     private final static String FAVORITE_LATITUDE_PREF_NAME = "FAVORITE_LATITUDE_";
     private final static String FAVORITE_LONGITUDE_PREF_NAME = "FAVORITE_LONGITUDE_";
     private final static String FAVORITES_GRID_LAYOUT_NAME = "FAVORITES_GRID_LAYOUT";
+    private final static String FAVORITES_KEEP_SCREEN_ON = "FAVORITES_KEEP_SCREEN_ON";
     private final static String SYNC_ID_SPLITTER = ";";
 
     private static List<RoadCamera> allRoadCameras = Collections.synchronizedList(new ArrayList<RoadCamera>());
@@ -197,6 +198,19 @@ public final class RoadCameraArchiveHandler {
     public static int getFavoritesGridLayout(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPref.getInt(FAVORITES_GRID_LAYOUT_NAME, 2);
+    }
+
+    public static void setKeepScreenOn(boolean keepScreenOn, Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putBoolean(FAVORITES_KEEP_SCREEN_ON, keepScreenOn);
+        editor.commit();
+    }
+
+    public static boolean isKeepScreenOnSet(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(FAVORITES_KEEP_SCREEN_ON, false);
     }
 
     public static void initRoadCamerasArchive(Context context){
