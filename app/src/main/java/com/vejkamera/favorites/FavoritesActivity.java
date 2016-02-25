@@ -318,10 +318,9 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_favorites, menu);
 
-        if (RoadCameraArchiveHandler.isKeepScreenOnSet(this)) {
-            MenuItem menuItemKeepOn = (MenuItem) menu.findItem(R.id.menu_keep_screen_on);
-            changeMenuItemIcon(menuItemKeepOn, R.drawable.ic_cellphone_android_screen_on_24dp);
-        }
+        MenuItem menuItemKeepOn = menu.findItem(R.id.menu_keep_screen_on);
+        setKeepScreenOn(menuItemKeepOn, RoadCameraArchiveHandler.isKeepScreenOnSet(this), false);
+        //changeMenuItemIcon(menuItemKeepOn, R.drawable.ic_cellphone_android_screen_on_24dp);
         return true;
     }
 
@@ -348,7 +347,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         } else if (id == R.id.menu_sorting) {
             changeFavoritesSorting();
         } else if (id == R.id.menu_keep_screen_on){
-            setKeepScreenOn(item);
+            setKeepScreenOn(item, !RoadCameraArchiveHandler.isKeepScreenOnSet(this), true);
         }
 
         return super.onOptionsItemSelected(item);
@@ -412,20 +411,23 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         }
     }
 
-    private void setKeepScreenOn(MenuItem menuItem){
-        boolean newScreenOnStatus = !RoadCameraArchiveHandler.isKeepScreenOnSet(this);
+    private void setKeepScreenOn(MenuItem menuItem, boolean newScreenOnStatus, boolean doToast){
         RoadCameraArchiveHandler.setKeepScreenOn(newScreenOnStatus, this);
 
         if(newScreenOnStatus){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             changeMenuItemIcon(menuItem, R.drawable.ic_cellphone_android_screen_on_24dp);
             menuItem.setTitle(R.string.auto_screen_off);
-            Toast.makeText(this, "Screen always on enabled", Toast.LENGTH_SHORT).show();
+            if(doToast) {
+                Toast.makeText(this, "Screen always on enabled", Toast.LENGTH_SHORT).show();
+            }
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             changeMenuItemIcon(menuItem, R.drawable.ic_cellphone_android_white_24dp);
             menuItem.setTitle(R.string.keep_screen_on);
-            Toast.makeText(this, "Screen always on disabled", Toast.LENGTH_SHORT).show();
+            if(doToast) {
+                Toast.makeText(this, "Screen always on disabled", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
