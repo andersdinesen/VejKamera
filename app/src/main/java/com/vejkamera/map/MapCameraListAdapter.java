@@ -29,6 +29,18 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
         super(context, R.layout.map_camera_info, values);
         this.context = context;
         this.roadCameras = values;
+
+        if(imageWidth == 0){
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(metrics);
+
+            // Adjusting with to 1/4 of screen width
+            imageWidth = Math.round(metrics.widthPixels/4);
+
+            // Adjusting height to wide-screen format 16:9
+            imageHeight = Math.round(imageWidth * 0.5625f);
+        }
     }
 
     @Override
@@ -44,6 +56,7 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
 
         ImageView mapPin = ((ImageView) rowView.findViewById(R.id.map_pin_in_map_header_row));
         mapPin.setImageResource(DirectionToMapPin.getMapPinIconFromRoadCamera(roadCamera, context));
+        adjustMapPinSize(mapPin);
 
         setupFavoriteStar(rowView, roadCamera);
 
@@ -78,6 +91,7 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
 
 
     private void adjustImageSize(ImageView imageView) {
+        /*
         if(imageWidth == 0){
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             DisplayMetrics metrics = new DisplayMetrics();
@@ -88,13 +102,16 @@ public class MapCameraListAdapter extends ArrayAdapter<RoadCamera> {
 
             // Adjusting height to wide-screen format 16:9
             imageHeight = Math.round(imageWidth * 0.5625f);
-        }
+        }*/
 
         imageView.getLayoutParams().width = imageWidth;
         imageView.getLayoutParams().height = imageHeight;
-/*
-        progressBar.getLayoutParams().width = imageWidth;
-        progressBar.getLayoutParams().height = imageHeight;
-        */
+    }
+
+    private void adjustMapPinSize(ImageView mapPinView){
+        // Adjust the map pin to the same height at the thumbnail image
+        //int oldImageHeight =
+        mapPinView.getLayoutParams().height = imageHeight;
+
     }
 }

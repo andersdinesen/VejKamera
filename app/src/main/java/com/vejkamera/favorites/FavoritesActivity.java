@@ -317,7 +317,21 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_favorites, menu);
+
+        if (RoadCameraArchiveHandler.isKeepScreenOnSet(this)) {
+            MenuItem menuItemKeepOn = (MenuItem) menu.findItem(R.id.menu_keep_screen_on);
+            changeMenuItemIcon(menuItemKeepOn, R.drawable.ic_cellphone_android_screen_on_24dp);
+        }
         return true;
+    }
+
+    private void changeMenuItemIcon(MenuItem menuItem, int resourceId){
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            menuItem.setIcon(getDrawable(resourceId));
+        } else {
+            menuItem.setIcon(getResources().getDrawable(resourceId));
+        }
+
     }
 
     @Override
@@ -330,7 +344,7 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.menu_grid_layout) {
-            changeGridLayout();
+            changeGridLayout(item);
         } else if (id == R.id.menu_sorting) {
             changeFavoritesSorting();
         } else if (id == R.id.menu_keep_screen_on){
@@ -402,27 +416,20 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         boolean newScreenOnStatus = !RoadCameraArchiveHandler.isKeepScreenOnSet(this);
         RoadCameraArchiveHandler.setKeepScreenOn(newScreenOnStatus, this);
 
-        int newIcon = 0;
         if(newScreenOnStatus){
-            newIcon = R.drawable.ic_cellphone_android_screen_on_24dp;
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            changeMenuItemIcon(menuItem, R.drawable.ic_cellphone_android_screen_on_24dp);
             menuItem.setTitle(R.string.auto_screen_off);
             Toast.makeText(this, "Screen always on enabled", Toast.LENGTH_SHORT).show();
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            newIcon = R.drawable.ic_cellphone_android_white_24dp;
+            changeMenuItemIcon(menuItem, R.drawable.ic_cellphone_android_white_24dp);
             menuItem.setTitle(R.string.keep_screen_on);
             Toast.makeText(this, "Screen always on disabled", Toast.LENGTH_SHORT).show();
         }
-
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            menuItem.setIcon(getDrawable(newIcon));
-        } else {
-            menuItem.setIcon(getResources().getDrawable(newIcon));
-        }
     }
 
-    private void changeGridLayout() {
+    private void changeGridLayout(MenuItem menuItem) {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.favorites_listview);
 
         int currentLayout = RoadCameraArchiveHandler.getFavoritesGridLayout(this);
@@ -431,34 +438,22 @@ public class FavoritesActivity extends AppCompatActivity implements GoogleApiCli
         recyclerView.setLayoutManager(new GridLayoutManager(this, newLayout));
         RoadCameraArchiveHandler.setFavoritesGridLayout(newLayout, this);
 
-        adjustGridLayoutIcon();
+        adjustGridLayoutIcon(menuItem);
     }
 
-    private void adjustGridLayoutIcon() {
+    private void adjustGridLayoutIcon(MenuItem menuItem) {
         int gridLayout = RoadCameraArchiveHandler.getFavoritesGridLayout(this);
-        MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
+        //MenuView.ItemView menuItem = (MenuView.ItemView) findViewById(R.id.menu_grid_layout);
         if(menuItem!=null) {
             switch (gridLayout) {
                 case 1:
-                    if (android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid2_white_24dp));
-                    }
+                    changeMenuItemIcon(menuItem, R.drawable.ic_view_grid2_white_24dp);
                     break;
                 case 2:
-                    if (android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid3_white_24dp));
-                    }
+                    changeMenuItemIcon(menuItem, R.drawable.ic_view_grid3_white_24dp);
                     break;
                 case 3:
-                    if (android.os.Build.VERSION.SDK_INT >= 21) {
-                        menuItem.setIcon(getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                    } else {
-                        menuItem.setIcon(getResources().getDrawable(R.drawable.ic_view_grid1_white_24dp));
-                    }
+                    changeMenuItemIcon(menuItem, R.drawable.ic_view_grid1_white_24dp);
                     break;
             }
         }
